@@ -96,6 +96,14 @@ body {
     line-height: 1.6;
 }
 
+img, video, iframe {
+    max-width: 100%;
+}
+
+table {
+    max-width: 100%;
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Cinzel', serif;
     font-weight: 700;
@@ -400,4 +408,52 @@ body:not(.dark-mode) .tn-select-option:hover {
 body:not(.dark-mode) .tn-select-option.selected {
     background: rgba(212, 175, 55, 0.12);
     color: #b8941f;
+}
+
+/* =================== RESPONSIVE BASE =================== */
+@media (max-width: 767px) {
+    .container,
+    .container-fluid {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
+        margin: 38px 0 16px;
+        padding-bottom: 14px;
+    }
+
+    .btn-gold,
+    .btn-outline-gold {
+        max-width: 100%;
+        padding: 10px 18px;
+        font-size: 0.78rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control,
+    .form-select,
+    .tn-select-trigger {
+        min-height: 44px;
+        padding: 10px 13px;
+        font-size: 0.88rem;
+    }
+
+    .modal-dialog {
+        margin: 0.75rem;
+    }
+
+    .table-responsive {
+        border-radius: 10px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title { font-size: 1.45rem; }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.45rem; }
+    h3 { font-size: 1.2rem; }
 }

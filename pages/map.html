@@ -302,10 +302,15 @@
         /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
             html, body { overflow-x: hidden; overflow-y: auto; }
+            body.has-tn-navbar.map-page { overflow-x: hidden; overflow-y: auto; }
             .map-layout,
             body.has-tn-navbar.map-page .map-layout {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto clamp(360px, 64dvh, 620px);
+                height: auto;
+                min-height: calc(100dvh - var(--navbar-height));
+            }
+            body.has-tn-navbar.map-page .map-layout {
                 height: auto;
                 min-height: calc(100dvh - var(--navbar-height));
             }

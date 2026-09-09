@@ -347,6 +347,27 @@ html {
     }
 }
 
+@media (max-width: 576px) {
+    .tn-navbar > .container {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+        padding-top: 9px !important;
+        padding-bottom: 9px !important;
+    }
+
+    .tn-navbar .navbar-brand {
+        font-size: 1.08rem;
+        letter-spacing: 1px;
+    }
+
+    .tn-navbar .navbar-brand i { font-size: 0.95rem; }
+    .tn-navbar .navbar-toggler { padding: 6px 8px; }
+    .tn-navbar .navbar-collapse {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
+
 /* ═══════════════════════════════════════════════════════
    BODY SPACING
    ═══════════════════════════════════════════════════════ */

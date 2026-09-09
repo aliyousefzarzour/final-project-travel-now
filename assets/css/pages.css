@@ -194,3 +194,20 @@ body.dark-mode .company-card { background: var(--card-bg); }
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
 }
+
+@media (max-width: 767px) {
+    .page-header { padding: 88px 14px 42px; }
+    .page-header h1 { font-size: 1.75rem; line-height: 1.25; }
+    .page-header p { font-size: 0.84rem; line-height: 1.5; }
+    .search-filter-bar { margin-top: -20px; padding: 12px; border-radius: 12px; }
+    .search-filter-bar .row { --bs-gutter-y: 0.65rem; }
+    .attraction-body, .offer-body, .company-body { padding: 15px; }
+    .attraction-img, .offer-img, .company-img { height: 170px; }
+    .attraction-body h4, .offer-body h4, .company-body h4 { font-size: 1rem; }
+}
+
+@media (max-width: 480px) {
+    .page-header { padding-top: 78px; padding-bottom: 32px; }
+    .page-header h1 { font-size: 1.45rem; }
+    .page-header p { font-size: 0.78rem; }
+}
