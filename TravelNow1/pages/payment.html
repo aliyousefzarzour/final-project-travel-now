@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        /* Payment page always uses the dark navy background */
+        body {
+            background: linear-gradient(135deg, #0a1d2e 0%, #1a3a5c 100%) !important;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .payment-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .payment-card .form-control {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(212,175,55,0.3);
+            color: #fff;
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .payment-card .form-control::placeholder { color: rgba(255,255,255,0.45); }
+        .payment-card .form-control:focus {
+            background: rgba(255,255,255,0.15);
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+            color: #fff;
+        }
+
+        .payment-card .form-label { color: #d4af37; font-weight: 500; }
+
+        /* ── Invoice card ── */
+        .invoice {
+            background: #ffffff;
+            color: #0a1d2e;
+            border-radius: 15px;
+            padding: 30px;
+            position: sticky;
+            top: 20px;
+            border: 1px solid rgba(212,175,55,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+        }
+
+        .invoice h3        { color: #d4af37; }
+        .invoice p         { color: #2c3e50; }
+        .invoice h5        { color: #0a1d2e; font-weight: 700; }
+        .invoice hr        { border-color: rgba(10,29,46,0.15); }
+        .invoice .text-muted { color: #6c757d !important; }
+        .invoice span      { color: #2c3e50; }
+
+        /* TOTAL row */
+        .invoice #total    { color: #d4af37 !important; font-weight: 800; }
+
+        /* ── Light mode: keep invoice visible with stronger border ── */
+        body:not(.dark-mode) .invoice {
+            box-shadow: 0 4px 24px rgba(10,29,46,0.12), 0 0 0 1.5px rgba(212,175,55,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="tn-navbar" data-page="companies"></div>
+    <div class="container">
+        <div class="text-center mb-4">
+            <h1 style="color:#d4af37;"><i class="fas fa-lock"></i> SECURE PAYMENT</h1>
+            <p><i class="fas fa-shield-alt"></i> PCI-DSS style flow with backend booking confirmation</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="payment-card">
+                    <h4 style="color:#d4af37;">Card Information</h4>
+                    <div id="payment-warning" class="alert alert-warning d-none"></div>
+                    <form id="payment-form">
+                        <div class="mb-3"><label class="form-label">Card Holder Name *</label><input type="text" class="form-control" name="cardName" required></div>
+                        <div class="mb-3"><label class="form-label">Card Number *</label><input type="text" class="form-control" name="cardNumber" id="cardNumber" required maxlength="19" placeholder="1234 5678 9012 3456"></div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3"><label class="form-label">Expiration Date *</label><input type="text" class="form-control" name="expiry" id="expiry" required maxlength="5" placeholder="MM/YY"></div>
+                            <div class="col-md-6 mb-3"><label class="form-label">CVV *</label><input type="password" class="form-control" name="cvv" id="cvv" required maxlength="4" placeholder="•••"></div>
+                        </div>
+                        <div class="mb-3"><label class="form-label">Billing Address *</label><input type="text" class="form-control" name="address" required></div>
+                        <button type="submit" class="btn btn-gold btn-lg w-100"><i class="fas fa-lock"></i> CONFIRM BOOKING <span id="pay-amount">0</span> EGP</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="invoice">
+                    <h3><i class="fas fa-file-invoice"></i> INVOICE</h3>
+                    <hr>
+                    <p><strong>Order #:</strong> <span id="order-id">TRV-...</span></p>
+                    <p><strong>Date:</strong> <span id="order-date"></span></p>
+                    <p><strong>Customer:</strong> <span id="cust-name">-</span></p>
+                    <hr>
+                    <h5 id="invoice-title">Booking</h5>
+                    <p id="invoice-company" class="text-muted small mb-2"></p>
+                    <div class="d-flex justify-content-between"><span>Subtotal:</span> <span id="subtotal">0 EGP</span></div>
+                    <div class="d-flex justify-content-between"><span>VAT (14%):</span> <span id="vat">0 EGP</span></div>
+                    <div class="d-flex justify-content-between"><span>Service Fee:</span> <span id="fee">100 EGP</span></div>
+                    <hr>
+                    <div class="d-flex justify-content-between" style="font-size:1.3rem; color:#d4af37; font-weight:700;"><span>TOTAL:</span> <span id="total">0 EGP</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="receiptModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background:#0a1d2e; color:#fff; border:2px solid #d4af37;">
+                <div class="modal-body text-center p-5">
+                    <i class="fas fa-check-circle" style="font-size:5rem; color:#28a745"></i>
+                    <h2 class="mt-3" style="color:#d4af37">BOOKING CONFIRMED!</h2>
+                    <p>Your booking has been written to the database</p>
+                    <div id="receipt-content" class="text-start mt-4" style="background:rgba(255,255,255,0.05); padding:20px; border-radius:10px;"></div>
+                    <div class="mt-4">
+                        <a href="bookings.html" class="btn btn-gold">View Bookings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script>
+    const user = requireAuth();
+    const token = Storage.getToken();
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+    let offer = null;
+
+    async function fetchJson(url) {
+        const response = await fetch(url, { headers: authHeaders });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Request failed');
+        return data;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const offerId = urlParams.get('offer');
+    // proposal params (from company proposal approval flow)
+    const proposalPrice      = urlParams.get('price');
+    const proposalTitle      = urlParams.get('title');
+    const proposalCompany    = urlParams.get('company');
+    const proposalAttractions = urlParams.get('attractions');
+    const proposalPostId     = urlParams.get('postId');
+
+    async function loadOffer() {
+        // ── Proposal flow (comes from approving a company proposal on a post) ──
+        if (proposalPrice && proposalTitle) {
+            const subtotal = Number(proposalPrice);
+            const vat = Math.round(subtotal * 0.14);
+            const fee = 100;
+            const total = subtotal + vat + fee;
+
+            offer = {
+                _id: null,
+                title: decodeURIComponent(proposalTitle),
+                price: subtotal,
+                companyId: { companyName: proposalCompany ? decodeURIComponent(proposalCompany) : 'Company' },
+                isProposal: true,
+                postId: proposalPostId || null,
+                attractions: proposalAttractions ? decodeURIComponent(proposalAttractions) : ''
+            };
+
+            document.getElementById('cust-name').textContent = user.fullName || user.name || user.email;
+            document.getElementById('order-id').textContent = 'TRV-' + Date.now().toString().slice(-8);
+            document.getElementById('order-date').textContent = new Date().toLocaleDateString();
+            document.getElementById('invoice-title').textContent = offer.title;
+            document.getElementById('invoice-company').textContent = 'by ' + offer.companyId.companyName;
+
+            // Show attractions if any
+            if (offer.attractions) {
+                document.getElementById('invoice-company').textContent +=
+                    '\n📍 ' + offer.attractions;
+            }
+
+            document.getElementById('subtotal').textContent = subtotal.toLocaleString() + ' EGP';
+            document.getElementById('vat').textContent = vat.toLocaleString() + ' EGP';
+            document.getElementById('total').textContent = total.toLocaleString() + ' EGP';
+            document.getElementById('pay-amount').textContent = total.toLocaleString();
+            return;
+        }
+
+        // ── Regular offer flow ──
+        if (offerId) {
+            const data = await fetchJson(`../api/offers/${offerId}`);
+            offer = data.offer;
+        }
+        if (!offer) {
+            document.getElementById('payment-warning').textContent = 'This booking page needs a real offer. Please go back and choose a live company offer.';
+            document.getElementById('payment-warning').classList.remove('d-none');
+            document.getElementById('payment-form').querySelector('button[type="submit"]').disabled = true;
+            return;
+        }
+
+        const subtotal = Number(offer.price || 5000);
+        const vat = Math.round(subtotal * 0.14);
+        const fee = 100;
+        const total = subtotal + vat + fee;
+
+        document.getElementById('cust-name').textContent = user.fullName || user.name || user.email;
+        document.getElementById('order-id').textContent = 'TRV-' + Date.now().toString().slice(-8);
+        document.getElementById('order-date').textContent = new Date().toLocaleDateString();
+        document.getElementById('invoice-title').textContent = offer.title;
+        document.getElementById('invoice-company').textContent = offer.companyId?.companyName ? 'by ' + offer.companyId.companyName : '';
+        document.getElementById('subtotal').textContent = subtotal.toLocaleString() + ' EGP';
+        document.getElementById('vat').textContent = vat.toLocaleString() + ' EGP';
+        document.getElementById('total').textContent = total.toLocaleString() + ' EGP';
+        document.getElementById('pay-amount').textContent = total.toLocaleString();
+    }
+
+    document.getElementById('cardNumber').addEventListener('input', e => {
+        let val = e.target.value.replace(/\D/g, '');
+        val = val.match(/.{1,4}/g)?.join(' ') || val;
+        e.target.value = val;
+    });
+    document.getElementById('expiry').addEventListener('input', e => {
+        let val = e.target.value.replace(/\D/g, '');
+        if (val.length >= 2) val = val.slice(0, 2) + '/' + val.slice(2, 4);
+        e.target.value = val;
+    });
+    document.getElementById('cvv').addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    });
+
+    document.getElementById('payment-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        try {
+            const cardNum = event.target.cardNumber.value.replace(/\s/g, '');
+            if (cardNum.length < 13) {
+                showToast('Invalid card number', 'error');
+                return;
+            }
+
+            const subtotal = Number(offer.price || 5000);
+            const vat = Math.round(subtotal * 0.14);
+            const fee = 100;
+            const total = subtotal + vat + fee;
+
+            await fetch('../api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...authHeaders },
+                body: JSON.stringify({
+                    type: 'offer',
+                    offerId: offer._id,
+                    companyId: offer.companyId?._id || null,
+                    title: offer.title,
+                    amount: total,
+                    currency: 'EGP',
+                    status: 'confirmed',
+                    travelDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
+                    contactInfo: {
+                        name: event.target.cardName.value,
+                        email: user.email,
+                        phone: user.phone || ''
+                    }
+                })
+            }).then(async response => {
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to create booking');
+
+                // Close the post after successful payment (if proposal flow)
+                if (offer.postId) {
+                    await fetch(`../api/posts/${offer.postId}/close`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', ...authHeaders }
+                    }).catch(() => {}); // non-fatal
+                }
+
+                document.getElementById('receipt-content').innerHTML = `
+                    <p><strong>Order ID:</strong> ${document.getElementById('order-id').textContent}</p>
+                    <p><strong>Service:</strong> ${offer.title}</p>
+                    <p><strong>Company:</strong> ${offer.companyId?.companyName || 'TravelNow'}</p>
+                    <p><strong>Amount Paid:</strong> ${total.toLocaleString()} EGP</p>
+                    <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+                    <p style="color:#28a745"><i class="fas fa-check"></i> <strong>Status: CONFIRMED</strong></p>
+                `;
+                new bootstrap.Modal(document.getElementById('receiptModal')).show();
+                setTimeout(() => window.location.href = 'bookings.html', 1800);
+            }).catch(error => {
+                if (String(error.message || '').toLowerCase().includes('duplicate booking')) {
+                    showToast('You already have this booking. Opening your bookings page.', 'warning');
+                    setTimeout(() => window.location.href = 'bookings.html', 1200);
+                    return;
+                }
+                throw error;
+            });
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    });
+
+    loadOffer();
+    </script>
+</body>
+</html>

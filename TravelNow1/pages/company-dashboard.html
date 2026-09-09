@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+</head>
+<body>
+    <div id="tn-navbar" data-page="companies"></div>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-building fa-2x" style="color:#d4af37"></i>
+                <h3>COMPANY</h3>
+                <p id="company-name">Loading...</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-section="overview"><i class="fas fa-chart-pie"></i> Overview</a></li>
+                <li><a href="#" data-section="bookings"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="#" data-section="offers"><i class="fas fa-tags"></i> My Offers</a></li>
+                <li><a href="#" data-section="posts"><i class="fas fa-bullhorn"></i> Posts</a></li>
+                <li><a href="#" id="sidebar-profile-link"><i class="fas fa-user-tie"></i> Company Profile</a></li>
+                <li><a href="javascript:void(0)" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <h2 id="section-title">Company Dashboard</h2>
+            </div>
+
+            <div id="section-overview" class="admin-section">
+                <div class="welcome-banner">
+                    <h2>Welcome, <span id="welcome-name">Company</span></h2>
+                    <p>Live company activity and offers from the backend</p>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-calendar-check"></i><h3 id="booking-count">0</h3><p>Total Bookings</p></div></div>
+                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-tags"></i><h3 id="my-offers-count">0</h3><p>Active Offers</p></div></div>
+                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-bullhorn"></i><h3 id="my-posts-count">0</h3><p>Visible Posts</p></div></div>
+                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-star"></i><h3 id="my-rating">0</h3><p>Avg Rating</p></div></div>
+                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-heart" style="color:#e74c3c"></i><h3 id="my-followers">0</h3><p>Followers</p></div></div>
+                </div>
+            </div>
+
+            <div id="section-bookings" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4><i class="fas fa-calendar-check"></i> Customer Bookings</h4>
+                    <div id="company-bookings" class="mt-4"></div>
+                </div>
+            </div>
+
+            <div id="section-offers" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4>My Offers</h4>
+                        <button class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#offerModal"><i class="fas fa-plus"></i> Create Offer</button>
+                    </div>
+                    <div id="my-offers-list" class="mt-4"></div>
+                </div>
+            </div>
+
+            <div id="section-posts" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4><i class="fas fa-bullhorn"></i> Posts Feed</h4>
+                    <div id="company-posts" class="mt-3"></div>
+                </div>
+            </div>
+
+            <div id="section-profile" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4><i class="fas fa-user-tie"></i> Company Profile</h4>
+                    <p class="text-secondary">Manage your approved company details from the backend.</p>
+                    <div id="company-profile-details"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="offerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background:#0a1d2e; color:#fff; border:1px solid #d4af37;">
+                <div class="modal-header" style="border-color:rgba(212,175,55,0.3)">
+                    <h5 style="color:#d4af37">Create New Offer</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="offer-form">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3"><label class="form-label" style="color:#d4af37">Title *</label><input type="text" class="form-control" name="title" required></div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" style="color:#d4af37">Type *</label>
+                                <select class="form-select" name="type" required>
+                                    <option value="domestic">Domestic Trip</option>
+                                    <option value="international">International</option>
+                                    <option value="hajj">Hajj</option>
+                                    <option value="umrah">Umrah</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3"><label class="form-label" style="color:#d4af37">Destination *</label><input type="text" class="form-control" name="destination" required></div>
+                            <div class="col-md-6 mb-3"><label class="form-label" style="color:#d4af37">Price (EGP) *</label><input type="number" class="form-control" name="price" required></div>
+                            <div class="col-md-6 mb-3"><label class="form-label" style="color:#d4af37">Duration *</label><input type="text" class="form-control" name="duration" required></div>
+                            <div class="col-md-6 mb-3"><label class="form-label" style="color:#d4af37">Available Seats *</label><input type="number" class="form-control" name="availableSeats" required></div>
+                            <div class="col-12 mb-3"><label class="form-label" style="color:#d4af37">Booking Deadline *</label><input type="date" class="form-control" name="bookingDeadline" required></div>
+                            <div class="col-12 mb-3"><label class="form-label" style="color:#d4af37">Description *</label><textarea class="form-control" name="description" rows="3" required></textarea></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-color:rgba(212,175,55,0.3)">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-gold">Create Offer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Send Proposal Modal ── -->
+    <div class="modal fade" id="proposalModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content modal-modern" style="background:#0d1f33;">
+                <div class="modal-header" style="border-bottom:1px solid rgba(212,175,55,0.2); padding:20px 24px;">
+                    <div>
+                        <h5 style="color:#d4af37; margin:0;"><i class="fas fa-file-contract me-2"></i>Send Trip Proposal</h5>
+                        <small id="proposal-post-dest" style="color:rgba(255,255,255,0.6); font-size:0.8rem;"></small>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="proposal-form">
+                    <input type="hidden" id="proposal-post-id">
+                    <div class="modal-body px-4 py-4" style="max-height:65vh; overflow-y:auto;">
+
+                        <!-- Post summary (read-only) -->
+                        <div id="proposal-post-summary" class="mb-4 p-3 rounded-3" style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.15);">
+                            <small style="color:#d4af37; font-weight:700; letter-spacing:1px; font-size:0.72rem;">TRAVELER'S REQUEST</small>
+                            <p id="proposal-post-required" class="mb-1 mt-1" style="font-size:0.9rem;"></p>
+                            <div class="d-flex flex-wrap gap-3 mt-2">
+                                <span style="font-size:0.78rem; color:rgba(255,255,255,0.65);"><i class="fas fa-wallet me-1" style="color:#d4af37"></i><span id="proposal-post-budget"></span></span>
+                                <span style="font-size:0.78rem; color:rgba(255,255,255,0.65);"><i class="fas fa-users me-1" style="color:#d4af37"></i><span id="proposal-post-travelers"></span> travelers</span>
+                                <span style="font-size:0.78rem; color:rgba(255,255,255,0.65);"><i class="fas fa-calendar me-1" style="color:#d4af37"></i><span id="proposal-post-date"></span></span>
+                            </div>
+                            <!-- Traveler's selected attractions -->
+                            <div id="proposal-post-attractions" class="mt-2"></div>
+                        </div>
+
+                        <!-- Proposal fields -->
+                        <div class="mb-3">
+                            <label class="form-label" style="color:#d4af37; font-size:0.8rem; font-weight:700; letter-spacing:1px;">
+                                <i class="fas fa-align-left me-1"></i> YOUR TRIP DESCRIPTION *
+                            </label>
+                            <textarea class="form-control" id="proposal-description" rows="4"
+                                placeholder="Describe the trip in detail: itinerary, hotels, transport, what's included, duration..."
+                                required style="background:rgba(255,255,255,0.06); border:1px solid rgba(212,175,55,0.2); color:#fff; border-radius:12px; resize:vertical;"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="color:#d4af37; font-size:0.8rem; font-weight:700; letter-spacing:1px;">
+                                <i class="fas fa-tag me-1"></i> YOUR PRICE (EGP) *
+                            </label>
+                            <input type="number" class="form-control" id="proposal-price" min="1"
+                                placeholder="e.g. 8500" required
+                                style="background:rgba(255,255,255,0.06); border:1px solid rgba(212,175,55,0.2); color:#fff; border-radius:12px;">
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label" style="color:#d4af37; font-size:0.8rem; font-weight:700; letter-spacing:1px;">
+                                <i class="fas fa-map-pin me-1"></i> PLACES YOU'LL COVER
+                            </label>
+                            <small class="d-block mb-2" style="color:rgba(255,255,255,0.5); font-size:0.75rem;">Add all attractions / destinations included in your trip</small>
+                            <div id="proposal-attractions-container"></div>
+                            <button type="button" onclick="addProposalPlace()"
+                                style="background:rgba(212,175,55,0.08); border:1px dashed rgba(212,175,55,0.35); color:#d4af37; border-radius:10px; padding:7px 18px; font-size:0.8rem; cursor:pointer; margin-top:8px; transition:all 0.2s;"
+                                onmouseover="this.style.background='rgba(212,175,55,0.18)'" onmouseout="this.style.background='rgba(212,175,55,0.08)'">
+                                <i class="fas fa-plus-circle me-1"></i> Add Place
+                            </button>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer" style="border-top:1px solid rgba(212,175,55,0.12); padding:16px 24px; background:#0d1f33;">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius:12px; padding:10px 22px;">Cancel</button>
+                        <button type="submit" class="btn btn-gold px-5">
+                            <i class="fas fa-paper-plane me-1"></i> Send to Traveler
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/custom-select.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/realtime.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    const user = requireCompany();
+    const token = Storage.getToken();
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+    let offersCache = [];
+    let postsCache = [];
+
+    async function fetchJson(url, options = {}) {
+        const response = await fetch(url, {
+            headers: { 'Content-Type': 'application/json', ...authHeaders, ...(options.headers || {}) },
+            ...options
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.message || data.error || `Server error (${response.status})`);
+        return data;
+    }
+
+    if (user) {
+        document.getElementById('company-name').textContent = user.fullName || user.name || 'Company';
+        document.getElementById('welcome-name').textContent = user.fullName || user.name || 'Company';
+    }
+
+    document.querySelectorAll('.sidebar-menu a[data-section]').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            link.classList.add('active');
+            document.querySelectorAll('.admin-section').forEach(section => section.style.display = 'none');
+            const target = link.dataset.section;
+            document.getElementById(`section-${target}`).style.display = 'block';
+            document.getElementById('section-title').textContent = link.textContent.trim();
+        });
+    });
+
+    async function loadDashboard() {
+        const [offersData, postsData, companyData, bookingsData] = await Promise.all([
+            fetchJson('../api/offers'),
+            fetchJson('../api/posts?limit=50&page=1'),
+            fetchJson('../api/companies'),
+            fetchJson('../api/bookings/company/bookings').catch(() => ({ bookings: [] }))
+        ]);
+        offersCache = (offersData.offers || []).filter(offer => String(offer.companyId?.userId || offer.companyId?._id) === String(user.id));
+        postsCache = postsData.posts || [];
+        const bookings = bookingsData.bookings || [];
+        const company = (companyData.companies || []).find(item => String(item.userId) === String(user.id));
+
+        document.getElementById('booking-count').textContent = bookings.length;
+        document.getElementById('my-offers-count').textContent = offersCache.length;
+        document.getElementById('my-posts-count').textContent = postsCache.length;
+        document.getElementById('my-rating').textContent = company?.rating || 0;
+
+        // Followers count
+        if (company?._id) {
+            fetchJson(`../api/companies/${company._id}/followers`)
+                .then(d => {
+                    const el = document.getElementById('my-followers');
+                    if (el) el.textContent = d.followersCount || 0;
+                }).catch(() => {});
+        }
+        document.getElementById('company-profile-details').innerHTML = company ? `
+            <p><strong>Company:</strong> ${company.companyName}</p>
+            <p><strong>Email:</strong> ${company.email}</p>
+            <p><strong>Status:</strong> ${company.status}</p>
+            <p><strong>Governorate:</strong> ${company.governorate}</p>
+        ` : '<p class="text-secondary">No company profile found.</p>';
+
+        // set sidebar profile link to open standalone profile page
+        const profileLink = document.getElementById('sidebar-profile-link');
+        if (profileLink) {
+            if (company && company._id) {
+                profileLink.href = `company-profile.html?id=${company._id}`;
+                profileLink.addEventListener('click', e => {
+                    e.preventDefault();
+                    window.location.href = profileLink.href;
+                });
+            } else {
+                profileLink.addEventListener('click', e => {
+                    e.preventDefault();
+                    showToast('Company profile not available', 'warning');
+                });
+            }
+        }
+
+        // Render bookings
+        document.getElementById('company-bookings').innerHTML = bookings.length ? bookings.map(booking => {
+            const statusBadge = {
+                'pending': '<span class="badge bg-warning text-dark">Pending</span>',
+                'confirmed': '<span class="badge bg-success">Confirmed</span>',
+                'cancelled': '<span class="badge bg-danger">Cancelled</span>',
+                'completed': '<span class="badge bg-info">Completed</span>'
+            }[booking.status] || '<span class="badge bg-secondary">Unknown</span>';
+            
+            return `
+                <div class="dashboard-card mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 style="color:#d4af37">${booking.title}</h5>
+                            <p class="mb-1"><strong>Customer:</strong> ${booking.userId?.fullName || 'N/A'}</p>
+                            <p class="mb-1"><strong>Email:</strong> ${booking.userId?.email || 'N/A'}</p>
+                            <p class="mb-1"><strong>Travel Date:</strong> ${new Date(booking.travelDate).toLocaleDateString()}</p>
+                            <p class="mb-1"><strong>Amount:</strong> ${Number(booking.amount || 0).toLocaleString()} ${booking.currency || 'EGP'}</p>
+                            <p class="mb-1"><strong>Travelers:</strong> ${booking.travelers || 1}</p>
+                        </div>
+                        <div class="text-end">
+                            ${statusBadge}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('') : '<p class="text-muted text-center py-4">No bookings yet.</p>';
+
+        document.getElementById('my-offers-list').innerHTML = offersCache.length ? offersCache.map(offer => `
+            <div class="dashboard-card mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 style="color:#d4af37">${offer.title}</h5>
+                        <p class="mb-1">${offer.destination}</p>
+                        <p class="mb-1">${Number(offer.price || 0).toLocaleString()} EGP • ${offer.availableSeats || 0} seats</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn-action btn-edit" onclick="editOffer('${offer._id}')"><i class="fas fa-pen"></i></button>
+                        <button class="btn-action btn-delete" onclick="deleteOffer('${offer._id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        `).join('') : '<p class="text-muted text-center py-4">No offers yet.</p>';
+
+        document.getElementById('company-posts').innerHTML = postsCache.length ? postsCache.map(post => {
+            // Check if this company already sent a pending proposal on this post
+            const myProposal = (post.proposals || []).find(p =>
+                p.status === 'pending'
+            );
+            const pid = String(post._id || post.id || '');
+            return `
+            <div class="dashboard-card mb-3">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div class="flex-grow-1" style="min-width:0;">
+                        <h5 style="color:#d4af37; margin-bottom:6px;">${post.destination}</h5>
+                        <p class="mb-2" style="font-size:0.9rem; opacity:0.9;">${post.requiredText}</p>
+                        <div class="d-flex flex-wrap gap-3 mb-2">
+                            <small style="color:rgba(255,255,255,0.6);"><i class="fas fa-wallet me-1" style="color:#d4af37"></i>${(post.budget||0).toLocaleString()} EGP</small>
+                            <small style="color:rgba(255,255,255,0.6);"><i class="fas fa-users me-1" style="color:#d4af37"></i>${post.travelers||1} traveler(s)</small>
+                            <small style="color:rgba(255,255,255,0.6);"><i class="fas fa-calendar me-1" style="color:#d4af37"></i>${post.travelDate ? new Date(post.travelDate).toLocaleDateString('en-GB') : '-'}</small>
+                        </div>
+                        ${post.attractions?.length ? `
+                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                ${post.attractions.map(a => `<span style="background:rgba(212,175,55,0.12); color:#d4af37; border:1px solid rgba(212,175,55,0.25); border-radius:20px; padding:2px 10px; font-size:0.72rem;"><i class="fas fa-map-pin me-1"></i>${a.name||''}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="d-flex gap-3">
+                            <small style="color:rgba(255,255,255,0.4); font-size:0.75rem;">${(post.proposals?.length||0)} proposal(s) sent</small>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0">
+                        ${pid ? `<button class="btn btn-gold btn-sm px-3" style="font-size:0.8rem; white-space:nowrap;" onclick="openProposalModal('${pid}')">
+                            <i class="fas fa-paper-plane me-1"></i>Send Proposal
+                        </button>` : ''}
+                    </div>
+                </div>
+            </div>`;
+        }).join('') : '<p class="text-muted text-center py-4">No posts available.</p>';
+    }
+
+
+    async function deleteOffer(id) {
+        try {
+            await fetchJson(`../api/offers/${id}`, { method: 'DELETE' });
+            showToast('Offer deleted');
+            loadDashboard();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    function editOffer(id) {
+        showToast('Edit flow can open here', 'warning');
+    }
+
+    document.getElementById('offer-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        try {
+            await fetchJson('../api/offers', {
+                method: 'POST',
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+            showToast('Offer created');
+            bootstrap.Modal.getInstance(document.getElementById('offerModal')).hide();
+            event.target.reset();
+            loadDashboard();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    });
+
+    loadDashboard();
+
+    // Handle hash navigation (#offers, #bookings, #posts)
+    function navigateToHash() {
+        const hash = window.location.hash.replace('#', '');
+        if (!hash) return;
+        const link = document.querySelector(`.sidebar-menu a[data-section="${hash}"]`);
+        if (link) {
+            link.click();
+            setTimeout(() => {
+                const section = document.getElementById(`section-${hash}`);
+                if (section) section.scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+    }
+    navigateToHash();
+    window.addEventListener('hashchange', navigateToHash);
+
+    // Auto-refresh dashboard every 30 seconds
+    setInterval(() => {
+        loadDashboard().catch(err => console.log('Dashboard refresh error:', err.message));
+    }, 30000);
+
+    // Listen for theme changes and refresh
+    window.addEventListener('travelnow-theme-changed', () => {
+        loadDashboard().catch(err => console.log('Dashboard refresh error:', err.message));
+    });
+
+    // ── Real-time: refresh when notified ──
+    window.addEventListener('travelnow:post_updated', () => {
+        loadDashboard().catch(() => {});
+    });
+
+    // ── Proposal functions ──
+
+    function openProposalModal(postId) {
+        const post = postsCache.find(p => String(p._id) === String(postId));
+        if (!post) {
+            showToast('Post not found in cache. Try refreshing.', 'error');
+            return;
+        }
+
+        // Fill post summary
+        document.getElementById('proposal-post-id').value = postId;
+        document.getElementById('proposal-post-dest').textContent = '📍 ' + post.destination;
+        document.getElementById('proposal-post-required').textContent = post.requiredText || '';
+        document.getElementById('proposal-post-budget').textContent = (post.budget||0).toLocaleString() + ' EGP';
+        document.getElementById('proposal-post-travelers').textContent = post.travelers || 1;
+        document.getElementById('proposal-post-date').textContent = post.travelDate
+            ? new Date(post.travelDate).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'})
+            : '-';
+
+        // Traveler's attractions
+        const attEl = document.getElementById('proposal-post-attractions');
+        if (post.attractions?.length) {
+            attEl.innerHTML = '<div class="d-flex flex-wrap gap-1 mt-1">' +
+                post.attractions.map(a => `<span style="background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.3);border-radius:20px;padding:2px 10px;font-size:0.7rem;"><i class="fas fa-map-pin me-1"></i>${a.name||''}</span>`).join('') +
+                '</div>';
+        } else {
+            attEl.innerHTML = '';
+        }
+
+        // Reset form
+        document.getElementById('proposal-description').value = '';
+        document.getElementById('proposal-price').value = '';
+
+        // Pre-fill attractions from the post
+        const container = document.getElementById('proposal-attractions-container');
+        container.innerHTML = '';
+        if (post.attractions?.length) {
+            post.attractions.forEach(a => addProposalPlace(a.name || ''));
+        } else {
+            addProposalPlace();
+        }
+
+        new bootstrap.Modal(document.getElementById('proposalModal')).show();
+    }
+
+    function addProposalPlace(val = '') {
+        const container = document.getElementById('proposal-attractions-container');
+        const div = document.createElement('div');
+        div.className = 'd-flex gap-2 mb-2 align-items-center';
+        div.innerHTML = `
+            <input class="form-control" placeholder="e.g. Pyramids of Giza" value="${val}"
+                style="background:rgba(255,255,255,0.06); border:1px solid rgba(212,175,55,0.2); color:#fff; border-radius:10px;">
+            <button type="button" onclick="this.parentElement.remove()"
+                style="background:rgba(220,53,69,0.12); color:#ff6b7a; border:1px solid rgba(220,53,69,0.3); border-radius:8px; padding:6px 12px; white-space:nowrap; cursor:pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        container.appendChild(div);
+    }
+
+    document.getElementById('proposal-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const postId = document.getElementById('proposal-post-id').value;
+        const description = document.getElementById('proposal-description').value.trim();
+        const price = Number(document.getElementById('proposal-price').value);
+        const attractions = Array.from(document.querySelectorAll('#proposal-attractions-container input'))
+            .map(i => ({ name: i.value.trim() })).filter(a => a.name);
+
+        if (!postId) return showToast('Post ID missing — please close and reopen the form.', 'error');
+        if (!description) return showToast('Please write a trip description', 'error');
+        if (!price || price <= 0) return showToast('Please enter a valid price', 'error');
+
+        const btn = event.target.querySelector('[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Sending...';
+
+        try {
+            await fetchJson(`../api/posts/${postId}/proposals`, {
+                method: 'POST',
+                body: JSON.stringify({ description, price, attractions })
+            });
+            showToast('Proposal sent to the traveler! ✅', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('proposalModal')).hide();
+            loadDashboard();
+        } catch (error) {
+            showToast(error.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Send to Traveler';
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        /* OTP input digits */
+        .otp-inputs { display:flex; gap:10px; justify-content:center; margin:20px 0; }
+        .otp-digit {
+            width:52px; height:60px; text-align:center;
+            font-size:1.6rem; font-weight:700; letter-spacing:0;
+            background:rgba(255,255,255,0.08); border:2px solid rgba(212,175,55,0.3);
+            border-radius:14px; color:#fff; outline:none;
+            transition:border-color 0.2s, box-shadow 0.2s;
+            caret-color: #d4af37;
+        }
+        .otp-digit:focus { border-color:#d4af37; box-shadow:0 0 0 4px rgba(212,175,55,0.15); }
+        .otp-digit.filled { border-color:rgba(212,175,55,0.6); }
+
+        /* Step indicator */
+        .step-wrap { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:24px; }
+        .step-dot { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,0.2); transition:background 0.3s; }
+        .step-dot.active { background:#d4af37; }
+        .step-dot.done   { background:rgba(40,199,111,0.8); }
+
+        /* Cooldown timer */
+        .cooldown-msg { font-size:0.82rem; color:rgba(255,255,255,0.55); text-align:center; margin-top:8px; }
+        .cooldown-msg span { color:#d4af37; font-weight:700; }
+
+        /* Verified badge */
+        .wa-verified { display:inline-flex; align-items:center; gap:6px; background:rgba(40,199,111,0.15); color:#28c76f; border:1px solid rgba(40,199,111,0.3); border-radius:20px; padding:4px 12px; font-size:0.78rem; font-weight:700; }
+    </style>
+</head>
+<body class="auth-page">
+    <div id="tn-navbar" data-page="register" data-variant="minimal"></div>
+
+    <div class="auth-container" style="max-width:620px">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <i class="fas fa-user-plus"></i>
+                <h2>CREATE ACCOUNT</h2>
+                <p id="step-subtitle">Join TravelNow and start exploring Egypt</p>
+            </div>
+
+            <!-- Step dots -->
+            <div class="step-wrap">
+                <div class="step-dot active" id="dot-1"></div>
+                <div class="step-dot" id="dot-2"></div>
+                <div class="step-dot" id="dot-3"></div>
+            </div>
+
+            <!-- ══ STEP 1: Basic Info ══ -->
+            <div id="step-1">
+                <form id="info-form">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" id="reg-fullname" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Username *</label>
+                            <input type="text" class="form-control" id="reg-username" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" class="form-control" id="reg-email" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Country *</label>
+                            <select class="form-select" id="reg-country" required>
+                                <option value="">Select country</option>
+                                <option>Egypt</option>
+                                <option>Saudi Arabia</option>
+                                <option>UAE</option>
+                                <option>United States</option>
+                                <option>United Kingdom</option>
+                                <option>France</option>
+                                <option>Germany</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp Number *</label>
+                            <div class="d-flex gap-2 align-items-center">
+                                <input type="tel" class="form-control flex-grow-1" id="reg-phone" placeholder="+20 1xx xxx xxxx" required>
+                                <div id="wa-verified-badge" style="display:none">
+                                    <span class="wa-verified"><i class="fas fa-check-circle"></i> Verified</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Password *</label>
+                            <input type="password" class="form-control" id="reg-password" required minlength="6">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Confirm Password *</label>
+                            <input type="password" class="form-control" id="reg-confirm-password" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-gold auth-submit">
+                        <i class="fas fa-arrow-right me-1"></i> Continue — Verify WhatsApp
+                    </button>
+                    <p class="text-center mt-3" style="color:#ccc">
+                        Already have an account? <a href="login.html" class="auth-link">Login</a>
+                    </p>
+                </form>
+            </div>
+
+            <!-- ══ STEP 2: WhatsApp OTP ══ -->
+            <div id="step-2" style="display:none">
+                <div class="text-center mb-3">
+                    <i class="fab fa-whatsapp" style="font-size:3rem;color:#25d366;"></i>
+                    <p class="mt-2" style="color:rgba(255,255,255,0.8);">
+                        We sent a 6-digit code to<br>
+                        <strong id="otp-phone-display" style="color:#d4af37"></strong>
+                    </p>
+                </div>
+
+                <div class="otp-inputs" id="otp-inputs">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+                </div>
+
+                <div id="otp-error" style="color:#ff6b7a;text-align:center;font-size:0.85rem;margin-top:8px;display:none;"></div>
+
+                <button class="btn btn-gold w-100 mt-3" id="verify-otp-btn" onclick="verifyOtp()">
+                    <i class="fas fa-check me-1"></i> Verify Code
+                </button>
+
+                <div class="cooldown-msg mt-3" id="cooldown-msg">
+                    Didn't receive it?
+                    <button id="resend-btn" class="btn btn-link p-0 auth-link" onclick="resendOtp()" style="font-size:0.82rem;" disabled>
+                        Resend in <span id="cooldown-timer">60</span>s
+                    </button>
+                </div>
+
+                <button class="btn btn-link d-block mx-auto mt-3" style="color:rgba(255,255,255,0.5);font-size:0.8rem;" onclick="goBackToStep1()">
+                    <i class="fas fa-arrow-left me-1"></i> Change number
+                </button>
+            </div>
+
+            <!-- ══ STEP 3: Creating account (spinner) ══ -->
+            <div id="step-3" style="display:none;text-align:center;padding:40px 0;">
+                <div class="spinner-border mb-3" style="color:#d4af37;width:3rem;height:3rem;"></div>
+                <p style="color:rgba(255,255,255,0.8);">Creating your account…</p>
+            </div>
+
+        </div>
+
+        <a href="user-type.html" class="back-link text-center d-block mt-3">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/custom-select.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script>
+    let cooldownInterval = null;
+    let phoneVerified    = false;
+    let verifiedPhone    = '';
+
+    // ── Step dots ──
+    function setStep(n) {
+        [1, 2, 3].forEach(i => {
+            const dot = document.getElementById(`dot-${i}`);
+            if (i < n)       dot.className = 'step-dot done';
+            else if (i === n) dot.className = 'step-dot active';
+            else              dot.className = 'step-dot';
+        });
+        document.getElementById(`step-1`).style.display = n === 1 ? '' : 'none';
+        document.getElementById(`step-2`).style.display = n === 2 ? '' : 'none';
+        document.getElementById(`step-3`).style.display = n === 3 ? '' : 'none';
+        const subtitles = ['Fill in your details', 'Verify your WhatsApp', 'Creating account…'];
+        document.getElementById('step-subtitle').textContent = subtitles[n - 1];
+    }
+
+    // ── STEP 1 submit: validate → send OTP ──
+    document.getElementById('info-form').addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const fullName  = document.getElementById('reg-fullname').value.trim();
+        const username  = document.getElementById('reg-username').value.trim();
+        const email     = document.getElementById('reg-email').value.trim();
+        const country   = document.getElementById('reg-country').value;
+        const phone     = document.getElementById('reg-phone').value.trim();
+        const password  = document.getElementById('reg-password').value;
+        const confirm   = document.getElementById('reg-confirm-password').value;
+
+        if (!fullName || !username || !email || !country || !phone || !password) {
+            return showToast('Please fill in all required fields', 'error');
+        }
+        if (password.length < 6) return showToast('Password must be at least 6 characters', 'error');
+        if (password !== confirm) return showToast('Passwords do not match', 'error');
+
+        const btn = e.target.querySelector('[type=submit]');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Sending OTP…';
+
+        try {
+            const res  = await fetch(`${API_BASE}/auth/whatsapp-otp/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to send OTP');
+
+            // Show OTP step
+            document.getElementById('otp-phone-display').textContent = phone;
+            verifiedPhone = phone;
+            setStep(2);
+            startCooldown(60);
+            focusFirstOtpDigit();
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-arrow-right me-1"></i> Continue — Verify WhatsApp';
+        }
+    });
+
+    // ── OTP digit keyboard logic ──
+    function focusFirstOtpDigit() {
+        document.querySelectorAll('.otp-digit')[0]?.focus();
+    }
+
+    document.getElementById('otp-inputs').addEventListener('input', e => {
+        const digit = e.target;
+        if (digit.value.length === 1) {
+            digit.classList.add('filled');
+            const next = digit.nextElementSibling;
+            if (next) next.focus();
+            // Auto verify when all 6 filled
+            const digits = [...document.querySelectorAll('.otp-digit')];
+            if (digits.every(d => d.value.length === 1)) verifyOtp();
+        } else {
+            digit.classList.remove('filled');
+        }
+    });
+
+    document.getElementById('otp-inputs').addEventListener('keydown', e => {
+        if (e.key === 'Backspace' && !e.target.value) {
+            const prev = e.target.previousElementSibling;
+            if (prev) { prev.value = ''; prev.classList.remove('filled'); prev.focus(); }
+        }
+    });
+
+    // ── Verify OTP ──
+    async function verifyOtp() {
+        const digits = [...document.querySelectorAll('.otp-digit')].map(d => d.value).join('');
+        if (digits.length < 6) return showToast('Enter the full 6-digit code', 'warning');
+
+        const btn = document.getElementById('verify-otp-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Verifying…';
+        document.getElementById('otp-error').style.display = 'none';
+
+        try {
+            const res  = await fetch(`${API_BASE}/auth/whatsapp-otp/verify`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: verifiedPhone, otp: digits })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Verification failed');
+
+            // Phone verified — now register
+            phoneVerified = true;
+            document.getElementById('wa-verified-badge').style.display = '';
+            setStep(3);
+            clearInterval(cooldownInterval);
+            await completeRegistration();
+        } catch (err) {
+            const errEl = document.getElementById('otp-error');
+            errEl.textContent = err.message;
+            errEl.style.display = 'block';
+            // Shake animation
+            document.getElementById('otp-inputs').style.animation = 'none';
+            setTimeout(() => document.getElementById('otp-inputs').style.animation = '', 10);
+            document.querySelectorAll('.otp-digit').forEach(d => { d.value = ''; d.classList.remove('filled'); });
+            document.querySelectorAll('.otp-digit')[0]?.focus();
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check me-1"></i> Verify Code';
+        }
+    }
+
+    // ── Create account after OTP verified ──
+    async function completeRegistration() {
+        const payload = {
+            fullName:  document.getElementById('reg-fullname').value.trim(),
+            username:  document.getElementById('reg-username').value.trim(),
+            email:     document.getElementById('reg-email').value.trim(),
+            country:   document.getElementById('reg-country').value,
+            phone:     verifiedPhone,
+            password:  document.getElementById('reg-password').value
+        };
+        try {
+            const res  = await fetch(`${API_BASE}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Registration failed');
+
+            showToast('Account created! Welcome to TravelNow 🎉', 'success');
+            setTimeout(() => window.location.href = 'login.html?type=tourist', 1800);
+        } catch (err) {
+            showToast(err.message, 'error');
+            setStep(1);
+        }
+    }
+
+    // ── Resend OTP ──
+    async function resendOtp() {
+        const btn = document.getElementById('resend-btn');
+        btn.disabled = true;
+        try {
+            const res  = await fetch(`${API_BASE}/auth/whatsapp-otp/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: verifiedPhone })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message);
+            showToast('New OTP sent to your WhatsApp', 'success');
+            document.querySelectorAll('.otp-digit').forEach(d => { d.value = ''; d.classList.remove('filled'); });
+            focusFirstOtpDigit();
+            startCooldown(data.cooldown || 60);
+        } catch (err) {
+            showToast(err.message, 'error');
+            btn.disabled = false;
+        }
+    }
+
+    // ── Cooldown timer ──
+    function startCooldown(seconds) {
+        clearInterval(cooldownInterval);
+        const btn   = document.getElementById('resend-btn');
+        const timer = document.getElementById('cooldown-timer');
+        btn.disabled = true;
+        let remaining = seconds;
+        timer.textContent = remaining;
+        btn.innerHTML = `Resend in <span id="cooldown-timer">${remaining}</span>s`;
+
+        cooldownInterval = setInterval(() => {
+            remaining--;
+            const t = document.getElementById('cooldown-timer');
+            if (t) t.textContent = remaining;
+            if (remaining <= 0) {
+                clearInterval(cooldownInterval);
+                btn.innerHTML = 'Resend OTP';
+                btn.disabled  = false;
+            }
+        }, 1000);
+    }
+
+    // ── Back to step 1 ──
+    function goBackToStep1() {
+        clearInterval(cooldownInterval);
+        setStep(1);
+        document.querySelectorAll('.otp-digit').forEach(d => { d.value = ''; d.classList.remove('filled'); });
+    }
+    </script>
+</body>
+</html>

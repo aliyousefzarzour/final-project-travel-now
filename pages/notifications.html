@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        .unread-bg { background-color: rgba(212, 175, 55, 0.05); }
+        .notification-card { transition: transform 0.2s; border-left: 4px solid transparent; }
+        .notification-card.is-unread { border-left-color: var(--gold); }
+    </style>
+</head>
+<body>
+    <div id="tn-navbar"></div>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <button class="close-sidebar" onclick="document.querySelector('.sidebar').classList.remove('open')">
+                    <i class="fas fa-times"></i>
+                </button>
+                <i class="fas fa-user-circle fa-2x" style="color:#d4af37"></i>
+                <h3>PROFILE</h3>
+                <p id="user-side">Welcome</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a href="bookings.html"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="favorites.html"><i class="fas fa-heart"></i> Favorites</a></li>
+                <li><a href="saved-trips.html"><i class="fas fa-route"></i> Saved Trips</a></li>
+                <li><a href="notifications.html" class="active"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="chat.html"><i class="fas fa-comments"></i> Support Chat</a></li>
+                <li><a href="javascript:void(0)" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar d-flex justify-content-between align-items-center">
+                <div>
+                    <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <button class="btn btn-gold" onclick="deleteAllNotifications()"><i class="fas fa-trash-alt"></i> DELETE ALL</button>
+            </div>
+            <div id="notifications-container"></div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/realtime.js"></script>
+    <script>
+    const user = requireAuth();
+    const token = Storage.getToken();
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+    if (user) document.getElementById('user-side').textContent = 'Welcome, ' + (user.fullName || user.name || 'Traveler');
+
+    async function fetchJson(url, options = {}) {
+        const response = await fetch(url, {
+            headers: { 'Content-Type': 'application/json', ...authHeaders, ...(options.headers || {}) },
+            ...options
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Request failed');
+        return data;
+    }
+
+    // Extract feedbackId from notification link if present
+    function getFeedbackId(notification) {
+        if (notification.type !== 'admin_reply') return null;
+        const link = notification.link || '';
+        const match = link.match(/feedback=([a-f0-9]{24})/i);
+        return match ? match[1] : null;
+    }
+
+    async function loadNotifications() {
+        const container = document.getElementById('notifications-container');
+        try {
+            const data = await fetchJson('../api/notifications/my?limit=30');
+            const notifications = data.notifications || [];
+
+            if (!notifications.length) {
+                container.innerHTML = `
+                    <div class="dashboard-card text-center py-5">
+                        <i class="fas fa-bell-slash fa-3x mb-3" style="color:#d4af37;opacity:0.4"></i>
+                        <p class="text-muted">No notifications yet.</p>
+                    </div>`;
+                return;
+            }
+
+            const iconMap = {
+                admin_reply:       { icon: 'fa-reply',          color: '#d4af37' },
+                user_reply:        { icon: 'fa-comments',       color: '#74b9ff' },
+                booking:           { icon: 'fa-calendar-check', color: '#28a745' },
+                booking_confirmed: { icon: 'fa-check-circle',   color: '#28a745' },
+                payment:           { icon: 'fa-credit-card',    color: '#fd7e14' },
+                password_reset:    { icon: 'fa-lock',           color: '#e83e8c' },
+                company_approval:  { icon: 'fa-building',       color: '#28a745' },
+                company_rejection: { icon: 'fa-building',       color: '#dc3545' },
+                post:              { icon: 'fa-bullhorn',        color: '#6f42c1' },
+                system:            { icon: 'fa-bell',            color: '#d4af37' },
+                default:           { icon: 'fa-bell',            color: '#d4af37' }
+            };
+
+            container.innerHTML = notifications.map(n => {
+                const isAdminReply = n.type === 'admin_reply';
+                const feedbackId   = getFeedbackId(n);
+                const { icon, color } = iconMap[n.type] || iconMap.default;
+
+                // Extract admin reply text from message if present
+                // message format: "Your message "X" received a reply: "actual reply text""
+                let adminReplyText = '';
+                const replyMatch = n.message.match(/received a reply: "(.+)"$/s);
+                if (replyMatch) adminReplyText = replyMatch[1];
+
+                return `
+                <div class="dashboard-card mb-3 notification-card ${n.isRead ? '' : 'is-unread unread-bg'}" id="notif-${n._id}"
+                    ${n.link ? `onclick="notifNavigate('${n._id}', this)" data-link="${n.link}" style="cursor:pointer;transition:box-shadow 0.2s;"
+                    onmouseover="this.style.boxShadow='0 4px 20px rgba(212,175,55,0.15)'" onmouseout="this.style.boxShadow=''"` : ''}>
+                    <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+
+                        <div class="d-flex gap-3 flex-grow-1" style="min-width:0">
+                            <!-- Icon -->
+                            <div style="width:44px;height:44px;border-radius:12px;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                                <i class="fas ${icon}" style="color:${color}"></i>
+                            </div>
+
+                            <!-- Content -->
+                            <div style="flex:1;min-width:0">
+                                <div style="font-weight:600;color:${n.isRead ? 'var(--text)' : '#d4af37'};margin-bottom:4px">${n.title}</div>
+                                <div style="font-size:0.85rem;color:rgba(0,0,0,0.6);line-height:1.5;word-break:break-word" class="body.dark-mode-text">${n.message}</div>
+                                <div style="font-size:0.75rem;color:#999;margin-top:6px">
+                                    ${new Date(n.createdAt).toLocaleDateString('en-GB')} ${new Date(n.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+                                </div>
+
+                                ${isAdminReply ? `
+                                <!-- Admin reply bubble -->
+                                <div style="margin-top:12px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.25);border-radius:12px;padding:14px;border-left:3px solid #d4af37;">
+                                    <div style="font-size:0.7rem;color:#d4af37;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">
+                                        <i class="fas fa-shield-alt me-1"></i>Admin Reply
+                                    </div>
+                                    <div style="font-size:0.88rem;line-height:1.7;word-break:break-word;color:rgba(0,0,0,0.75)">
+                                        ${adminReplyText || n.message}
+                                    </div>
+                                </div>
+
+                                ${feedbackId ? `
+                                <!-- User reply box -->
+                                <div class="mt-3" id="reply-section-${n._id}">
+                                    <div style="background:rgba(0,0,0,0.03);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:14px;">
+                                        <div style="font-size:0.7rem;color:#d4af37;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">
+                                            <i class="fas fa-reply me-1"></i>Reply to Admin
+                                        </div>
+                                        <textarea id="reply-input-${n._id}" rows="2"
+                                            style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.9);border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:10px 12px;color:#333;font-size:0.85rem;resize:vertical;outline:none;font-family:inherit;"
+                                            placeholder="Write your reply to the admin..."></textarea>
+                                        <button class="btn btn-gold btn-sm mt-2 w-100" onclick="sendUserReply('${feedbackId}', '${n._id}')">
+                                            <i class="fas fa-paper-plane me-1"></i>Send Reply
+                                        </button>
+                                    </div>
+                                </div>` : ''}` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Mark read -->
+                        ${!n.isRead ? `
+                        <button class="btn btn-sm btn-gold flex-shrink-0" onclick="markRead('${n._id}')">
+                            <i class="fas fa-check me-1"></i>Mark read
+                        </button>` : `<span class="badge badge-success flex-shrink-0">Read</span>`}
+
+                    </div>
+                </div>`;
+            }).join('');
+
+        } catch (error) {
+            container.innerHTML = `<div class="dashboard-card text-center py-5 text-danger">${error.message}</div>`;
+        }
+    }
+
+    async function sendUserReply(feedbackId, notifId) {
+        const input = document.getElementById(`reply-input-${notifId}`);
+        const reply = input?.value?.trim();
+        if (!reply) return showToast('Please write a reply first', 'warning');
+
+        try {
+            await fetchJson(`../api/feedback/${feedbackId}/user-reply`, {
+                method: 'PUT',
+                body: JSON.stringify({ reply })
+            });
+            showToast('Reply sent to admin ✅', 'success');
+            // Replace textarea with success message
+            const section = document.getElementById(`reply-section-${notifId}`);
+            if (section) section.innerHTML = `
+                <div style="background:rgba(40,167,69,0.1);border:1px solid rgba(40,167,69,0.3);border-radius:10px;padding:12px;color:#55efc4;font-size:0.85rem;">
+                    <i class="fas fa-check-circle me-2"></i>Your reply has been sent to the admin.
+                </div>`;
+            // Mark notification as read
+            await fetchJson(`../api/notifications/${notifId}/read`, { method: 'PUT' }).catch(()=>{});
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
+    }
+
+    function notifNavigate(id, el) {
+        const link = (el && el.dataset && el.dataset.link) ? el.dataset.link : null;
+        // Mark as read silently
+        fetchJson(`../api/notifications/${id}/read`, { method:'PUT' }).catch(()=>{});
+        if (link) {
+            // Convert absolute path to relative
+            const url = link.startsWith('/pages/') ? link.slice(1) : link.startsWith('/') ? '../' + link.slice(1) : link;
+            window.location.href = url;
+        }
+    }
+
+    function notifNavigate(id, el) {
+        const link = typeof el === 'string' ? el : el?.dataset?.link;
+        // Mark as read silently
+        fetchJson(`../api/notifications/${id}/read`, { method: 'PUT' }).catch(()=>{});
+        if (!link) return;
+        // Convert absolute path to relative for pages/ directory
+        const url = link.startsWith('/pages/') ? '..' + link
+                  : link.startsWith('/') ? '..' + link
+                  : link;
+        window.location.href = url;
+    }
+
+    async function markRead(id) {
+        try {
+            await fetchJson(`../api/notifications/${id}/read`, { method: 'PUT' });
+            loadNotifications();
+        } catch (error) {
+            if(typeof showToast === 'function') showToast(error.message, 'error');
+        }
+    }
+
+    async function deleteAllNotifications() {
+        try {
+            await fetchJson('../api/notifications/my', { method: 'DELETE' });
+            if(typeof showToast === 'function') showToast('All notifications deleted', 'success');
+            loadNotifications();
+        } catch (error) {
+            if(typeof showToast === 'function') showToast(error.message, 'error');
+        }
+    }
+
+    loadNotifications();
+    setInterval(loadNotifications, 30000);
+    </script>
+</body>
+</html>

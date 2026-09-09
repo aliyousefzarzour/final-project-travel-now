@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Registration - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+</head>
+<body class="auth-page">
+    <div id="tn-navbar" data-variant="minimal"></div>
+    <div class="auth-container" style="max-width:620px">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <i class="fas fa-building"></i>
+                <h2>COMPANY REGISTRATION</h2>
+                <p>Submit your company for verification</p>
+            </div>
+
+            <form id="company-form" novalidate>
+                <!-- Basic Info -->
+                <h6 style="color:#d4af37;margin:0 0 14px;font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;">
+                    <i class="fas fa-info-circle me-1"></i> Basic Information
+                </h6>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Company Name *</label>
+                        <input type="text" class="form-control" name="companyName" placeholder="e.g. Nile Tours Co.">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Owner Name *</label>
+                        <input type="text" class="form-control" name="ownerName" placeholder="Full name">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" class="form-control" name="email" placeholder="company@example.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone *</label>
+                        <input type="tel" class="form-control" name="phone" placeholder="+20 1xx xxx xxxx">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp</label>
+                        <input type="tel" class="form-control" name="whatsapp" placeholder="+20 1xx xxx xxxx">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Governorate *</label>
+                        <select class="form-select" name="governorate">
+                            <option value="">Select</option>
+                            <option>Cairo</option><option>Giza</option><option>Alexandria</option>
+                            <option>Luxor</option><option>Aswan</option><option>Red Sea</option>
+                            <option>South Sinai</option><option>Matruh</option><option>Other</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Company Address *</label>
+                        <input type="text" class="form-control" name="address" placeholder="Street, City">
+                    </div>
+                </div>
+
+                <!-- Licenses -->
+                <h6 style="color:#d4af37;margin:8px 0 14px;font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;">
+                    <i class="fas fa-certificate me-1"></i> Licenses
+                </h6>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Commercial Reg. No. *</label>
+                        <input type="text" class="form-control" name="commercialReg">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Tourism License No. *</label>
+                        <input type="text" class="form-control" name="tourismLicense">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Tax Card No. *</label>
+                        <input type="text" class="form-control" name="taxCard">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Ministry License No. *</label>
+                        <input type="text" class="form-control" name="ministryLicense">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Years of Experience</label>
+                        <input type="number" class="form-control" name="experience" min="0" value="0">
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <h6 style="color:#d4af37;margin:8px 0 14px;font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;">
+                    <i class="fas fa-briefcase me-1"></i> Services
+                </h6>
+                <div class="mb-3">
+                    <label class="form-label">Company Description *</label>
+                    <textarea class="form-control" name="description" rows="2" placeholder="Briefly describe your company..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Services Offered *</label>
+                    <textarea class="form-control" name="services" rows="2" placeholder="e.g. Domestic trips, hotel bookings..."></textarea>
+                </div>
+
+                <!-- Password -->
+                <h6 style="color:#d4af37;margin:8px 0 14px;font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;">
+                    <i class="fas fa-lock me-1"></i> Account Password
+                </h6>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Password *</label>
+                        <input type="password" class="form-control" name="password" minlength="8">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Confirm Password *</label>
+                        <input type="password" class="form-control" name="confirmPassword">
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                <h6 style="color:#d4af37;margin:8px 0 14px;font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;">
+                    <i class="fas fa-file-upload me-1"></i> Documents
+                </h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Company Logo</label>
+                        <input type="file" class="form-control" name="logo" accept="image/*">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Commercial Registration</label>
+                        <input type="file" class="form-control" name="docCommercial" accept="image/*,.pdf">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Tourism License</label>
+                        <input type="file" class="form-control" name="docTourism" accept="image/*,.pdf">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Tax Card</label>
+                        <input type="file" class="form-control" name="docTax" accept="image/*,.pdf">
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="confirmCheck">
+                    <label class="form-check-label" for="confirmCheck" style="color:#d4af37;font-size:0.85rem;">
+                        I confirm all information is accurate and complete.
+                    </label>
+                </div>
+
+                <div id="form-error" class="alert alert-danger d-none" style="font-size:0.85rem;"></div>
+
+                <button type="submit" class="btn btn-gold auth-submit w-100" id="continue-btn">
+                    <i class="fas fa-arrow-right me-1"></i> Submit Registration
+                </button>
+            </form>
+
+        </div>
+
+        <a href="user-type.html" class="back-link text-center d-block mt-3">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/custom-select.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script>
+    document.getElementById('company-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        console.log('[Company Register] Submit fired');
+
+        var form   = e.target;
+        var fd     = new FormData(form);
+        var pwd    = fd.get('password');
+        var conf   = fd.get('confirmPassword');
+        var btn    = document.getElementById('continue-btn');
+        var errDiv = document.getElementById('form-error');
+        errDiv.classList.add('d-none');
+
+        if (pwd !== conf) { showToast('Passwords do not match', 'error'); return; }
+        if (!pwd || pwd.length < 8) { showToast('Password must be at least 8 characters', 'error'); return; }
+
+        var required = ['companyName','ownerName','email','phone','governorate','address','commercialReg','tourismLicense','taxCard','ministryLicense','description','services'];
+        for (var i = 0; i < required.length; i++) {
+            var val = fd.get(required[i]);
+            if (!val || !String(val).trim()) {
+                showToast('Please fill in: ' + required[i], 'error');
+                var el = form.querySelector('[name="' + required[i] + '"]');
+                if (el) { el.focus(); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+                return;
+            }
+        }
+
+        if (!document.getElementById('confirmCheck').checked) {
+            showToast('Please confirm your information is accurate', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Submitting…';
+        console.log('[Company Register] Sending to backend:', API_BASE + '/companies/register');
+
+        try {
+            var token = Storage.getToken();
+            var result = await new Promise(function(resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', API_BASE + '/companies/register');
+                if (token) xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                xhr.onload = function() {
+                    try {
+                        var d = JSON.parse(xhr.responseText);
+                        console.log('[Company Register] Response:', xhr.status, d);
+                        if (xhr.status >= 200 && xhr.status < 300) resolve(d);
+                        else reject(new Error(d.message || 'Server error ' + xhr.status));
+                    } catch(ex) { reject(new Error('Invalid server response')); }
+                };
+                xhr.onerror = function() {
+                    console.error('[Company Register] XHR error - backend not reachable');
+                    reject(new Error('Cannot reach server. Make sure the backend is running on port 5000.'));
+                };
+                xhr.send(fd);
+            });
+
+            var email = fd.get('email') || '';
+            console.log('[Company Register] Success! Redirecting to verify page for:', email);
+            window.location.href = 'company-verify-email.html?email=' + encodeURIComponent(email);
+
+        } catch(err) {
+            console.error('[Company Register] Error:', err.message);
+            showToast('❌ ' + err.message, 'error');
+            errDiv.textContent = '❌ ' + err.message;
+            errDiv.classList.remove('d-none');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-arrow-right me-1"></i> Submit Registration';
+        }
+    });
+    </script>
+</body>
+</html>

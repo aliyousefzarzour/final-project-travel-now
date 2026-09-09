@@ -1,0 +1,196 @@
+/* =================== ATTRACTIONS / COMPANIES =================== */
+.page-header {
+    background: linear-gradient(135deg, #0a1d2e 0%, #1a3a5c 100%);
+    color: #fff;
+    padding: 120px 0 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?w=1600') center/cover;
+    opacity: 0.2;
+}
+
+.page-header h1 {
+    color: #d4af37;
+    font-size: 3rem;
+    position: relative;
+}
+
+.page-header p {
+    position: relative;
+    opacity: 0.9;
+}
+/* ================= SEARCH FILTER BAR ================= */
+
+.search-filter-bar {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: var(--shadow-soft);
+    margin-top: -30px;
+    position: relative;
+    z-index: 5;
+    border: 1px solid var(--card-border);
+}
+
+/* ... existing button group styles ... */
+
+body.dark-mode .search-filter-bar { background: var(--card-bg); }
+
+/* Native form-control (text inputs) in search bar */
+.search-filter-bar .form-control {
+    background: rgba(255,255,255,0.04);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 20px 40px rgba(0,0,0,0.12);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+/* Hide the native select — custom select takes over */
+.search-filter-bar select.form-select {
+    display: none;
+}
+
+/* Style the custom trigger inside search-filter-bar */
+.search-filter-bar .tn-select-trigger {
+    border-radius: 14px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-filter-bar .tn-select-trigger:hover {
+    transform: translateY(-1px);
+}
+
+.search-filter-bar .form-control:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 4px rgba(212,175,55,0.14);
+    outline: none;
+    background: rgba(255,255,255,0.08);
+}
+
+body:not(.dark-mode) .search-filter-bar .form-control {
+    background: #ffffff;
+    color: #0a1d2e;
+    border-color: rgba(10,29,46,0.12);
+    box-shadow: 0 18px 40px rgba(10,29,46,0.08);
+}
+
+body:not(.dark-mode) .search-filter-bar .form-control:focus {
+    border-color: #0a1d2e;
+    box-shadow: 0 0 0 4px rgba(10,29,46,0.08);
+    background: #fff;
+}
+
+.attraction-card, .offer-card, .company-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 25px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--card-border);
+}
+
+body.dark-mode .attraction-card,
+body.dark-mode .offer-card,
+body.dark-mode .company-card { background: var(--card-bg); }
+
+.attraction-card:hover, .offer-card:hover, .company-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+}
+
+.attraction-img, .offer-img, .company-img {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.verified-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #28a745;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.verified-badge i { margin-right: 4px; }
+
+.ministry-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #d4af37;
+    color: #000;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.attraction-body, .offer-body, .company-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.attraction-body h4, .offer-body h4, .company-body h4 {
+    color: var(--text);
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    
+}
+
+.attraction-meta {
+    color: #d4af37;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+}
+
+.attraction-meta i { margin-right: 5px; }
+
+.rating-stars {
+    color: #ffc107;
+    margin-bottom: 10px;
+}
+
+.price-tag {
+    color: #d4af37;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin:10px 0;
+    padding-top: 0%;
+}
+
+.btn-book {
+    margin-top: auto;
+    background: var(--gradient-gold);
+    color: #0a1d2e;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-book:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+}

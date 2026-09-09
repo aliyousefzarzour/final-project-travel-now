@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        @keyframes fadeInUp {
+            from { opacity:0; transform:translateY(8px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        /* Chat panel styles */
+        #admin-chat-messages::-webkit-scrollbar { width: 4px; }
+        #admin-chat-messages::-webkit-scrollbar-thumb { background:rgba(212,175,55,0.3); border-radius:4px; }
+        #chat-user-list::-webkit-scrollbar { width: 3px; }
+        #chat-user-list::-webkit-scrollbar-thumb { background:rgba(212,175,55,0.2); border-radius:4px; }
+        #chat-user-list > div:hover { background: rgba(212,175,55,0.07) !important; }
+        #admin-msg-input:focus { border-color: #d4af37; box-shadow: 0 0 0 2px rgba(212,175,55,0.12); }
+        /* Fix section-chats height containment */
+        #section-chats { overflow: hidden; }
+        #section-chats .row { overflow: hidden; }
+        #section-chats .dashboard-card { overflow: hidden !important; }
+        #active-chat { overflow: hidden; }
+        .filter-btn-active { background: rgba(212,175,55,0.9) !important; color: #0a1d2e !important; border: none !important; }    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-shield-alt fa-2x" style="color:#d4af37"></i>
+                <h3>ADMIN PANEL</h3>
+                <p>System Administrator</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                <li><a href="#" data-section="companies"><i class="fas fa-building"></i> Companies <span id="pending-badge" style="display:none;background:#ff4d4d;color:#fff;border-radius:50%;font-size:0.65rem;padding:1px 6px;font-weight:700;margin-left:4px;"></span></a></li>
+                <li><a href="#" data-section="users"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="#" data-section="attractions"><i class="fas fa-landmark"></i> Attractions</a></li>
+                <li><a href="#" data-section="bookings"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="#" data-section="payments"><i class="fas fa-credit-card"></i> Payments</a></li>
+                <li><a href="#" data-section="reviews"><i class="fas fa-star"></i> Reviews</a></li>
+                <li><a href="#" data-section="feedback"><i class="fas fa-comment-dots"></i> Feedback</a></li>
+                <li><a href="#" data-section="chats"><i class="fas fa-comments"></i> Live Chat <span id="chat-badge" style="display:none;background:#ff4d4d;color:#fff;border-radius:50%;font-size:0.65rem;padding:1px 6px;font-weight:700;margin-left:4px;"></span></a></li>
+                <li><a href="#" data-section="posts"><i class="fas fa-bullhorn"></i> Posts</a></li>
+                <li><a href="javascript:void(0)" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <h2 id="section-title">Analytics Dashboard</h2>
+                <div class="user-info-top">
+                    <div class="user-avatar">A</div>
+                    <span>Administrator</span>
+                </div>
+            </div>
+
+            <section id="section-dashboard" class="admin-section">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card"><i class="fas fa-users"></i><h3 id="total-users-count">0</h3><p>Total Users</p></div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card"><i class="fas fa-building"></i><h3 id="total-companies-count">0</h3><p>Companies</p></div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card"><i class="fas fa-calendar-check"></i><h3 id="total-bookings-count">0</h3><p>Bookings</p></div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card"><i class="fas fa-wallet"></i><h3 id="total-revenue-count">0</h3><p>Revenue (EGP)</p></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="dashboard-card">
+                            <h5>Bookings Trend</h5>
+                            <canvas id="bookingsChart" height="100"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="dashboard-card">
+                            <h5>Top Destinations</h5>
+                            <canvas id="destinationsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-companies" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>Company Verification Requests</h4>
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Company</th><th>Owner</th><th>Email</th><th>Experience</th><th>Status</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="companies-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-users" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>Manage Users</h4>
+                    <table class="data-table">
+                        <thead><tr><th>Name</th><th>Email</th><th>Country</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="users-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-attractions" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>Manage Attractions</h4>
+                    <button class="btn btn-gold mb-3" onclick="openAddAttractionModal()"><i class="fas fa-plus"></i> Add New</button>
+                    <table class="data-table">
+                        <thead><tr><th>Name</th><th>Category</th><th>Governorate</th><th>Rating</th><th>Price</th><th>Actions</th></tr></thead>
+                        <tbody id="attractions-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-bookings" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h4 class="mb-0"><i class="fas fa-calendar-check me-2" style="color:#d4af37"></i>All Bookings</h4>
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="text" id="bookings-search" class="form-control form-control-sm" placeholder="🔍 Search by name or service..." style="width:250px;background:rgba(255,255,255,0.08);border-color:rgba(212,175,55,0.3);color:#fff;" oninput="filterBookings()">
+                            <select id="bookings-status-filter" class="form-select form-select-sm" style="width:130px;background:rgba(255,255,255,0.08);border-color:rgba(212,175,55,0.3);color:#fff;" onchange="filterBookings()">
+                                <option value="">All Status</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="pending">Pending</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <span id="bookings-count" class="badge" style="background:#d4af37;color:#0a1d2e;font-size:0.85rem;"></span>
+                        </div>
+                    </div>
+                    <div style="overflow-x:auto;">
+                    <table class="data-table" id="bookings-table">
+                        <thead><tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Contact</th>
+                            <th>Actions</th>
+                        </tr></thead>
+                        <tbody id="bookings-tbody"></tbody>
+                    </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Booking Details Modal -->
+            <div class="modal fade" id="bookingDetailsModal" tabindex="-1">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content" style="background:#0a1d2e;color:#fff;border:1px solid rgba(212,175,55,0.4);border-radius:20px;overflow:hidden;">
+                        <div class="modal-header" style="border-bottom:1px solid rgba(212,175,55,0.2);padding:16px 22px;">
+                            <h5 class="modal-title" style="color:#d4af37;font-family:'Cinzel',serif;font-size:1rem;">
+                                <i class="fas fa-calendar-check me-2"></i>Booking Details
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body" id="booking-details-body" style="padding:22px;max-height:70vh;overflow-y:auto;"></div>
+                        <div class="modal-footer" style="border-top:1px solid rgba(212,175,55,0.15);padding:12px 22px;">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section id="section-payments" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h4 class="mb-0"><i class="fas fa-credit-card me-2" style="color:#d4af37"></i>Payment Transactions</h4>
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="text" id="payments-search" class="form-control form-control-sm" placeholder="🔍 Search by name or ID..." style="width:250px;background:rgba(255,255,255,0.08);border-color:rgba(212,175,55,0.3);color:#fff;" oninput="filterPayments()">
+                            <span id="payments-count" class="badge" style="background:#d4af37;color:#0a1d2e;font-size:0.85rem;"></span>
+                        </div>
+                    </div>
+                    <div style="overflow-x:auto;">
+                    <table class="data-table" id="payments-table">
+                        <thead><tr>
+                            <th>Transaction ID</th>
+                            <th>Customer</th>
+                            <th>Contact</th>
+                            <th>Actions</th>
+                        </tr></thead>
+                        <tbody id="payments-tbody"></tbody>
+                    </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payment Details Modal -->
+            <div class="modal fade" id="paymentDetailsModal" tabindex="-1">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content" style="background:#0a1d2e;color:#fff;border:1px solid rgba(212,175,55,0.4);border-radius:20px;overflow:hidden;">
+                        <div class="modal-header" style="border-bottom:1px solid rgba(212,175,55,0.2);padding:16px 22px;">
+                            <h5 class="modal-title" style="color:#d4af37;font-family:'Cinzel',serif;font-size:1rem;">
+                                <i class="fas fa-credit-card me-2"></i>Payment Details
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body" id="payment-details-body" style="padding:22px;max-height:70vh;overflow-y:auto;"></div>
+                        <div class="modal-footer" style="border-top:1px solid rgba(212,175,55,0.15);padding:12px 22px;">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section id="section-reviews" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h4 class="mb-0"><i class="fas fa-star me-2" style="color:#d4af37"></i>All Reviews</h4>
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="text" id="reviews-search" class="form-control form-control-sm" placeholder="🔍 Search by user or comment..." style="width:260px;background:rgba(255,255,255,0.08);border-color:rgba(212,175,55,0.3);color:#fff;" oninput="filterReviews()">
+                            <select id="reviews-type-filter" class="form-select form-select-sm" style="width:140px;background:rgba(255,255,255,0.08);border-color:rgba(212,175,55,0.3);color:#fff;" onchange="filterReviews()">
+                                <option value="">All Types</option>
+                                <option value="attraction">Attraction</option>
+                                <option value="company">Company</option>
+                                <option value="hotel">Hotel</option>
+                            </select>
+                            <span id="reviews-count" class="badge" style="background:#d4af37;color:#0a1d2e;font-size:0.85rem;"></span>
+                        </div>
+                    </div>
+                    <div style="overflow-x:auto;">
+                    <table class="data-table">
+                        <thead><tr>
+                            <th>User</th>
+                            <th>Target Type</th>
+                            <th>Rating</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr></thead>
+                        <tbody id="reviews-tbody"></tbody>
+                    </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Review View Modal -->
+            <div class="modal fade" id="reviewModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered" style="max-width:500px;">
+                    <div class="modal-content" style="background:#0a1d2e;border:1px solid rgba(212,175,55,0.35);border-radius:22px;overflow:hidden;">
+                        <div class="modal-body" id="review-modal-body" style="padding:0;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <section id="section-feedback" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h4 class="mb-0"><i class="fas fa-comment-dots me-2" style="color:#d4af37"></i>Contact & Feedback Messages</h4>
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="text" id="feedback-search" class="form-control form-control-sm" placeholder="🔍 Search by name or email..." style="width:250px;background:rgba(255,255,255,0.08);border-color:rgba(212,175,55,0.3);color:#fff;" oninput="filterFeedback()">
+                            <select id="feedback-source-filter" class="form-select form-select-sm" style="width:140px;background:rgba(255,255,255,0.08);border-color:rgba(212,175,55,0.3);color:#fff;" onchange="filterFeedback()">
+                                <option value="">All Sources</option>
+                                <option value="contact">Contact Page</option>
+                                <option value="feedback">Feedback Widget</option>
+                            </select>
+                            <span id="feedback-unread" class="badge bg-danger" style="font-size:0.82rem;"></span>
+                            <span id="feedback-count" class="badge" style="background:#d4af37;color:#0a1d2e;font-size:0.85rem;"></span>
+                        </div>
+                    </div>
+                    <div style="overflow-x:auto;">
+                    <table class="data-table">
+                        <thead><tr>
+                            <th>Sender</th>
+                            <th>Contact</th>
+                            <th>Subject</th>
+                            <th>Source</th>
+                            <th>Date</th>
+                            <th style="width:100px">Actions</th>
+                        </tr></thead>
+                        <tbody id="feedback-tbody"></tbody>
+                    </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feedback Details Modal -->
+            <div class="modal fade" id="feedbackDetailsModal" tabindex="-1">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content" style="background:#0a1d2e;color:#fff;border:1px solid rgba(212,175,55,0.4);border-radius:20px;overflow:hidden;">
+                        <div class="modal-header" style="border-bottom:1px solid rgba(212,175,55,0.2);padding:16px 22px;">
+                            <h5 class="modal-title" style="color:#d4af37;font-family:'Cinzel',serif;font-size:1rem;">
+                                <i class="fas fa-envelope-open-text me-2"></i>Message Details
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body" id="feedback-details-body" style="padding:20px;max-height:65vh;overflow-y:auto;overflow-x:hidden;word-break:break-word;"></div>
+                        <div class="modal-footer" style="border-top:1px solid rgba(212,175,55,0.15);padding:12px 22px;">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger btn-sm" id="modal-delete-feedback-btn">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section id="section-chats" class="admin-section" style="display:none;">
+                <div class="row g-3" style="height:calc(100vh - 200px);min-height:480px;max-height:700px;">
+                    <!-- Users list -->
+                    <div class="col-md-4" style="height:100%;">
+                        <div class="dashboard-card" style="padding:0;overflow:hidden;height:100%;display:flex;flex-direction:column;">
+                            <!-- Header + filter -->
+                            <div style="padding:16px 18px;border-bottom:1px solid rgba(0,0,0,0.08);flex-shrink:0;background:linear-gradient(135deg,#d4af37,#c9a227);">
+                                <h5 class="mb-2" style="color:#0a1d2e;font-size:0.95rem;font-weight:700"><i class="fas fa-users me-2"></i>Conversations</h5>
+                                <input type="text" id="chat-user-search" placeholder="Search name or email..." oninput="filterChatUsers()"
+                                    style="width:100%;background:rgba(255,255,255,0.9);border:none;border-radius:10px;padding:8px 12px;color:#1a1a2e;font-size:0.8rem;outline:none;margin-bottom:10px;font-family:inherit;">
+                                <div class="d-flex gap-2">
+                                    <button id="filter-all"     onclick="setChatFilter('all')"     style="flex:1;border-radius:20px;font-size:0.72rem;background:rgba(10,29,46,0.85);color:#fff;border:none;padding:5px 0;cursor:pointer;font-weight:600">All</button>
+                                    <button id="filter-tourist" onclick="setChatFilter('tourist')" style="flex:1;border-radius:20px;font-size:0.72rem;background:rgba(255,255,255,0.3);color:#0a1d2e;border:none;padding:5px 0;cursor:pointer;font-weight:600">Tourist</button>
+                                    <button id="filter-company" onclick="setChatFilter('company')" style="flex:1;border-radius:20px;font-size:0.72rem;background:rgba(255,255,255,0.3);color:#0a1d2e;border:none;padding:5px 0;cursor:pointer;font-weight:600">Company</button>
+                                </div>
+                            </div>
+                            <div id="chat-user-list" style="flex:1;overflow-y:auto;min-height:0;"></div>
+                        </div>
+                    </div>
+                    <!-- Chat window -->
+                    <div class="col-md-8" style="height:100%;">
+                        <div class="dashboard-card" style="padding:0;overflow:hidden;height:100%;display:flex;flex-direction:column;">
+                            <div id="no-chat-selected" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:#bbb;padding:40px;">
+                                <div style="width:72px;height:72px;border-radius:50%;background:rgba(212,175,55,0.1);border:2px dashed rgba(212,175,55,0.3);display:flex;align-items:center;justify-content:center;">
+                                    <i class="fas fa-comments" style="font-size:1.8rem;color:rgba(212,175,55,0.4)"></i>
+                                </div>
+                                <div style="text-align:center">
+                                    <div style="font-weight:600;color:var(--text,#333);margin-bottom:4px">No conversation selected</div>
+                                    <div style="font-size:0.82rem;color:#aaa">Pick a user from the list to start chatting</div>
+                                </div>
+                            </div>
+                            <div id="active-chat" style="display:none;flex-direction:column;height:100%;min-height:0;">
+                                <!-- Chat header -->
+                                <div id="admin-chat-header" style="padding:14px 18px;border-bottom:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(212,175,55,0.02));">
+                                    <div style="display:flex;align-items:center;gap:12px;">
+                                        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#d4af37,#c9a227);display:flex;align-items:center;justify-content:center;color:#0a1d2e;font-weight:700;font-size:1rem;box-shadow:0 2px 8px rgba(212,175,55,0.3);flex-shrink:0;" id="admin-chat-avatar">?</div>
+                                        <div>
+                                            <div style="font-weight:700;color:var(--text,#1a1a2e);font-size:0.9rem" id="admin-chat-name">User</div>
+                                            <div style="font-size:0.72rem;color:#aaa;" id="admin-chat-email"></div>
+                                        </div>
+                                    </div>
+                                    <button onclick="openNotifModal()" style="background:linear-gradient(135deg,#d4af37,#c9a227);border:none;color:#0a1d2e;border-radius:10px;padding:7px 14px;font-size:0.78rem;cursor:pointer;font-weight:600;box-shadow:0 2px 8px rgba(212,175,55,0.3);transition:transform 0.15s;flex-shrink:0;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                                        <i class="fas fa-bell me-1"></i>Notify
+                                    </button>
+                                </div>
+                                <!-- Messages — fixed height with scroll -->
+                                <div id="admin-chat-messages" style="flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth;min-height:0;background:rgba(0,0,0,0.01);"></div>
+                                <!-- Input -->
+                                <div style="padding:12px 14px;border-top:1px solid rgba(0,0,0,0.07);display:flex;gap:10px;align-items:flex-end;flex-shrink:0;background:var(--card,#fff);">
+                                    <textarea id="admin-msg-input" rows="1" placeholder="Type a message…"
+                                        style="flex:1;background:transparent;border:1.5px solid rgba(212,175,55,0.35);border-radius:22px;padding:10px 16px;color:var(--text,#1a1a2e);font-size:0.87rem;resize:none;outline:none;max-height:90px;font-family:inherit;transition:border-color 0.2s;"
+                                        onkeydown="adminHandleKey(event)"
+                                        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px'"></textarea>
+                                    <button onclick="adminSendMessage()" style="width:42px;height:42px;background:linear-gradient(135deg,#d4af37,#c9a227);border:none;border-radius:50%;color:#0a1d2e;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(212,175,55,0.35);transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.07)'" onmouseout="this.style.transform='scale(1)'">
+                                        <i class="fas fa-paper-plane" style="font-size:0.85rem"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Send Notification Modal -->
+            <div class="modal fade" id="notifModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="background:#0a1d2e;border:1px solid rgba(212,175,55,0.4);border-radius:18px;color:#fff;">
+                        <div class="modal-header" style="border-bottom:1px solid rgba(212,175,55,0.2);padding:16px 22px;">
+                            <h5 class="modal-title" style="color:#d4af37;font-size:0.95rem"><i class="fas fa-bell me-2"></i>Send Notification</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body" style="padding:22px;">
+                            <div style="margin-bottom:14px;">
+                                <label style="color:#d4af37;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Title</label>
+                                <input type="text" id="notif-title" placeholder="Notification title..."
+                                    style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(212,175,55,0.3);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.87rem;">
+                            </div>
+                            <div>
+                                <label style="color:#d4af37;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Message</label>
+                                <textarea id="notif-message" rows="3" placeholder="Write your notification message..."
+                                    style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(212,175,55,0.3);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.87rem;resize:vertical;font-family:inherit;"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="border-top:1px solid rgba(212,175,55,0.15);padding:12px 22px;">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-gold btn-sm" onclick="sendNotifToUser()">
+                                <i class="fas fa-paper-plane me-1"></i>Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section id="section-posts" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h4 class="mb-0"><i class="fas fa-bullhorn me-2" style="color:#d4af37"></i>Travel Posts</h4>
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="text" id="posts-search" class="form-control form-control-sm" placeholder="🔍 Search destination or author..." style="width:250px;background:rgba(255,255,255,0.08);border-color:rgba(212,175,55,0.3);color:#fff;" oninput="filterPosts()">
+                            <select id="posts-status-filter" class="form-select form-select-sm" style="width:130px;background:rgba(255,255,255,0.08);border-color:rgba(212,175,55,0.3);color:#fff;" onchange="filterPosts()">
+                                <option value="">All Status</option>
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                            <span id="posts-count" class="badge" style="background:#d4af37;color:#0a1d2e;font-size:0.85rem;"></span>
+                        </div>
+                    </div>
+                    <div style="overflow-x:auto;">
+                    <table class="data-table">
+                        <thead><tr>
+                            <th>Author</th>
+                            <th>Destination</th>
+                            <th>Budget</th>
+                            <th>Travelers</th>
+                            <th>Travel Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr></thead>
+                        <tbody id="posts-tbody"></tbody>
+                    </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Post Details Modal -->
+            <div class="modal fade" id="postDetailsModal" tabindex="-1">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content" style="background:#0a1d2e;color:#fff;border:1px solid rgba(212,175,55,0.4);border-radius:20px;">
+                        <div class="modal-header" style="border-bottom:1px solid rgba(212,175,55,0.2);padding:20px 25px;">
+                            <h5 class="modal-title" style="color:#d4af37;font-family:'Cinzel',serif;">
+                                <i class="fas fa-bullhorn me-2"></i>Post Details
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body" id="post-details-body" style="padding:25px;"></div>
+                        <div class="modal-footer" style="border-top:1px solid rgba(212,175,55,0.15);padding:15px 25px;">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger btn-sm" id="modal-delete-post-btn">
+                                <i class="fas fa-trash me-1"></i> Delete Post
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="attractionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light" style="border: 1px solid #d4af37;">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(212,175,55,0.2);">
+                    <h5 class="modal-title" id="modalTargetTitle" style="color: #d4af37;">Add Attraction</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="attractionForm" onsubmit="handleAttractionSubmit(event)">
+                    <input type="hidden" id="attraction-id">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" id="att-name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select id="att-category" class="form-select" required>
+                                <option value="historical">Historical</option>
+                                <option value="beach">Beach</option>
+                                <option value="museums">Museums</option>
+                                <option value="adventure">Adventure</option>
+                                <option value="cultural">Cultural</option>
+                                <option value="natural">Natural</option>
+                                <option value="religious">Religious</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Governorate</label>
+                            <input type="text" id="att-governorate" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price (EGP)</label>
+                            <input type="number" id="att-price" class="form-control" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea id="att-description" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-header d-flex justify-content-end gap-2" style="border-top: 1px solid rgba(212,175,55,0.2);">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-gold btn-sm">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Details Modal -->
+    <div class="modal fade" id="companyDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background:#0a1d2e;color:#fff;border:1px solid #d4af37;">
+                <div class="modal-header" style="border-color:rgba(212,175,55,0.3)">
+                    <h5 style="color:#d4af37"><i class="fas fa-building me-2"></i>Company Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="company-details-body" style="color:#ccc"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/custom-select.js"></script>
+    <script>
+    requireAdmin();
+
+    const token = Storage.getToken();
+    const apiHeaders = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+
+    let bsAttractionModal;
+    document.addEventListener("DOMContentLoaded", () => {
+        bsAttractionModal = new bootstrap.Modal(document.getElementById('attractionModal'));
+    });
+
+    const emptyRow = (colspan, message) => `<tr><td colspan="${colspan}" class="text-center text-muted py-3">${message}</td></tr>`;
+    const setCount = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    };
+
+    // Auto-detect backend URL (works on both localhost and 127.0.0.1)
+    const BACKEND = `http://${window.location.hostname === '127.0.0.1' ? '127.0.0.1' : 'localhost'}:5000`;
+
+    async function fetchJson(url, options = {}) {
+        // Convert relative URLs to absolute
+        let finalUrl = url;
+        if (url.startsWith('../api/')) {
+            finalUrl = BACKEND + '/api' + url.slice('../api'.length);
+        } else if (url.startsWith('/api/')) {
+            finalUrl = BACKEND + '/api' + url.slice('/api'.length);
+        }
+
+        const response = await fetch(finalUrl, {
+            headers: apiHeaders,
+            ...options
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.message || data.error || 'Request failed');
+        }
+        return data;
+    }
+
+    document.querySelectorAll('.sidebar-menu a[data-section]').forEach(link => {
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            document.querySelectorAll('.sidebar-menu a').forEach(item => item.classList.remove('active'));
+            link.classList.add('active');
+            const section = link.dataset.section;
+            document.querySelectorAll('.admin-section').forEach(area => area.style.display = 'none');
+            document.getElementById(`section-${section}`).style.display = 'block';
+            document.getElementById('section-title').textContent = link.textContent.trim();
+
+            // Load data when switching sections
+            if (section === 'companies')   loadCompanies();
+            if (section === 'users')       loadUsers();
+            if (section === 'attractions') loadAttractions();
+            if (section === 'bookings')    loadBookings();
+            if (section === 'payments')    loadPayments();
+            if (section === 'reviews')     loadReviews();
+            if (section === 'feedback')    loadFeedback();
+            if (section === 'chats')       loadChatList();
+            if (section === 'posts')       loadPosts();
+        });
+    });
+
+    // ===== CHARTS =====
+    new Chart(document.getElementById('bookingsChart'), {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Bookings',
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                borderColor: '#d4af37',
+                backgroundColor: 'rgba(212,175,55,0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    new Chart(document.getElementById('destinationsChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['No data'],
+            datasets: [{
+                data: [1],
+                backgroundColor: ['#d4af37']
+            }]
+        }
+    });
+
+    async function loadAnalytics() {
+        try {
+            const data = await fetchJson('../api/admin/analytics');
+            const analytics = data.analytics || {};
+            setCount('total-users-count', analytics.totalUsers ?? 0);
+            setCount('total-companies-count', analytics.totalCompanies ?? 0);
+            setCount('total-bookings-count', analytics.totalBookings ?? 0);
+            setCount('total-revenue-count', Number(analytics.revenue || 0).toLocaleString());
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function loadUsers() {
+        try {
+            const data = await fetchJson('../api/admin/users');
+            const users = data.users || [];
+            document.getElementById('users-tbody').innerHTML = users.length
+                ? users.map(user => `
+                    <tr>
+                        <td>${user.fullName || user.name || '-'}</td>
+                        <td>${user.email || '-'}</td>
+                        <td>${user.country || '-'}</td>
+                        <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}</td>
+                        <td><span class="badge ${user.isBanned ? 'badge-danger' : 'badge-success'}">${user.isBanned ? 'banned' : 'active'}</span></td>
+                        <td><button class="btn-action btn-delete">Ban</button></td>
+                    </tr>
+                `).join('')
+                : emptyRow(6, 'No users found');
+        } catch (error) {
+            document.getElementById('users-tbody').innerHTML = emptyRow(6, error.message);
+        }
+    }
+
+    // ===== COMPANIES LOGIC =====
+    async function loadCompanies() {
+        try {
+            const data = await fetchJson('../api/companies/pending');
+            const companies = data.companies || [];
+
+            // Update sidebar badge
+            const badge = document.getElementById('pending-badge');
+            if (badge) {
+                if (companies.length > 0) {
+                    badge.textContent = companies.length;
+                    badge.style.display = 'inline';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+
+            document.getElementById('companies-tbody').innerHTML = companies.length
+                ? companies.map(company => `
+                    <tr>
+                        <td>
+                            <strong style="color:#d4af37">${company.companyName}</strong><br>
+                            <small class="text-muted">${company.governorate || ''}</small>
+                        </td>
+                        <td>${company.ownerName}</td>
+                        <td>${company.email}<br><small class="text-muted">${company.phone || ''}</small></td>
+                        <td>${company.experience || 0} yrs</td>
+                        <td><span class="badge badge-warning">${company.status}</span></td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="viewCompanyDetails('${company._id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn btn-success btn-sm py-1 px-2 ms-1" onclick="verifyCompany('${company._id}', 'approve')">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger btn-sm py-1 px-2 ms-1" onclick="verifyCompany('${company._id}', 'reject')">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </td>
+                    </tr>
+                `).join('')
+                : emptyRow(6, '✅ No pending companies — all verified');
+        } catch (error) {
+            document.getElementById('companies-tbody').innerHTML = emptyRow(6, error.message);
+        }
+    }
+
+    // Show full company details in a modal
+    async function viewCompanyDetails(id) {
+        try {
+            const data = await fetchJson(`../api/companies/${id}`);
+            const c = data.company;
+
+            const BACKEND_URL = `http://${window.location.hostname === '127.0.0.1' ? '127.0.0.1' : 'localhost'}:5000`;
+
+            // Helper: render a file link/image
+            function fileLink(path, label) {
+                if (!path) return `<span class="text-muted">Not uploaded</span>`;
+                const fullUrl = BACKEND_URL + path;
+                const isImg = /\.(jpg|jpeg|png|gif|webp)$/i.test(path);
+                if (isImg) {
+                    return `<div><img src="${fullUrl}" alt="${label}" style="max-width:100%;max-height:220px;border-radius:8px;border:1px solid rgba(212,175,55,0.3);cursor:pointer;" onclick="window.open('${fullUrl}','_blank')"><br><small><a href="${fullUrl}" target="_blank" style="color:#d4af37;">${label}</a></small></div>`;
+                }
+                return `<a href="${fullUrl}" target="_blank" style="color:#d4af37;"><i class="fas fa-file me-1"></i>${label}</a>`;
+            }
+
+            document.getElementById('company-details-body').innerHTML = `
+                <div class="row g-3">
+                    <div class="col-6"><strong>Company:</strong> ${c.companyName}</div>
+                    <div class="col-6"><strong>Owner:</strong> ${c.ownerName}</div>
+                    <div class="col-6"><strong>Email:</strong> ${c.email}</div>
+                    <div class="col-6"><strong>Phone:</strong> ${c.phone}</div>
+                    <div class="col-6"><strong>WhatsApp:</strong> ${c.whatsapp || '-'}</div>
+                    <div class="col-6"><strong>Governorate:</strong> ${c.governorate}</div>
+                    <div class="col-12"><strong>Address:</strong> ${c.address}</div>
+                    <div class="col-12"><strong>Website:</strong> ${c.website || '-'}</div>
+                    <div class="col-12"><hr style="border-color:rgba(212,175,55,0.2)"></div>
+                    <div class="col-6"><strong>Commercial Reg:</strong> ${c.commercialReg}</div>
+                    <div class="col-6"><strong>Tax Card:</strong> ${c.taxCard}</div>
+                    <div class="col-6"><strong>Tourism License:</strong> ${c.tourismLicense}</div>
+                    <div class="col-6"><strong>Ministry License:</strong> ${c.ministryLicense || '-'}</div>
+                    <div class="col-6"><strong>Experience:</strong> ${c.experience || 0} years</div>
+                    <div class="col-6"><strong>Employees:</strong> ${c.employees || 0}</div>
+                    <div class="col-12"><strong>Services:</strong> ${c.services || '-'}</div>
+                    <div class="col-12"><strong>Description:</strong> ${c.description || '-'}</div>
+                    <div class="col-12"><hr style="border-color:rgba(212,175,55,0.2)"></div>
+                    <div class="col-12"><strong style="color:#d4af37;">Logo:</strong><br>${fileLink(c.logo, 'Company Logo')}</div>
+                    <div class="col-6"><strong style="color:#d4af37;">Commercial Reg Doc:</strong><br>${fileLink(c.documents?.commercial, 'Commercial Registration')}</div>
+                    <div class="col-6"><strong style="color:#d4af37;">Tax Card Doc:</strong><br>${fileLink(c.documents?.tax, 'Tax Card')}</div>
+                    <div class="col-6"><strong style="color:#d4af37;">Tourism License Doc:</strong><br>${fileLink(c.documents?.tourism, 'Tourism License')}</div>
+                    <div class="col-6"><strong style="color:#d4af37;">Ministry License Doc:</strong><br>${fileLink(c.documents?.ministry, 'Ministry License')}</div>
+                    ${c.documents?.ownerId ? `<div class="col-6"><strong style="color:#d4af37;">Owner ID:</strong><br>${fileLink(c.documents.ownerId, 'Owner ID')}</div>` : ''}
+                    <div class="col-12"><hr style="border-color:rgba(212,175,55,0.2)"></div>
+                    <div class="col-12">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success flex-grow-1" onclick="verifyCompany('${c._id}','approve'); bootstrap.Modal.getInstance(document.getElementById('companyDetailsModal')).hide()">
+                                <i class="fas fa-check me-1"></i> APPROVE
+                            </button>
+                            <button class="btn btn-danger flex-grow-1" onclick="verifyCompany('${c._id}','reject'); bootstrap.Modal.getInstance(document.getElementById('companyDetailsModal')).hide()">
+                                <i class="fas fa-times me-1"></i> REJECT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(document.getElementById('companyDetailsModal')).show();
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
+    }
+
+
+    async function verifyCompany(id, action) {
+        let reason = '';
+        if (action === 'reject') {
+            reason = (prompt('Enter the rejection reason. It will be emailed to the company:') || '').trim();
+            if (!reason) {
+                showToast('A rejection reason is required.', 'warning');
+                return;
+            }
+        }
+        if(!confirm(`Are you sure you want to ${action} this company?`)) return;
+        try {
+            // تصليح المسار ليكلم راوت الـ companies المباشر بالسيرفر الخاص بك
+            await fetchJson(`../api/companies/${id}/${action}`, {
+                method: 'PUT',
+                body: action === 'reject' ? JSON.stringify({ reason }) : undefined
+            });
+            showToast(`Company successfully ${action}d!`, 'success');
+            loadCompanies();
+            loadAnalytics();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    // ===== ATTRACTIONS LOGIC =====
+    let allAttractions = []; 
+    async function loadAttractions() {
+        try {
+            const data = await fetchJson('../api/attractions');
+            allAttractions = data.attractions || [];
+            document.getElementById('attractions-tbody').innerHTML = allAttractions.length
+                ? allAttractions.map(attraction => `
+                    <tr>
+                        <td>${attraction.name}</td>
+                        <td>${attraction.category}</td>
+                        <td>${attraction.governorate}</td>
+                        <td>${'★'.repeat(Math.floor(attraction.rating || 0))} (${attraction.rating || 0})</td>
+                        <td>${attraction.priceEGP > 0 ? attraction.priceEGP + ' EGP' : 'Free'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info py-1 px-2 me-1 text-light" onclick="openEditAttractionModal('${attraction._id}')"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn btn-sm btn-danger py-1 px-2" onclick="deleteAttraction('${attraction._id}')"><i class="fas fa-trash"></i> Delete</button>
+                        </td>
+                    </tr>
+                `).join('')
+                : emptyRow(6, 'No attractions found');
+        } catch (error) {
+            document.getElementById('attractions-tbody').innerHTML = emptyRow(6, error.message);
+        }
+    }
+
+    function openAddAttractionModal() {
+        document.getElementById('attractionForm').reset();
+        document.getElementById('attraction-id').value = '';
+        document.getElementById('modalTargetTitle').textContent = 'Add New Attraction';
+        bsAttractionModal.show();
+    }
+
+    function openEditAttractionModal(id) {
+        const att = allAttractions.find(a => a._id === id);
+        if(!att) return showToast('Attraction details not found', 'error');
+        
+        document.getElementById('attraction-id').value = att._id;
+        document.getElementById('att-name').value = att.name;
+        document.getElementById('att-category').value = att.category;
+        document.getElementById('att-governorate').value = att.governorate;
+        document.getElementById('att-price').value = att.priceEGP || 0;
+        document.getElementById('att-description').value = att.description || '';
+        
+        document.getElementById('modalTargetTitle').textContent = 'Edit Attraction';
+        bsAttractionModal.show();
+    }
+
+    async function handleAttractionSubmit(e) {
+        e.preventDefault();
+        const id = document.getElementById('attraction-id').value;
+        const payload = {
+            name: document.getElementById('att-name').value,
+            category: document.getElementById('att-category').value,
+            governorate: document.getElementById('att-governorate').value,
+            priceEGP: Number(document.getElementById('att-price').value),
+            description: document.getElementById('att-description').value
+        };
+
+        // تصليح مسار الإضافة والتعديل ليكلم راوت الـ attractions العام بالسيرفر
+        const url = id ? `../api/attractions/${id}` : '../api/attractions';
+        const method = id ? 'PUT' : 'POST';
+
+        try {
+            await fetchJson(url, {
+                method: method,
+                body: JSON.stringify(payload)
+            });
+            showToast(id ? 'Attraction updated successfully!' : 'Attraction added successfully!', 'success');
+            bsAttractionModal.hide();
+            loadAttractions();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function deleteAttraction(id) {
+        if(!confirm('Are you sure you want to delete this attraction?')) return;
+        try {
+            // تصليح مسار الحذف ليكلم راوت الـ attractions العام بالسيرفر
+            await fetchJson(`../api/attractions/${id}`, { method: 'DELETE' });
+            showToast('Attraction deleted successfully', 'success');
+            loadAttractions();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    const unavailable = {
+        reviews: 'Reviews are not connected to a live endpoint yet',
+        feedback: 'Feedback is not connected to a live endpoint yet'
+    };
+    document.getElementById('reviews-tbody').innerHTML = emptyRow(5, unavailable.reviews);
+    document.getElementById('feedback-tbody').innerHTML = emptyRow(6, unavailable.feedback);
+
+    // ===== BOOKINGS LOGIC =====
+    let allBookingsData = [];
+    async function loadBookings() {
+        document.getElementById('bookings-tbody').innerHTML = `<tr><td colspan="9" class="text-center py-3"><div class="spinner-border spinner-border-sm me-2" style="color:#d4af37"></div>Loading...</td></tr>`;
+        try {
+            const data = await fetchJson('../api/admin/bookings');
+            allBookingsData = data.bookings || [];
+            renderBookings(allBookingsData);
+        } catch (error) {
+            console.error('Bookings error:', error);
+            document.getElementById('bookings-tbody').innerHTML = emptyRow(9, '❌ ' + error.message);
+        }
+    }
+
+    function renderBookings(bookings) {
+        const count = document.getElementById('bookings-count');
+        if (count) count.textContent = bookings.length + ' records';
+
+        document.getElementById('bookings-tbody').innerHTML = bookings.length
+            ? bookings.map(b => {
+                const user = b.userId || {};
+                const statusClass = b.status === 'confirmed' ? 'badge-success' : b.status === 'cancelled' ? 'badge-danger' : 'badge-warning';
+                const phone = user.phone || b.contactInfo?.phone || '-';
+                const email = user.email || b.contactInfo?.email || '-';
+                return `<tr>
+                    <td><small style="color:#d4af37;font-family:monospace">#${b._id.slice(-8).toUpperCase()}</small></td>
+                    <td><strong style="color:var(--text,#1a1a2e)">${user.fullName || b.contactInfo?.name || 'Unknown'}</strong></td>
+                    <td>
+                        <small><i class="fas fa-envelope me-1" style="color:#d4af37"></i>${email}</small><br>
+                        <small><i class="fas fa-phone me-1" style="color:#d4af37"></i>${phone}</small>
+                    </td>
+                    <td><button class="btn btn-sm" style="background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:4px 12px;" onclick="viewBookingDetails('${b._id}')"><i class="fas fa-eye me-1"></i>View</button></td>
+                </tr>`;
+            }).join('')
+            : emptyRow(4, '📭 No bookings found');
+    }
+
+    function filterBookings() {
+        const q = (document.getElementById('bookings-search')?.value || '').toLowerCase();
+        const status = document.getElementById('bookings-status-filter')?.value || '';
+        const filtered = allBookingsData.filter(b => {
+            const name = (b.userId?.fullName || b.contactInfo?.name || '').toLowerCase();
+            const email = (b.userId?.email || b.contactInfo?.email || '').toLowerCase();
+            const title = (b.title || '').toLowerCase();
+            const matchQ = !q || name.includes(q) || email.includes(q) || title.includes(q);
+            const matchStatus = !status || b.status === status;
+            return matchQ && matchStatus;
+        });
+        renderBookings(filtered);
+    }
+
+    // ===== PAYMENTS LOGIC =====
+    let allPaymentsData = [];
+    async function loadPayments() {
+        document.getElementById('payments-tbody').innerHTML = `<tr><td colspan="8" class="text-center py-3"><div class="spinner-border spinner-border-sm me-2" style="color:#d4af37"></div>Loading...</td></tr>`;
+        try {
+            const data = await fetchJson('../api/admin/payments');
+            allPaymentsData = data.payments || [];
+            renderPayments(allPaymentsData);
+        } catch (error) {
+            console.error('Payments error:', error);
+            document.getElementById('payments-tbody').innerHTML = emptyRow(8, '❌ ' + error.message);
+        }
+    }
+
+    function renderPayments(payments) {
+        const count = document.getElementById('payments-count');
+        if (count) count.textContent = payments.length + ' records';
+
+        document.getElementById('payments-tbody').innerHTML = payments.length
+            ? payments.map(p => {
+                const user    = p.userId || {};
+                const booking = p.bookingId || {};
+                const statusClass = p.status === 'succeeded' ? 'badge-success' : p.status === 'failed' ? 'badge-danger' : 'badge-warning';
+                return `<tr>
+                    <td><small style="color:#d4af37;font-family:monospace">#${p._id.slice(-8).toUpperCase()}</small><br>
+                        <small class="text-muted">${p.transactionId?.slice(-12) || '-'}</small>
+                    </td>
+                    <td><strong style="color:var(--text,#1a1a2e)">${user.fullName || '-'}</strong></td>
+                    <td>
+                        <small><i class="fas fa-envelope me-1" style="color:#d4af37"></i>${user.email || '-'}</small><br>
+                        <small><i class="fas fa-phone me-1" style="color:#d4af37"></i>${user.phone || '-'}</small>
+                    </td>
+                    <td><button class="btn btn-sm" style="background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:4px 12px;" onclick="viewPaymentDetails('${p._id}')"><i class="fas fa-eye me-1"></i>View</button></td>
+                </tr>`;
+            }).join('')
+            : emptyRow(4, '📭 No payments found');
+    }
+
+    function filterPayments() {
+        const q = (document.getElementById('payments-search')?.value || '').toLowerCase();
+        const filtered = allPaymentsData.filter(p => {
+            const name = (p.userId?.fullName || '').toLowerCase();
+            const email = (p.userId?.email || '').toLowerCase();
+            const id = (p._id || '').toLowerCase();
+            return !q || name.includes(q) || email.includes(q) || id.includes(q);
+        });
+        renderPayments(filtered);
+    }
+
+    // ===== BOOKING DETAILS MODAL =====
+    function viewBookingDetails(id) {
+        const b = allBookingsData.find(x => x._id === id);
+        if (!b) return;
+        const user    = b.userId || {};
+        const company = b.companyId || {};
+        const phone   = user.phone || b.contactInfo?.phone || '-';
+        const email   = user.email || b.contactInfo?.email || '-';
+        const statusColor = b.status === 'confirmed' ? '#28a745' : b.status === 'cancelled' ? '#dc3545' : '#ffc107';
+
+        document.getElementById('booking-details-body').innerHTML = `
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:16px;">
+                    <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"><i class="fas fa-user me-1"></i>Customer</div>
+                    <div class="row g-2">
+                        <div class="col-6"><strong style="color:#fff">${user.fullName || b.contactInfo?.name || '-'}</strong></div>
+                        <div class="col-6"><small style="color:#aaa"><i class="fas fa-envelope me-1" style="color:#d4af37"></i>${email}</small></div>
+                        <div class="col-6"><small style="color:#aaa"><i class="fas fa-phone me-1" style="color:#d4af37"></i>${phone}</small></div>
+                    </div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;">
+                    <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"><i class="fas fa-calendar-check me-1"></i>Booking Info</div>
+                    <div class="row g-2">
+                        <div class="col-6"><small style="color:#aaa">Order ID</small><div style="color:#d4af37;font-family:monospace">#${b._id.slice(-8).toUpperCase()}</div></div>
+                        <div class="col-6"><small style="color:#aaa">Status</small><div><span style="color:${statusColor};font-weight:700">${b.status || '-'}</span></div></div>
+                        <div class="col-12"><small style="color:#aaa">Service</small><div style="color:#fff;font-weight:600">${b.title || '-'}</div></div>
+                        <div class="col-6"><small style="color:#aaa">Amount</small><div style="color:#28a745;font-weight:700">${b.amount ? b.amount.toLocaleString() + ' EGP' : '-'}</div></div>
+                        <div class="col-6"><small style="color:#aaa">Travel Date</small><div style="color:#fff">${b.travelDate ? new Date(b.travelDate).toLocaleDateString('en-GB') : '-'}</div></div>
+                        <div class="col-6"><small style="color:#aaa">Booked On</small><div style="color:#fff">${b.createdAt ? new Date(b.createdAt).toLocaleDateString('en-GB') : '-'}</div></div>
+                        <div class="col-6"><small style="color:#aaa">Travelers</small><div style="color:#fff">${b.travelers || 1}</div></div>
+                    </div>
+                </div>
+                ${company.companyName ? `
+                <div style="background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:16px;">
+                    <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"><i class="fas fa-building me-1"></i>Company</div>
+                    <div class="row g-2">
+                        <div class="col-12"><strong style="color:#fff">${company.companyName}</strong></div>
+                        <div class="col-6"><small style="color:#aaa"><i class="fas fa-envelope me-1" style="color:#d4af37"></i>${company.email || '-'}</small></div>
+                        <div class="col-6"><small style="color:#aaa"><i class="fas fa-phone me-1" style="color:#d4af37"></i>${company.phone || '-'}</small></div>
+                    </div>
+                </div>` : ''}
+            </div>
+        `;
+        new bootstrap.Modal(document.getElementById('bookingDetailsModal')).show();
+    }
+
+    // ===== PAYMENT DETAILS MODAL =====
+    function viewPaymentDetails(id) {
+        const p = allPaymentsData.find(x => x._id === id);
+        if (!p) return;
+        const user    = p.userId || {};
+        const booking = p.bookingId || {};
+        const company = booking.companyId || {};
+        const statusColor = p.status === 'succeeded' ? '#28a745' : p.status === 'failed' ? '#dc3545' : '#ffc107';
+
+        document.getElementById('payment-details-body').innerHTML = `
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:16px;">
+                    <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"><i class="fas fa-user me-1"></i>Customer</div>
+                    <div class="row g-2">
+                        <div class="col-6"><strong style="color:#fff">${user.fullName || '-'}</strong></div>
+                        <div class="col-6"><small style="color:#aaa"><i class="fas fa-envelope me-1" style="color:#d4af37"></i>${user.email || '-'}</small></div>
+                        <div class="col-6"><small style="color:#aaa"><i class="fas fa-phone me-1" style="color:#d4af37"></i>${user.phone || '-'}</small></div>
+                    </div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;">
+                    <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"><i class="fas fa-receipt me-1"></i>Transaction</div>
+                    <div class="row g-2">
+                        <div class="col-6"><small style="color:#aaa">Transaction ID</small><div style="color:#d4af37;font-family:monospace;font-size:0.8rem">${p.transactionId || '-'}</div></div>
+                        <div class="col-6"><small style="color:#aaa">Status</small><div style="color:${statusColor};font-weight:700">${p.status || '-'}</div></div>
+                        <div class="col-6"><small style="color:#aaa">Amount</small><div style="color:#28a745;font-weight:700">${p.amount ? p.amount.toLocaleString() + ' EGP' : '-'}</div></div>
+                        <div class="col-6"><small style="color:#aaa">Date</small><div style="color:#fff">${p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-GB') : '-'}</div></div>
+                        <div class="col-6"><small style="color:#aaa">Card</small><div style="color:#fff">${p.cardBrand?.toUpperCase() || '-'} **** ${p.cardLast4 || '----'}</div></div>
+                    </div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;">
+                    <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"><i class="fas fa-calendar-check me-1"></i>Booking</div>
+                    <div class="row g-2">
+                        <div class="col-12"><strong style="color:#fff">${booking.title || '-'}</strong></div>
+                        <div class="col-6"><small style="color:#aaa">Travel Date</small><div style="color:#fff">${booking.travelDate ? new Date(booking.travelDate).toLocaleDateString('en-GB') : '-'}</div></div>
+                    </div>
+                </div>
+                ${company.companyName ? `
+                <div style="background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:16px;">
+                    <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"><i class="fas fa-building me-1"></i>Company</div>
+                    <div class="row g-2">
+                        <div class="col-12"><strong style="color:#fff">${company.companyName}</strong></div>
+                        <div class="col-6"><small style="color:#aaa"><i class="fas fa-envelope me-1" style="color:#d4af37"></i>${company.email || '-'}</small></div>
+                        <div class="col-6"><small style="color:#aaa"><i class="fas fa-phone me-1" style="color:#d4af37"></i>${company.phone || '-'}</small></div>
+                    </div>
+                </div>` : ''}
+            </div>
+        `;
+        new bootstrap.Modal(document.getElementById('paymentDetailsModal')).show();
+    }
+
+    // ===== FEEDBACK LOGIC =====
+    let allFeedbackData = [];
+    async function loadFeedback() {
+        document.getElementById('feedback-tbody').innerHTML = `<tr><td colspan="6" class="text-center py-3"><div class="spinner-border spinner-border-sm me-2" style="color:#d4af37"></div>Loading...</td></tr>`;
+        try {
+            const data = await fetchJson('../api/feedback');
+            allFeedbackData = data.feedback || [];
+            renderFeedback(allFeedbackData);
+        } catch (error) {
+            document.getElementById('feedback-tbody').innerHTML = emptyRow(6, '❌ ' + error.message);
+        }
+    }
+
+    function renderFeedback(items) {
+        const unread = items.filter(f => !f.isRead).length;
+        const countEl = document.getElementById('feedback-count');
+        const unreadEl = document.getElementById('feedback-unread');
+        if (countEl) countEl.textContent = items.length + ' messages';
+        if (unreadEl) { unreadEl.textContent = unread ? unread + ' unread' : ''; unreadEl.style.display = unread ? '' : 'none'; }
+
+        document.getElementById('feedback-tbody').innerHTML = items.length
+            ? items.map(f => {
+                const name     = f.userId?.fullName || f.guestName || 'Unknown';
+                const email    = f.userId?.email    || f.guestEmail || '-';
+                const phone    = f.guestPhone       || '-';
+                const isContact = f.source === 'contact';
+                const preview  = (f.message || '').slice(0, 55) + ((f.message || '').length > 55 ? '…' : '');
+                const rowStyle = !f.isRead ? 'background:rgba(212,175,55,0.04);' : '';
+
+                return `<tr style="${rowStyle};cursor:pointer;" onclick="viewFeedback('${f._id}')">
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:36px;height:36px;border-radius:50%;background:rgba(212,175,55,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:#d4af37;font-size:0.85rem">
+                                ${name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <strong style="color:${!f.isRead ? '#d4af37' : '#fff'};display:block">${name}</strong>
+                                ${!f.isRead ? '<span class="badge bg-danger" style="font-size:0.6rem;padding:2px 6px">New</span>' : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div><i class="fas fa-envelope me-1" style="color:#d4af37;font-size:0.75rem"></i><small>${email}</small></div>
+                        ${phone !== '-' ? `<div><i class="fas fa-phone me-1" style="color:#d4af37;font-size:0.75rem"></i><small>${phone}</small></div>` : ''}
+                    </td>
+                    <td>
+                        <strong style="color:#fff;display:block;margin-bottom:2px">${f.subject || '-'}</strong>
+                        <small class="text-muted" style="font-size:0.78rem">${preview}</small>
+                    </td>
+                    <td>
+                        <span class="badge" style="background:${isContact ? 'rgba(0,123,255,0.15);color:#74b9ff;border:1px solid rgba(0,123,255,0.25)' : 'rgba(40,167,69,0.15);color:#55efc4;border:1px solid rgba(40,167,69,0.25)'}">
+                            <i class="fas ${isContact ? 'fa-paper-plane' : 'fa-comment-dots'} me-1"></i>${isContact ? 'Contact' : 'Feedback'}
+                        </span>
+                        ${f.adminResponse ? '<br><span class="badge mt-1" style="background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.25);font-size:0.65rem"><i class="fas fa-check me-1"></i>Replied</span>' : ''}
+                    </td>
+                    <td><small style="white-space:nowrap">${f.createdAt ? new Date(f.createdAt).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) : '-'}</small></td>
+                    <td onclick="event.stopPropagation()">
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm" style="background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:4px 10px;white-space:nowrap" onclick="viewFeedback('${f._id}')">
+                                <i class="fas fa-eye me-1"></i>View
+                            </button>
+                            <button class="btn btn-sm" style="background:rgba(220,53,69,0.15);color:#ff6b7a;border:1px solid rgba(220,53,69,0.3);border-radius:8px;padding:4px 8px" onclick="deleteFeedback('${f._id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('')
+            : emptyRow(6, '📭 No messages yet');
+    }
+
+    function filterFeedback() {
+        const q      = (document.getElementById('feedback-search')?.value || '').toLowerCase();
+        const source = document.getElementById('feedback-source-filter')?.value || '';
+        const filtered = allFeedbackData.filter(f => {
+            const name  = (f.userId?.fullName || f.guestName || '').toLowerCase();
+            const email = (f.userId?.email || f.guestEmail || '').toLowerCase();
+            const subj  = (f.subject || '').toLowerCase();
+            const matchQ = !q || name.includes(q) || email.includes(q) || subj.includes(q);
+            const matchS = !source || f.source === source;
+            return matchQ && matchS;
+        });
+        renderFeedback(filtered);
+    }
+
+    async function markFeedbackRead(id, btn) {
+        try {
+            await fetchJson(`../api/feedback/${id}/read`, { method: 'PUT' });
+            const item = allFeedbackData.find(f => f._id === id);
+            if (item) item.isRead = true;
+            renderFeedback(allFeedbackData);
+        } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    function viewFeedback(id) {
+        const f = allFeedbackData.find(x => x._id === id);
+        if (!f) return;
+
+        // Mark as read silently
+        if (!f.isRead) {
+            fetchJson(`../api/feedback/${id}/read`, { method: 'PUT' }).catch(() => {});
+            f.isRead = true;
+            renderFeedback(allFeedbackData);
+        }
+
+        const name      = f.userId?.fullName  || f.guestName  || 'Unknown';
+        const email     = f.userId?.email     || f.guestEmail || '-';
+        const phone     = f.guestPhone        || f.userId?.phone || '-';
+        const isContact = f.source === 'contact';
+        const hasUser   = !!f.userId?._id;
+
+        const body = document.getElementById('feedback-details-body');
+        body.innerHTML = `
+            <div style="display:flex;flex-direction:column;gap:12px;">
+
+                <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:14px 16px;">
+                    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                        <div>
+                            <div style="color:#d4af37;font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">From</div>
+                            <div style="color:#fff;font-weight:700;margin-bottom:4px">${name}</div>
+                            <div style="color:rgba(255,255,255,0.65);font-size:0.82rem;word-break:break-all"><i class="fas fa-envelope me-1" style="color:#d4af37"></i>${email}</div>
+                            ${phone !== '-' ? `<div style="color:rgba(255,255,255,0.65);font-size:0.82rem;margin-top:2px"><i class="fas fa-phone me-1" style="color:#d4af37"></i>${phone}</div>` : ''}
+                        </div>
+                        <div style="text-align:right;flex-shrink:0">
+                            <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.72rem;${isContact ? 'background:rgba(0,123,255,0.15);color:#74b9ff;border:1px solid rgba(0,123,255,0.3)' : 'background:rgba(40,167,69,0.15);color:#55efc4;border:1px solid rgba(40,167,69,0.3)'}">
+                                ${isContact ? '📨 Contact' : '💬 Feedback'}
+                            </span>
+                            <div style="color:rgba(255,255,255,0.4);font-size:0.72rem;margin-top:5px">${f.createdAt ? new Date(f.createdAt).toLocaleString('en-GB') : ''}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px 16px;">
+                    <div style="color:#d4af37;font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px"><i class="fas fa-tag me-1"></i>Subject</div>
+                    <div style="color:#fff;font-weight:600">${f.subject || '-'}</div>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px 16px;">
+                    <div style="color:#d4af37;font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px"><i class="fas fa-comment me-1"></i>Message</div>
+                    <div style="color:rgba(255,255,255,0.85);line-height:1.8;white-space:pre-wrap;word-break:break-word;font-size:0.87rem;overflow-wrap:anywhere">${f.message || '-'}</div>
+                </div>
+
+                ${f.adminResponse ? `
+                <div style="background:rgba(40,167,69,0.08);border:1px solid rgba(40,167,69,0.25);border-radius:12px;padding:14px 16px;">
+                    <div style="color:#55efc4;font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px"><i class="fas fa-reply me-1"></i>Admin Reply</div>
+                    <div style="color:rgba(255,255,255,0.82);line-height:1.8;white-space:pre-wrap;word-break:break-word;font-size:0.87rem;overflow-wrap:anywhere">${f.adminResponse}</div>
+                </div>` : ''}
+
+                ${f.userReply ? `
+                <div style="background:rgba(0,123,255,0.08);border:1px solid rgba(0,123,255,0.25);border-radius:12px;padding:14px 16px;">
+                    <div style="color:#74b9ff;font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px"><i class="fas fa-user me-1"></i>User Reply</div>
+                    <div style="color:rgba(255,255,255,0.82);line-height:1.8;white-space:pre-wrap;word-break:break-word;font-size:0.87rem;overflow-wrap:anywhere">${f.userReply}</div>
+                </div>` : ''}
+
+                ${hasUser ? `
+                <div style="background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:14px 16px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0;" id="reply-toggle-row">
+                        <div style="color:#d4af37;font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;"><i class="fas fa-paper-plane me-1"></i>Reply to User</div>
+                        <button onclick="toggleReplyBox()" id="reply-toggle-btn" style="background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.3);color:#d4af37;border-radius:8px;padding:4px 12px;font-size:0.75rem;cursor:pointer;">
+                            <i class="fas fa-chevron-down me-1" id="reply-toggle-icon"></i>Write Reply
+                        </button>
+                    </div>
+                    <div id="reply-box-content" style="display:none;margin-top:12px;">
+                        <textarea id="admin-reply-text" rows="3"
+                            style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.3);color:#fff;border-radius:10px;padding:10px 12px;font-size:0.85rem;resize:vertical;outline:none;font-family:inherit;"
+                            placeholder="Write your reply...">${f.adminResponse || ''}</textarea>
+                        <button class="btn btn-gold btn-sm mt-2 w-100" id="send-reply-btn" onclick="sendFeedbackReply('${f._id}')">
+                            <i class="fas fa-paper-plane me-1"></i>Send Reply &amp; Notify User
+                        </button>
+                    </div>
+                </div>` : `
+                <div style="background:rgba(255,193,7,0.08);border:1px solid rgba(255,193,7,0.25);border-radius:12px;padding:12px 16px;color:rgba(255,193,7,0.85);font-size:0.82rem;">
+                    <i class="fas fa-info-circle me-2"></i>Guest message — no account linked, notification not available.
+                </div>`}
+
+            </div>
+        `;
+
+        document.getElementById('modal-delete-feedback-btn').onclick = () => {
+            bootstrap.Modal.getInstance(document.getElementById('feedbackDetailsModal')).hide();
+            deleteFeedback(id);
+        };
+
+        new bootstrap.Modal(document.getElementById('feedbackDetailsModal')).show();
+    }
+
+    function toggleReplyBox() {
+        const box  = document.getElementById('reply-box-content');
+        const icon = document.getElementById('reply-toggle-icon');
+        const btn  = document.getElementById('reply-toggle-btn');
+        if (!box) return;
+        const isOpen = box.style.display !== 'none';
+        box.style.display  = isOpen ? 'none' : 'block';
+        icon.className     = isOpen ? 'fas fa-chevron-down me-1' : 'fas fa-chevron-up me-1';
+        btn.style.background = isOpen ? 'rgba(212,175,55,0.15)' : 'rgba(212,175,55,0.3)';
+        if (!isOpen) document.getElementById('admin-reply-text')?.focus();
+    }
+
+    async function sendFeedbackReply(id) {        const reply = document.getElementById('admin-reply-text')?.value?.trim();
+        if (!reply) return showToast('Please write a reply first', 'warning');
+
+        const btn = document.getElementById('send-reply-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Sending...';
+
+        try {
+            await fetchJson(`../api/feedback/${id}/reply`, {
+                method: 'PUT',
+                body: JSON.stringify({ reply })
+            });
+            showToast('Reply sent & user notified ✅', 'success');
+            // Update local data
+            const item = allFeedbackData.find(f => f._id === id);
+            if (item) item.adminResponse = reply;
+            bootstrap.Modal.getInstance(document.getElementById('feedbackDetailsModal')).hide();
+            renderFeedback(allFeedbackData);
+        } catch (err) {
+            showToast(err.message, 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Send Reply & Notify User';
+        }
+    }
+
+    async function deleteFeedback(id) {
+        if (!confirm('Delete this message permanently?')) return;
+        try {
+            await fetchJson(`../api/feedback/${id}`, { method: 'DELETE' });
+            showToast('Message deleted', 'success');
+            allFeedbackData = allFeedbackData.filter(f => f._id !== id);
+            renderFeedback(allFeedbackData);
+        } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    // ===== REVIEWS LOGIC =====
+    let allReviewsData = [];
+    async function loadReviews() {
+        document.getElementById('reviews-tbody').innerHTML = `<tr><td colspan="6" class="text-center py-3"><div class="spinner-border spinner-border-sm me-2" style="color:#d4af37"></div>Loading...</td></tr>`;
+        try {
+            const data = await fetchJson('../api/admin/reviews');
+            allReviewsData = data.reviews || [];
+            renderReviews(allReviewsData);
+        } catch (error) {
+            document.getElementById('reviews-tbody').innerHTML = emptyRow(6, '❌ ' + error.message);
+        }
+    }
+
+    function renderReviews(reviews) {
+        const count = document.getElementById('reviews-count');
+        if (count) count.textContent = reviews.length + ' records';
+
+        const stars = n => '★'.repeat(Math.min(5, Math.max(0, n))) + '☆'.repeat(5 - Math.min(5, Math.max(0, n)));
+        const typeColor = { attraction: '#28a745', company: '#007bff', hotel: '#fd7e14' };
+        const typeIcon  = { attraction: 'fa-landmark', company: 'fa-building', hotel: 'fa-hotel' };
+
+        document.getElementById('reviews-tbody').innerHTML = reviews.length
+            ? reviews.map(r => `
+                <tr>
+                    <td>
+                        <strong style="color:#fff">${r.userId?.fullName || 'Unknown'}</strong><br>
+                        <small class="text-muted">${r.userId?.email || ''}</small>
+                    </td>
+                    <td>
+                        <span style="color:${typeColor[r.targetType] || '#d4af37'}">
+                            <i class="fas ${typeIcon[r.targetType] || 'fa-star'} me-1"></i>
+                            ${r.targetType?.charAt(0).toUpperCase() + r.targetType?.slice(1) || '-'}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="color:#d4af37;font-size:1.1rem;letter-spacing:1px">${stars(r.rating)}</span>
+                        <small class="text-muted ms-1">(${r.rating}/5)</small>
+                    </td>
+                    <td><small>${r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) : '-'}</small></td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm" style="background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:4px 10px;" onclick="viewReview('${r._id}')">
+                                <i class="fas fa-eye me-1"></i>View
+                            </button>
+                            <button class="btn btn-sm" style="background:rgba(220,53,69,0.15);color:#ff6b7a;border:1px solid rgba(220,53,69,0.3);border-radius:8px;padding:4px 10px;" onclick="deleteReview('${r._id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('')
+            : emptyRow(5, '📭 No reviews found');
+    }
+
+    function filterReviews() {
+        const q = (document.getElementById('reviews-search')?.value || '').toLowerCase();
+        const type = document.getElementById('reviews-type-filter')?.value || '';
+        const filtered = allReviewsData.filter(r => {
+            const name    = (r.userId?.fullName || '').toLowerCase();
+            const email   = (r.userId?.email || '').toLowerCase();
+            const comment = (r.comment || '').toLowerCase();
+            const matchQ    = !q || name.includes(q) || email.includes(q) || comment.includes(q);
+            const matchType = !type || r.targetType === type;
+            return matchQ && matchType;
+        });
+        renderReviews(filtered);
+    }
+
+    async function deleteReview(id) {
+        if (!confirm('Delete this review permanently?')) return;
+        try {
+            await fetchJson(`../api/admin/reviews/${id}`, { method: 'DELETE' });
+            showToast('Review deleted', 'success');
+            allReviewsData = allReviewsData.filter(r => r._id !== id);
+            renderReviews(allReviewsData);
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
+    }
+
+    function viewReview(id) {
+        const r = allReviewsData.find(x => x._id === id);
+        if (!r) return;
+
+        const typeColor = { attraction: '#28a745', company: '#007bff', hotel: '#fd7e14' };
+        const typeIcon  = { attraction: 'fa-landmark', company: 'fa-building', hotel: 'fa-hotel' };
+        const tColor    = typeColor[r.targetType] || '#d4af37';
+        const tIcon     = typeIcon[r.targetType]  || 'fa-star';
+        const tLabel    = r.targetType ? r.targetType.charAt(0).toUpperCase() + r.targetType.slice(1) : '-';
+        const filled    = Math.round(r.rating || 0);
+        const starsHtml = Array.from({length:5}, (_,i) =>
+            '<i class="fas fa-star" style="color:' + (i < filled ? '#d4af37' : 'rgba(212,175,55,0.2)') + ';font-size:1.4rem;margin:0 2px"></i>'
+        ).join('');
+
+        document.getElementById('review-modal-body').innerHTML = `
+            <div style="background:linear-gradient(135deg,#d4af37,#c9a227);padding:22px 24px;position:relative;">
+                <button type="button" onclick="bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide()"
+                    style="position:absolute;top:14px;right:16px;background:rgba(10,29,46,0.25);border:none;color:#0a1d2e;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div style="width:52px;height:52px;border-radius:50%;background:rgba(10,29,46,0.2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#0a1d2e;font-weight:700;flex-shrink:0">
+                        ${(r.userId?.fullName||'U').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <div style="font-weight:700;color:#0a1d2e;font-size:1rem">${r.userId?.fullName || 'Unknown'}</div>
+                        <div style="font-size:0.78rem;color:rgba(10,29,46,0.65)">${r.userId?.email || ''}</div>
+                    </div>
+                </div>
+            </div>
+            <div style="padding:22px 24px;display:flex;flex-direction:column;gap:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                    <span style="background:${tColor}22;color:${tColor};border:1px solid ${tColor}44;border-radius:20px;padding:4px 14px;font-size:0.8rem;font-weight:600;">
+                        <i class="fas ${tIcon} me-1"></i>${tLabel}
+                    </span>
+                    <span style="color:rgba(255,255,255,0.45);font-size:0.78rem;">
+                        <i class="fas fa-calendar-alt me-1"></i>
+                        ${r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : '-'}
+                    </span>
+                </div>
+                <div style="text-align:center;padding:18px 0;background:rgba(212,175,55,0.06);border-radius:14px;border:1px solid rgba(212,175,55,0.15);">
+                    <div style="margin-bottom:8px">${starsHtml}</div>
+                    <div style="font-size:0.8rem;color:rgba(255,255,255,0.45);">${filled} out of 5 stars</div>
+                </div>
+                ${r.comment ? `
+                <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;border-left:3px solid #d4af37;">
+                    <div style="color:#d4af37;font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;"><i class="fas fa-quote-left me-1"></i>Comment</div>
+                    <div style="color:rgba(255,255,255,0.88);line-height:1.8;font-size:0.88rem;word-break:break-word;">${r.comment}</div>
+                </div>` : `
+                <div style="text-align:center;padding:14px;color:rgba(255,255,255,0.3);font-style:italic;font-size:0.85rem;">
+                    <i class="fas fa-comment-slash me-2"></i>No comment provided
+                </div>`}
+                <button onclick="bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide();deleteReview('${r._id}')"
+                    style="width:100%;background:rgba(220,53,69,0.12);border:1px solid rgba(220,53,69,0.3);color:#ff6b7a;border-radius:10px;padding:10px;font-size:0.85rem;cursor:pointer;">
+                    <i class="fas fa-trash me-2"></i>Delete Review
+                </button>
+            </div>
+        `;
+        new bootstrap.Modal(document.getElementById('reviewModal')).show();
+    }
+
+    // ===== POSTS LOGIC =====
+    let allPostsData = [];
+
+    async function loadPosts() {
+        document.getElementById('posts-tbody').innerHTML = `<tr><td colspan="7" class="text-center py-3"><div class="spinner-border spinner-border-sm me-2" style="color:#d4af37"></div>Loading...</td></tr>`;
+        try {
+            const data = await fetchJson('../api/posts?limit=100&page=1');
+            allPostsData = data.posts || [];
+            renderPosts(allPostsData);
+        } catch (error) {
+            document.getElementById('posts-tbody').innerHTML = emptyRow(7, '❌ ' + error.message);
+        }
+    }
+
+    function renderPosts(posts) {
+        const countEl = document.getElementById('posts-count');
+        if (countEl) countEl.textContent = posts.length + ' posts';
+
+        document.getElementById('posts-tbody').innerHTML = posts.length
+            ? posts.map(post => {
+                const isPublished = post.status === 'published';
+                const mktStatus = post.marketplaceStatus || 'open';
+                const mktColor = mktStatus === 'closed' ? '#6c757d' : mktStatus === 'locked' ? '#fd7e14' : '#28a745';
+                return `<tr>
+                    <td>
+                        <strong style="color:#fff">${post.userId?.fullName || post.userId?.username || 'User'}</strong><br>
+                        <small class="text-muted">${post.userId?.email || ''}</small>
+                    </td>
+                    <td><strong style="color:#d4af37">${post.destination || '-'}</strong></td>
+                    <td><strong style="color:#28a745">${(post.budget||0).toLocaleString()} EGP</strong></td>
+                    <td class="text-center"><i class="fas fa-users me-1" style="color:#d4af37"></i>${post.travelers || 1}</td>
+                    <td>${post.travelDate ? new Date(post.travelDate).toLocaleDateString('en-GB') : '-'}</td>
+                    <td>
+                        <span class="badge ${isPublished ? 'badge-success' : 'badge-warning'}">${post.status}</span>
+                        <br><small style="color:${mktColor};font-size:0.7rem">${mktStatus}</small>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1 flex-wrap">
+                            <button class="btn btn-sm" style="background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:4px 10px;" onclick="viewPost('${post._id}')">
+                                <i class="fas fa-eye me-1"></i>View
+                            </button>
+                            <button class="btn btn-sm" style="background:rgba(220,53,69,0.15);color:#ff6b7a;border:1px solid rgba(220,53,69,0.3);border-radius:8px;padding:4px 10px;" onclick="adminDeletePost('${post._id}')">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('')
+            : emptyRow(7, '📭 No posts found');
+    }
+
+    function filterPosts() {
+        const q      = (document.getElementById('posts-search')?.value || '').toLowerCase();
+        const status = document.getElementById('posts-status-filter')?.value || '';
+        const filtered = allPostsData.filter(p => {
+            const dest   = (p.destination || '').toLowerCase();
+            const author = (p.userId?.fullName || p.userId?.username || '').toLowerCase();
+            const matchQ = !q || dest.includes(q) || author.includes(q);
+            const matchS = !status || p.status === status;
+            return matchQ && matchS;
+        });
+        renderPosts(filtered);
+    }
+
+    function viewPost(id) {
+        const post = allPostsData.find(p => p._id === id);
+        if (!post) return;
+
+        const body = document.getElementById('post-details-body');
+        const attractions = post.attractions?.map(a => a.name).filter(Boolean).join(', ') || '-';
+        const proposals   = post.proposals?.length || 0;
+        const comments    = post.comments?.length  || 0;
+        const mktBadge    = {
+            open:   '<span style="color:#28a745">🟢 Open</span>',
+            locked: '<span style="color:#fd7e14">🔒 Locked</span>',
+            closed: '<span style="color:#6c757d">⛔ Closed</span>'
+        }[post.marketplaceStatus || 'open'];
+
+        body.innerHTML = `
+            <div class="row g-3">
+                <div class="col-12">
+                    <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:14px;padding:18px 20px;">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                            <div>
+                                <h5 style="color:#d4af37;margin-bottom:4px"><i class="fas fa-map-marker-alt me-2"></i>${post.destination}</h5>
+                                <span class="badge ${post.status === 'published' ? 'badge-success' : 'badge-warning'} me-2">${post.status}</span>
+                                ${mktBadge}
+                            </div>
+                            <small class="text-muted">${post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) : ''}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;text-align:center;">
+                        <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Budget</div>
+                        <div style="color:#28a745;font-weight:700;font-size:1.1rem">${(post.budget||0).toLocaleString()} EGP</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;text-align:center;">
+                        <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Travelers</div>
+                        <div style="color:#fff;font-weight:700;font-size:1.1rem">${post.travelers || 1} person(s)</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;text-align:center;">
+                        <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Travel Date</div>
+                        <div style="color:#fff;font-weight:700">${post.travelDate ? new Date(post.travelDate).toLocaleDateString('en-GB') : '-'}</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;text-align:center;">
+                        <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Duration</div>
+                        <div style="color:#fff;font-weight:700">${post.duration ? post.duration + ' days' : '-'}</div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;">
+                        <div style="color:#d4af37;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px"><i class="fas fa-user me-1"></i>Author</div>
+                        <strong>${post.userId?.fullName || 'Unknown'}</strong>
+                        <span class="text-muted ms-2">${post.userId?.email || ''}</span>
+                    </div>
+                </div>
+
+                ${post.requiredText ? `
+                <div class="col-12">
+                    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;">
+                        <div style="color:#d4af37;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px"><i class="fas fa-list-ul me-1"></i>Requirements</div>
+                        <p style="color:rgba(255,255,255,0.82);margin:0;line-height:1.7">${post.requiredText}</p>
+                    </div>
+                </div>` : ''}
+
+                ${post.description ? `
+                <div class="col-12">
+                    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;">
+                        <div style="color:#d4af37;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px"><i class="fas fa-align-left me-1"></i>Description</div>
+                        <p style="color:rgba(255,255,255,0.82);margin:0;line-height:1.7">${post.description}</p>
+                    </div>
+                </div>` : ''}
+
+                <div class="col-12">
+                    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;">
+                        <div class="row g-3">
+                            <div class="col-4 text-center">
+                                <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px">Attractions</div>
+                                <div style="color:#fff;font-size:1.2rem;font-weight:700">${post.attractions?.length || 0}</div>
+                                <small class="text-muted">${attractions}</small>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px">Proposals</div>
+                                <div style="color:#fff;font-size:1.2rem;font-weight:700">${proposals}</div>
+                                <small class="text-muted">from companies</small>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px">Comments</div>
+                                <div style="color:#fff;font-size:1.2rem;font-weight:700">${comments}</div>
+                                <small class="text-muted">total</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Wire delete button in modal
+        document.getElementById('modal-delete-post-btn').onclick = () => {
+            bootstrap.Modal.getInstance(document.getElementById('postDetailsModal')).hide();
+            adminDeletePost(id);
+        };
+
+        new bootstrap.Modal(document.getElementById('postDetailsModal')).show();
+    }
+
+    async function adminDeletePost(id) {
+        if (!confirm('Delete this post permanently?')) return;
+        try {
+            await fetchJson(`../api/posts/${id}`, { method: 'DELETE' });
+            showToast('Post deleted successfully', 'success');
+            allPostsData = allPostsData.filter(p => p._id !== id);
+            renderPosts(allPostsData);
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
+    }
+
+    // ===== CHAT LOGIC (ADMIN) =====
+    let activeChatId   = null;
+    let activeUserId   = null;
+    let allChats       = [];
+    let allChatUsers   = [];
+    let chatUserFilter = 'all';
+
+    async function loadChatList() {
+        await loadChatUsers();
+    }
+
+    async function loadChatUsers() {
+        const list = document.getElementById('chat-user-list');
+        if (!list) return;
+        list.innerHTML = `<div class="text-center py-4"><div class="spinner-border spinner-border-sm" style="color:#d4af37"></div></div>`;
+        try {
+            // Load all users + existing chats in parallel
+            const [usersData, chatsData] = await Promise.all([
+                fetchJson('../api/admin/users'),
+                fetchJson('../api/chat')
+            ]);
+            allChatUsers = (usersData.users || []).filter(u => u.role !== 'admin');
+            allChats     = chatsData.chats || [];
+            renderChatUsers();
+
+            // Update badge
+            const totalUnread = allChats.reduce((s,c) => s + (c.adminUnread||0), 0);
+            const badge = document.getElementById('chat-badge');
+            if (badge) { badge.textContent = totalUnread||''; badge.style.display = totalUnread ? '' : 'none'; }
+        } catch(e) {
+            if (list) list.innerHTML = `<div class="text-center py-4 text-danger small">${e.message}</div>`;
+        }
+    }
+
+    function setChatFilter(f) {
+        chatUserFilter = f;
+        ['all','tourist','company'].forEach(x => {
+            const btn = document.getElementById('filter-' + x);
+            if (!btn) return;
+            if (x === f) {
+                btn.style.background = 'rgba(10,29,46,0.85)';
+                btn.style.color      = '#fff';
+            } else {
+                btn.style.background = 'rgba(255,255,255,0.3)';
+                btn.style.color      = '#0a1d2e';
+            }
+        });
+        renderChatUsers();
+    }
+
+    function filterChatUsers() { renderChatUsers(); }
+
+    function renderChatUsers() {
+        const list = document.getElementById('chat-user-list');
+        if (!list) return;
+        const q = (document.getElementById('chat-user-search')?.value||'').toLowerCase();
+
+        let users = allChatUsers.filter(u => {
+            const matchRole = chatUserFilter === 'all' || u.role === chatUserFilter;
+            const matchQ    = !q || (u.fullName||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q);
+            return matchRole && matchQ;
+        });
+
+        if (!users.length) {
+            list.innerHTML = `<div class="text-center py-5" style="color:rgba(255,255,255,0.3);font-size:0.85rem">No users found</div>`;
+            return;
+        }
+
+        list.innerHTML = users.map(u => {
+            const init   = (u.fullName||'U').charAt(0).toUpperCase();
+            const chat   = allChats.find(c => String(c.userId?._id||c.userId) === String(u._id));
+            const unread = chat?.adminUnread || 0;
+            const last   = chat?.lastMessage || '';
+            const isActive = String(u._id) === String(activeUserId);
+            const roleColor = u.role === 'company' ? '#0066cc' : '#1a7a4a';
+            const roleBg    = u.role === 'company' ? 'rgba(0,102,204,0.1)' : 'rgba(26,122,74,0.1)';
+            const roleLabel = u.role === 'company' ? 'Company' : 'Tourist';
+            const activeBg  = isActive ? 'rgba(212,175,55,0.15)' : 'transparent';
+            const borderL   = isActive ? '3px solid #d4af37' : '3px solid transparent';
+
+            return `<div onclick="openUserChat('${u._id}','${(u.fullName||'User').replace(/'/g,"\\'")}','${(u.email||'').replace(/'/g,"\\'")}','${u.role||'tourist'}')"
+                style="padding:12px 14px;border-bottom:1px solid rgba(0,0,0,0.06);cursor:pointer;display:flex;gap:12px;align-items:center;background:${activeBg};border-left:${borderL};transition:all 0.15s;">
+                <div style="position:relative;flex-shrink:0">
+                    <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#d4af37,#c9a227);display:flex;align-items:center;justify-content:center;color:#0a1d2e;font-weight:700;font-size:1rem;box-shadow:0 2px 8px rgba(212,175,55,0.3)">${init}</div>
+                    ${unread ? `<span style="position:absolute;top:-3px;right:-3px;background:#e53e3e;color:#fff;border-radius:50%;font-size:0.6rem;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid #fff">${unread}</span>` : ''}
+                </div>
+                <div style="flex:1;min-width:0">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:3px">
+                        <span style="font-weight:600;color:var(--text,#1a1a2e);font-size:0.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${u.fullName||'Unknown'}</span>
+                        <span style="font-size:0.68rem;color:${roleColor};background:${roleBg};border-radius:20px;padding:2px 8px;flex-shrink:0;font-weight:500">${roleLabel}</span>
+                    </div>
+                    <div style="font-size:0.775rem;color:rgba(0,0,0,0.45);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${last || u.email || ''}</div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    async function openUserChat(userId, name, email, role) {
+        activeUserId = userId;
+        renderChatUsers();
+
+        // Set header
+        document.getElementById('admin-chat-name').textContent   = name;
+        document.getElementById('admin-chat-email').textContent  = email;
+        document.getElementById('admin-chat-avatar').textContent = name.charAt(0).toUpperCase();
+        document.getElementById('no-chat-selected').style.display = 'none';
+        document.getElementById('active-chat').style.display      = 'flex';
+
+        // Load or create chat for this user
+        try {
+            // find existing chat
+            let chat = allChats.find(c => String(c.userId?._id||c.userId) === String(userId));
+            const msgsEl = document.getElementById('admin-chat-messages');
+            msgsEl.innerHTML = '';
+
+            if (chat) {
+                activeChatId = chat._id;
+                const data = await fetchJson(`../api/chat/${chat._id}`);
+                (data.chat.messages || []).forEach(m => adminAppendMsg(m, false));
+                // mark read
+                const c = allChats.find(x => x._id === chat._id);
+                if (c) c.adminUnread = 0;
+                renderChatUsers();
+            } else {
+                activeChatId = null;
+                msgsEl.innerHTML = `<div style="text-align:center;color:rgba(255,255,255,0.3);margin:auto;font-size:0.85rem">Start the conversation!</div>`;
+            }
+            msgsEl.scrollTop = msgsEl.scrollHeight;
+            document.getElementById('admin-msg-input').focus();
+        } catch(e) { showToast(e.message,'error'); }
+    }
+
+    // Send notification modal
+    function openNotifModal() {
+        if (!activeUserId) return;
+        document.getElementById('notif-title').value   = '';
+        document.getElementById('notif-message').value = '';
+        new bootstrap.Modal(document.getElementById('notifModal')).show();
+    }
+
+    async function sendNotifToUser() {
+        const title   = document.getElementById('notif-title').value.trim();
+        const message = document.getElementById('notif-message').value.trim();
+        if (!title || !message) return showToast('Title and message are required', 'warning');
+        if (!activeUserId) return;
+
+        try {
+            await fetchJson(`../api/admin/notify/${activeUserId}`, {
+                method: 'POST',
+                body: JSON.stringify({ title, message })
+            });
+            bootstrap.Modal.getInstance(document.getElementById('notifModal')).hide();
+            showToast('Notification sent ✅', 'success');
+        } catch(e) { showToast(e.message,'error'); }
+    }
+
+    function adminAppendMsg(msg, animate = true) {
+        const box = document.getElementById('admin-chat-messages');
+        if (!box) return;
+        const isUser   = msg.sender === 'user';
+        const userName = (document.getElementById('admin-chat-name')?.textContent || 'U');
+        const initials = userName.charAt(0).toUpperCase();
+        const timeStr  = new Date(msg.createdAt||new Date()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+
+        const row = document.createElement('div');
+        row.style.cssText = `display:flex;align-items:flex-end;gap:8px;${isUser?'':'flex-direction:row-reverse;'}${animate?'animation:fadeInUp .22s ease;':''}`;
+
+        row.innerHTML = `
+            <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;${isUser?'background:rgba(212,175,55,0.15);color:#c9a227;border:1.5px solid rgba(212,175,55,0.3)':'background:linear-gradient(135deg,#d4af37,#c9a227);color:#0a1d2e'}">
+                ${isUser ? initials : 'A'}
+            </div>
+            <div style="max-width:65%;display:flex;flex-direction:column;gap:3px;${isUser?'':'align-items:flex-end'}">
+                <div style="padding:6px 12px;border-radius:18px;font-size:0.82rem;line-height:1.5;word-break:break-word;white-space:pre-wrap;${isUser?'background:#f3f4f6;color:#1a1a2e;border-bottom-left-radius:4px':'background:linear-gradient(135deg,#d4af37,#c9a227);color:#0a1d2e;border-bottom-right-radius:4px;box-shadow:0 2px 8px rgba(212,175,55,0.2)'}">
+                    ${String(msg.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}
+                </div>
+                <div style="font-size:0.65rem;color:#aaa;${isUser?'':'text-align:right'}">
+                    ${timeStr}${!isUser?'&nbsp;<span style="color:#d4af37">✓✓</span>':''}
+                </div>
+            </div>`;
+
+        box.appendChild(row);
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function adminHandleKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); adminSendMessage(); }
+    }
+
+    async function adminSendMessage() {
+        if (!activeUserId) return;
+        const input = document.getElementById('admin-msg-input');
+        const text  = input.value.trim();
+        if (!text) return;
+        input.value = ''; input.style.height = 'auto';
+        adminAppendMsg({ sender: 'admin', text, createdAt: new Date() });
+
+        try {
+            // If no existing chat — create one first via user send endpoint (admin triggers)
+            if (!activeChatId) {
+                // Use admin endpoint to create chat for this user
+                const res = await fetchJson(`../api/chat/admin-init/${activeUserId}`, {
+                    method: 'POST', body: JSON.stringify({ text })
+                });
+                activeChatId = res.chatId;
+                // Refresh chat list
+                const chatsData = await fetchJson('../api/chat');
+                allChats = chatsData.chats || [];
+                renderChatUsers();
+            } else {
+                await fetchJson(`../api/chat/${activeChatId}/send`, {
+                    method: 'POST', body: JSON.stringify({ text })
+                });
+            }
+        } catch(e) { showToast(e.message,'error'); }
+    }
+
+    function initAdminChatSocket() {
+        const interval = setInterval(() => {
+            if (typeof io === 'undefined') return;
+            clearInterval(interval);
+            const tok = Storage.getToken();
+            if (!tok) return;
+            const s = io((window.TRAVELNOW_API_BASE || 'http://127.0.0.1:5000').replace('/api',''), {
+                auth: { token: tok }, transports: ['websocket','polling']
+            });
+            s.on('chat_message', data => {
+                const { chatId, message, userId: msgUserId } = data;
+                let c = allChats.find(x => x._id === chatId);
+                if (!c && msgUserId) {
+                    fetchJson('../api/chat').then(d => { allChats = d.chats||[]; renderChatUsers(); }).catch(()=>{});
+                    return;
+                }
+                if (c) { c.adminUnread = (c.adminUnread||0)+1; c.lastMessage = (message.text||'').slice(0,60); }
+                const totalUnread = allChats.reduce((sum,x) => sum + (x.adminUnread||0), 0);
+                const badge = document.getElementById('chat-badge');
+                if (badge) { badge.textContent = totalUnread||''; badge.style.display = totalUnread ? '' : 'none'; }
+                renderChatUsers();
+                if (chatId === activeChatId && message.sender === 'user') {
+                    adminAppendMsg(message);
+                    fetchJson(`../api/chat/${chatId}/read`, { method:'PUT' }).catch(()=>{});
+                    if (c) c.adminUnread = 0;
+                    renderChatUsers();
+                }
+            });
+        }, 400);
+    }
+
+    initAdminChatSocket();
+    setInterval(() => { if (document.getElementById('section-chats')?.style.display !== 'none') loadChatList(); }, 15000);
+
+    loadAnalytics();
+    loadUsers();
+    loadCompanies();
+    loadAttractions();
+    </script>
+</body>
+</html>

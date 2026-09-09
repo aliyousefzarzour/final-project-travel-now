@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        .unread-bg { background-color: rgba(212, 175, 55, 0.05); }
+        .notification-card { transition: transform 0.2s; border-left: 4px solid transparent; }
+        .notification-card.is-unread { border-left-color: var(--gold); }
+    </style>
+</head>
+<body>
+    <div id="tn-navbar"></div>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <button class="close-sidebar" onclick="document.querySelector('.sidebar').classList.remove('open')">
+                    <i class="fas fa-times"></i>
+                </button>
+                <i class="fas fa-user-circle fa-2x" style="color:#d4af37"></i>
+                <h3>PROFILE</h3>
+                <p id="user-side">Welcome</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a href="bookings.html"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="favorites.html"><i class="fas fa-heart"></i> Favorites</a></li>
+                <li><a href="saved-trips.html"><i class="fas fa-route"></i> Saved Trips</a></li>
+                <li><a href="notifications.html" class="active"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="javascript:void(0)" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar d-flex justify-content-between align-items-center">
+                <div>
+                    <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <button class="btn btn-gold" onclick="deleteAllNotifications()"><i class="fas fa-trash-alt"></i> DELETE ALL</button>
+            </div>
+            <div id="notifications-container"></div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/realtime.js"></script>
+    <script>
+    const user = requireAuth();
+    const token = Storage.getToken();
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+    if (user) document.getElementById('user-side').textContent = 'Welcome, ' + (user.fullName || user.name || 'Traveler');
+
+    async function fetchJson(url, options = {}) {
+        const response = await fetch(url, {
+            headers: { 'Content-Type': 'application/json', ...authHeaders, ...(options.headers || {}) },
+            ...options
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Request failed');
+        return data;
+    }
+
+    async function loadNotifications() {
+        const container = document.getElementById('notifications-container');
+        try {
+            const data = await fetchJson('../api/notifications/my?limit=30');
+            const notifications = data.notifications || [];
+            
+            if (!notifications.length) {
+                container.innerHTML = '<div class="dashboard-card text-center py-5">No notifications yet.</div>';
+                return;
+            }
+            
+            container.innerHTML = notifications.map(n => `
+                <div class="dashboard-card mb-3 notification-card ${n.isRead ? '' : 'is-unread unread-bg'}">
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+                        <div>
+                            <h5 style="color:${n.isRead ? '#777' : '#d4af37'}">${n.title}</h5>
+                            <p class="mb-1">${n.message}</p>
+                            <small class="text-muted">${new Date(n.createdAt).toLocaleDateString()} ${new Date(n.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>
+                        </div>
+                        ${!n.isRead ? `<button class="btn btn-sm btn-gold" onclick="markRead('${n._id}')">Mark read</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            container.innerHTML = `<div class="dashboard-card text-center py-5 text-danger">${error.message}</div>`;
+        }
+    }
+
+    async function markRead(id) {
+        try {
+            await fetchJson(`../api/notifications/${id}/read`, { method: 'PUT' });
+            loadNotifications();
+        } catch (error) {
+            // تأكد من وجود دالة showToast في ملفاتك
+            if(typeof showToast === 'function') showToast(error.message, 'error');
+        }
+    }
+
+    async function deleteAllNotifications() {
+        try {
+            await fetchJson('../api/notifications/my', { method: 'DELETE' });
+            if(typeof showToast === 'function') showToast('All notifications deleted', 'success');
+            loadNotifications();
+        } catch (error) {
+            if(typeof showToast === 'function') showToast(error.message, 'error');
+        }
+    }
+
+    loadNotifications();
+    // تحديث الإشعارات كل 30 ثانية
+    setInterval(loadNotifications, 30000);
+    </script>
+</body>
+</html>

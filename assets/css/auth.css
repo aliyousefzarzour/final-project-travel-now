@@ -1,0 +1,328 @@
+/* =================== AUTH PAGES =================== */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow-y: auto;
+    background: linear-gradient(135deg, #0a1d2e 0%, #1a3a5c 50%, #0f4c75 100%);
+    padding: 20px;
+}
+
+.auth-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?w=1600') center/cover;
+    opacity: 0.15;
+    z-index: 0;
+}
+
+/* Hieroglyphic decorations */
+.auth-page::after {
+    content: '𓂀 𓁹 𓃭 𓅃 𓆣 𓇳 𓈖 𓉐 𓊖 𓋴';
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    right: 5%;
+    bottom: 5%;
+    color: rgba(212, 175, 55, 0.05);
+    font-size: 2rem;
+    letter-spacing: 50px;
+    word-spacing: 100px;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    line-height: 3;
+}
+
+.auth-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 500px;
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 25px;
+    padding: 50px 40px;
+    color: #fff;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+
+.auth-logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-logo i {
+    font-size: 3rem;
+    color: #d4af37;
+    margin-bottom: 10px;
+}
+
+.auth-logo h2 {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 5px;
+    margin: 0;
+}
+
+.auth-logo p {
+    color: #d4af37;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.auth-card .form-label {
+    color: #d4af37;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.auth-card .form-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 12px;
+    padding: 12px 18px;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+.auth-card .form-control:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #d4af37;
+    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+    color: #fff;
+}
+
+.auth-card .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-card .form-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: #fff;
+    border-radius: 12px;
+    padding: 12px 18px;
+}
+
+.auth-card .form-select option {
+    background: #0a1d2e;
+}
+
+.auth-submit {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.auth-submit.escaping {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.auth-link {
+    color: #d4af37;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.auth-link:hover {
+    color: #f4e5a3;
+    text-decoration: underline;
+}
+
+.auth-divider {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0;
+    width: 100%; height: 1px;
+    background: rgba(212, 175, 55, 0.3);
+}
+
+.auth-divider span {
+    background: rgba(10, 29, 46, 0.6);
+    padding: 0 15px;
+    position: relative;
+}
+
+.error-msg {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: none;
+    animation: shake 0.4s;
+}
+
+.error-msg.show { display: block; }
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* User Type Selection */
+.user-type-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a1d2e 0%, #1a3a5c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.user-type-container {
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+    color: #fff;
+}
+
+.user-type-container h1 {
+    color: #d4af37;
+    margin-bottom: 15px;
+    font-size: 2.5rem;
+}
+
+.user-type-container > p {
+    color: #ccc;
+    margin-bottom: 50px;
+    font-size: 1.1rem;
+}
+
+.user-type-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.user-type-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(212, 175, 55, 0.2);
+    border-radius: 25px;
+    padding: 50px 30px;
+    cursor: pointer;
+    transition: all 0.4s;
+    text-align: center;
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+.user-type-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.user-type-card:hover::before {
+    opacity: 1;
+}
+
+.user-type-card:hover {
+    border-color: #d4af37;
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(212, 175, 55, 0.3);
+    color: #fff;
+}
+
+.user-type-card i {
+    font-size: 5rem;
+    color: #d4af37;
+    margin-bottom: 20px;
+    transition: transform 0.4s;
+}
+
+.user-type-card:hover i {
+    transform: scale(1.15) rotate(5deg);
+}
+
+.user-type-card h3 {
+    color: #d4af37;
+    margin-bottom: 15px;
+    font-family: 'Cinzel', serif;
+}
+
+.user-type-card p {
+    color: #ccc;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.back-link {
+    color: #d4af37;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 30px;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    color: #f4e5a3;
+}
+
+/* File upload custom */
+.file-upload {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-upload input[type="file"] {
+    position: absolute;
+    font-size: 100px;
+    opacity: 0;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}
+
+.file-upload-label {
+    display: block;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(212, 175, 55, 0.5);
+    border-radius: 12px;
+    color: #d4af37;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.file-upload-label:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-style: solid;
+}
+
+.file-upload-label i {
+    margin-right: 8px;
+}
+

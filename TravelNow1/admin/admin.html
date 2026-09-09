@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-shield-alt fa-2x" style="color:#d4af37"></i>
+                <h3>ADMIN PANEL</h3>
+                <p>System Administrator</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                <li><a href="#" data-section="companies"><i class="fas fa-building"></i> Companies <span id="pending-badge" style="display:none;background:#ff4d4d;color:#fff;border-radius:50%;font-size:0.65rem;padding:1px 6px;font-weight:700;margin-left:4px;"></span></a></li>
+                <li><a href="#" data-section="users"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="#" data-section="attractions"><i class="fas fa-landmark"></i> Attractions</a></li>
+                <li><a href="#" data-section="bookings"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="#" data-section="payments"><i class="fas fa-credit-card"></i> Payments</a></li>
+                <li><a href="#" data-section="reviews"><i class="fas fa-star"></i> Reviews</a></li>
+                <li><a href="#" data-section="feedback"><i class="fas fa-comment-dots"></i> Feedback</a></li>
+                <li><a href="#" data-section="posts"><i class="fas fa-bullhorn"></i> Posts</a></li>
+                <li><a href="javascript:void(0)" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <h2 id="section-title">Analytics Dashboard</h2>
+                <div class="user-info-top">
+                    <div class="user-avatar">A</div>
+                    <span>Administrator</span>
+                </div>
+            </div>
+
+            <section id="section-dashboard" class="admin-section">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card"><i class="fas fa-users"></i><h3 id="total-users-count">0</h3><p>Total Users</p></div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card"><i class="fas fa-building"></i><h3 id="total-companies-count">0</h3><p>Companies</p></div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card"><i class="fas fa-calendar-check"></i><h3 id="total-bookings-count">0</h3><p>Bookings</p></div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card"><i class="fas fa-wallet"></i><h3 id="total-revenue-count">0</h3><p>Revenue (EGP)</p></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="dashboard-card">
+                            <h5>Bookings Trend</h5>
+                            <canvas id="bookingsChart" height="100"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="dashboard-card">
+                            <h5>Top Destinations</h5>
+                            <canvas id="destinationsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-companies" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>Company Verification Requests</h4>
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Company</th><th>Owner</th><th>Email</th><th>Experience</th><th>Status</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="companies-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-users" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>Manage Users</h4>
+                    <table class="data-table">
+                        <thead><tr><th>Name</th><th>Email</th><th>Country</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="users-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-attractions" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>Manage Attractions</h4>
+                    <button class="btn btn-gold mb-3" onclick="openAddAttractionModal()"><i class="fas fa-plus"></i> Add New</button>
+                    <table class="data-table">
+                        <thead><tr><th>Name</th><th>Category</th><th>Governorate</th><th>Rating</th><th>Price</th><th>Actions</th></tr></thead>
+                        <tbody id="attractions-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-bookings" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>All Bookings</h4>
+                    <table class="data-table">
+                        <thead><tr><th>Order ID</th><th>Customer</th><th>Service</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+                        <tbody id="bookings-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-payments" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>Payment Transactions</h4>
+                    <table class="data-table">
+                        <thead><tr><th>Order ID</th><th>Card</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody id="payments-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-reviews" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>Reviews Management</h4>
+                    <table class="data-table">
+                        <thead><tr><th>User</th><th>Target</th><th>Rating</th><th>Comment</th><th>Actions</th></tr></thead>
+                        <tbody id="reviews-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-feedback" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>User Feedback</h4>
+                    <table class="data-table">
+                        <thead><tr><th>User</th><th>Subject</th><th>Rating</th><th>Message</th><th>Date</th><th>Actions</th></tr></thead>
+                        <tbody id="feedback-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-posts" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4>Travel Posts</h4>
+                    <table class="data-table">
+                        <thead><tr><th>Author</th><th>Destination</th><th>Budget</th><th>Travelers</th><th>Date</th><th>Actions</th></tr></thead>
+                        <tbody id="posts-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal fade" id="attractionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light" style="border: 1px solid #d4af37;">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(212,175,55,0.2);">
+                    <h5 class="modal-title" id="modalTargetTitle" style="color: #d4af37;">Add Attraction</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="attractionForm" onsubmit="handleAttractionSubmit(event)">
+                    <input type="hidden" id="attraction-id">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" id="att-name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select id="att-category" class="form-select" required>
+                                <option value="historical">Historical</option>
+                                <option value="beach">Beach</option>
+                                <option value="museums">Museums</option>
+                                <option value="adventure">Adventure</option>
+                                <option value="cultural">Cultural</option>
+                                <option value="natural">Natural</option>
+                                <option value="religious">Religious</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Governorate</label>
+                            <input type="text" id="att-governorate" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price (EGP)</label>
+                            <input type="number" id="att-price" class="form-control" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea id="att-description" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-header d-flex justify-content-end gap-2" style="border-top: 1px solid rgba(212,175,55,0.2);">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-gold btn-sm">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Details Modal -->
+    <div class="modal fade" id="companyDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background:#0a1d2e;color:#fff;border:1px solid #d4af37;">
+                <div class="modal-header" style="border-color:rgba(212,175,55,0.3)">
+                    <h5 style="color:#d4af37"><i class="fas fa-building me-2"></i>Company Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="company-details-body" style="color:#ccc"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/custom-select.js"></script>
+    <script>
+    requireAdmin();
+
+    const token = Storage.getToken();
+    const apiHeaders = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+
+    let bsAttractionModal;
+    document.addEventListener("DOMContentLoaded", () => {
+        bsAttractionModal = new bootstrap.Modal(document.getElementById('attractionModal'));
+    });
+
+    const emptyRow = (colspan, message) => `<tr><td colspan="${colspan}" class="text-center text-muted py-3">${message}</td></tr>`;
+    const setCount = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    };
+
+    async function fetchJson(url, options = {}) {
+        // Convert relative URLs to absolute
+        let finalUrl = url;
+        if (url.startsWith('../api/')) {
+            finalUrl = 'http://localhost:5000/api' + url.slice('../api'.length);
+        } else if (url.startsWith('/api/')) {
+            finalUrl = 'http://localhost:5000/api' + url.slice('/api'.length);
+        }
+
+        const response = await fetch(finalUrl, {
+            headers: apiHeaders,
+            ...options
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.message || data.error || 'Request failed');
+        }
+        return data;
+    }
+
+    document.querySelectorAll('.sidebar-menu a[data-section]').forEach(link => {
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            document.querySelectorAll('.sidebar-menu a').forEach(item => item.classList.remove('active'));
+            link.classList.add('active');
+            const section = link.dataset.section;
+            document.querySelectorAll('.admin-section').forEach(area => area.style.display = 'none');
+            document.getElementById(`section-${section}`).style.display = 'block';
+            document.getElementById('section-title').textContent = link.textContent.trim();
+
+            // Load data when switching sections
+            if (section === 'companies')   loadCompanies();
+            if (section === 'users')       loadUsers();
+            if (section === 'attractions') loadAttractions();
+            if (section === 'bookings')    loadBookings();
+            if (section === 'payments')    loadPayments();
+            if (section === 'posts')       loadPosts();
+        });
+    });
+
+    // ===== CHARTS =====
+    new Chart(document.getElementById('bookingsChart'), {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Bookings',
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                borderColor: '#d4af37',
+                backgroundColor: 'rgba(212,175,55,0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    new Chart(document.getElementById('destinationsChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['No data'],
+            datasets: [{
+                data: [1],
+                backgroundColor: ['#d4af37']
+            }]
+        }
+    });
+
+    async function loadAnalytics() {
+        try {
+            const data = await fetchJson('../api/admin/analytics');
+            const analytics = data.analytics || {};
+            setCount('total-users-count', analytics.totalUsers ?? 0);
+            setCount('total-companies-count', analytics.totalCompanies ?? 0);
+            setCount('total-bookings-count', analytics.totalBookings ?? 0);
+            setCount('total-revenue-count', Number(analytics.revenue || 0).toLocaleString());
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function loadUsers() {
+        try {
+            const data = await fetchJson('../api/admin/users');
+            const users = data.users || [];
+            document.getElementById('users-tbody').innerHTML = users.length
+                ? users.map(user => `
+                    <tr>
+                        <td>${user.fullName || user.name || '-'}</td>
+                        <td>${user.email || '-'}</td>
+                        <td>${user.country || '-'}</td>
+                        <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}</td>
+                        <td><span class="badge ${user.isBanned ? 'badge-danger' : 'badge-success'}">${user.isBanned ? 'banned' : 'active'}</span></td>
+                        <td><button class="btn-action btn-delete">Ban</button></td>
+                    </tr>
+                `).join('')
+                : emptyRow(6, 'No users found');
+        } catch (error) {
+            document.getElementById('users-tbody').innerHTML = emptyRow(6, error.message);
+        }
+    }
+
+    // ===== COMPANIES LOGIC =====
+    async function loadCompanies() {
+        try {
+            const data = await fetchJson('../api/companies/pending');
+            const companies = data.companies || [];
+
+            // Update sidebar badge
+            const badge = document.getElementById('pending-badge');
+            if (badge) {
+                if (companies.length > 0) {
+                    badge.textContent = companies.length;
+                    badge.style.display = 'inline';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+
+            document.getElementById('companies-tbody').innerHTML = companies.length
+                ? companies.map(company => `
+                    <tr>
+                        <td>
+                            <strong style="color:#d4af37">${company.companyName}</strong><br>
+                            <small class="text-muted">${company.governorate || ''}</small>
+                        </td>
+                        <td>${company.ownerName}</td>
+                        <td>${company.email}<br><small class="text-muted">${company.phone || ''}</small></td>
+                        <td>${company.experience || 0} yrs</td>
+                        <td><span class="badge badge-warning">${company.status}</span></td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="viewCompanyDetails('${company._id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn btn-success btn-sm py-1 px-2 ms-1" onclick="verifyCompany('${company._id}', 'approve')">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger btn-sm py-1 px-2 ms-1" onclick="verifyCompany('${company._id}', 'reject')">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </td>
+                    </tr>
+                `).join('')
+                : emptyRow(6, '✅ No pending companies — all verified');
+        } catch (error) {
+            document.getElementById('companies-tbody').innerHTML = emptyRow(6, error.message);
+        }
+    }
+
+    // Show full company details in a modal
+    async function viewCompanyDetails(id) {
+        try {
+            const data = await fetchJson(`../api/companies/${id}`);
+            const c = data.company;
+            document.getElementById('company-details-body').innerHTML = `
+                <div class="row g-3">
+                    <div class="col-6"><strong>Company:</strong> ${c.companyName}</div>
+                    <div class="col-6"><strong>Owner:</strong> ${c.ownerName}</div>
+                    <div class="col-6"><strong>Email:</strong> ${c.email}</div>
+                    <div class="col-6"><strong>Phone:</strong> ${c.phone}</div>
+                    <div class="col-6"><strong>WhatsApp:</strong> ${c.whatsapp || '-'}</div>
+                    <div class="col-6"><strong>Governorate:</strong> ${c.governorate}</div>
+                    <div class="col-12"><strong>Address:</strong> ${c.address}</div>
+                    <div class="col-12"><hr style="border-color:rgba(212,175,55,0.2)"></div>
+                    <div class="col-6"><strong>Commercial Reg:</strong> ${c.commercialReg}</div>
+                    <div class="col-6"><strong>Tax Card:</strong> ${c.taxCard}</div>
+                    <div class="col-6"><strong>Tourism License:</strong> ${c.tourismLicense}</div>
+                    <div class="col-6"><strong>Experience:</strong> ${c.experience || 0} years</div>
+                    <div class="col-12"><strong>Services:</strong> ${c.services || '-'}</div>
+                    <div class="col-12"><strong>Description:</strong> ${c.description || '-'}</div>
+                    <div class="col-12"><hr style="border-color:rgba(212,175,55,0.2)"></div>
+                    <div class="col-12">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success flex-grow-1" onclick="verifyCompany('${c._id}','approve'); bootstrap.Modal.getInstance(document.getElementById('companyDetailsModal')).hide()">
+                                <i class="fas fa-check me-1"></i> APPROVE
+                            </button>
+                            <button class="btn btn-danger flex-grow-1" onclick="verifyCompany('${c._id}','reject'); bootstrap.Modal.getInstance(document.getElementById('companyDetailsModal')).hide()">
+                                <i class="fas fa-times me-1"></i> REJECT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(document.getElementById('companyDetailsModal')).show();
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
+    }
+
+
+    async function verifyCompany(id, action) {
+        if(!confirm(`Are you sure you want to ${action} this company?`)) return;
+        try {
+            // تصليح المسار ليكلم راوت الـ companies المباشر بالسيرفر الخاص بك
+            await fetchJson(`../api/companies/${id}/${action}`, {
+                method: 'PUT'
+            });
+            showToast(`Company successfully ${action}d!`, 'success');
+            loadCompanies();
+            loadAnalytics();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    // ===== ATTRACTIONS LOGIC =====
+    let allAttractions = []; 
+    async function loadAttractions() {
+        try {
+            const data = await fetchJson('../api/attractions');
+            allAttractions = data.attractions || [];
+            document.getElementById('attractions-tbody').innerHTML = allAttractions.length
+                ? allAttractions.map(attraction => `
+                    <tr>
+                        <td>${attraction.name}</td>
+                        <td>${attraction.category}</td>
+                        <td>${attraction.governorate}</td>
+                        <td>${'★'.repeat(Math.floor(attraction.rating || 0))} (${attraction.rating || 0})</td>
+                        <td>${attraction.priceEGP > 0 ? attraction.priceEGP + ' EGP' : 'Free'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info py-1 px-2 me-1 text-light" onclick="openEditAttractionModal('${attraction._id}')"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn btn-sm btn-danger py-1 px-2" onclick="deleteAttraction('${attraction._id}')"><i class="fas fa-trash"></i> Delete</button>
+                        </td>
+                    </tr>
+                `).join('')
+                : emptyRow(6, 'No attractions found');
+        } catch (error) {
+            document.getElementById('attractions-tbody').innerHTML = emptyRow(6, error.message);
+        }
+    }
+
+    function openAddAttractionModal() {
+        document.getElementById('attractionForm').reset();
+        document.getElementById('attraction-id').value = '';
+        document.getElementById('modalTargetTitle').textContent = 'Add New Attraction';
+        bsAttractionModal.show();
+    }
+
+    function openEditAttractionModal(id) {
+        const att = allAttractions.find(a => a._id === id);
+        if(!att) return showToast('Attraction details not found', 'error');
+        
+        document.getElementById('attraction-id').value = att._id;
+        document.getElementById('att-name').value = att.name;
+        document.getElementById('att-category').value = att.category;
+        document.getElementById('att-governorate').value = att.governorate;
+        document.getElementById('att-price').value = att.priceEGP || 0;
+        document.getElementById('att-description').value = att.description || '';
+        
+        document.getElementById('modalTargetTitle').textContent = 'Edit Attraction';
+        bsAttractionModal.show();
+    }
+
+    async function handleAttractionSubmit(e) {
+        e.preventDefault();
+        const id = document.getElementById('attraction-id').value;
+        const payload = {
+            name: document.getElementById('att-name').value,
+            category: document.getElementById('att-category').value,
+            governorate: document.getElementById('att-governorate').value,
+            priceEGP: Number(document.getElementById('att-price').value),
+            description: document.getElementById('att-description').value
+        };
+
+        // تصليح مسار الإضافة والتعديل ليكلم راوت الـ attractions العام بالسيرفر
+        const url = id ? `../api/attractions/${id}` : '../api/attractions';
+        const method = id ? 'PUT' : 'POST';
+
+        try {
+            await fetchJson(url, {
+                method: method,
+                body: JSON.stringify(payload)
+            });
+            showToast(id ? 'Attraction updated successfully!' : 'Attraction added successfully!', 'success');
+            bsAttractionModal.hide();
+            loadAttractions();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function deleteAttraction(id) {
+        if(!confirm('Are you sure you want to delete this attraction?')) return;
+        try {
+            // تصليح مسار الحذف ليكلم راوت الـ attractions العام بالسيرفر
+            await fetchJson(`../api/attractions/${id}`, { method: 'DELETE' });
+            showToast('Attraction deleted successfully', 'success');
+            loadAttractions();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    const unavailable = {
+        reviews: 'Reviews are not connected to a live endpoint yet',
+        feedback: 'Feedback is not connected to a live endpoint yet'
+    };
+    document.getElementById('reviews-tbody').innerHTML = emptyRow(5, unavailable.reviews);
+    document.getElementById('feedback-tbody').innerHTML = emptyRow(6, unavailable.feedback);
+
+    // ===== BOOKINGS LOGIC =====
+    async function loadBookings() {
+        try {
+            const data = await fetchJson('../api/admin/bookings');
+            const bookings = data.bookings || [];
+            document.getElementById('bookings-tbody').innerHTML = bookings.length
+                ? bookings.map(booking => `
+                    <tr>
+                        <td><small>${booking._id.slice(-8)}</small></td>
+                        <td>
+                            <strong>${booking.userId?.fullName || 'Unknown'}</strong><br>
+                            <small class="text-muted">${booking.userId?.email || ''}</small>
+                        </td>
+                        <td>
+                            <strong style="color:#d4af37">${booking.title || '-'}</strong><br>
+                            <small class="text-muted">${booking.offerId?.title || booking.attractionId?.name || '-'}</small>
+                        </td>
+                        <td>${booking.amount ? booking.amount.toLocaleString() + ' EGP' : '-'}</td>
+                        <td>${booking.travelDate ? new Date(booking.travelDate).toLocaleDateString('en-GB') : '-'}</td>
+                        <td>
+                            <span class="badge ${booking.status === 'confirmed' ? 'badge-success' : booking.status === 'cancelled' ? 'badge-danger' : 'badge-warning'}">${booking.status || 'pending'}</span>
+                        </td>
+                    </tr>
+                `).join('')
+                : emptyRow(6, 'No bookings found');
+        } catch (error) {
+            console.error('Bookings error:', error);
+            document.getElementById('bookings-tbody').innerHTML = emptyRow(6, error.message);
+        }
+    }
+
+    // ===== PAYMENTS LOGIC =====
+    async function loadPayments() {
+        try {
+            const data = await fetchJson('../api/admin/payments');
+            const payments = data.payments || [];
+            document.getElementById('payments-tbody').innerHTML = payments.length
+                ? payments.map(payment => `
+                    <tr>
+                        <td><small>${payment._id.slice(-8)}</small></td>
+                        <td>
+                            <strong>${payment.cardBrand?.toUpperCase() || 'Unknown'}</strong><br>
+                            <small class="text-muted">**** ${payment.cardLast4 || '----'}</small>
+                        </td>
+                        <td>${payment.amount ? payment.amount.toLocaleString() + ' EGP' : '-'}</td>
+                        <td>
+                            <span class="badge ${payment.status === 'succeeded' ? 'badge-success' : payment.status === 'failed' ? 'badge-danger' : 'badge-warning'}">${payment.status || 'pending'}</span>
+                        </td>
+                        <td>${payment.createdAt ? new Date(payment.createdAt).toLocaleDateString('en-GB') : '-'}</td>
+                    </tr>
+                `).join('')
+                : emptyRow(5, 'No payments found');
+        } catch (error) {
+            console.error('Payments error:', error);
+            document.getElementById('payments-tbody').innerHTML = emptyRow(5, error.message);
+        }
+    }
+
+    // ===== POSTS LOGIC =====
+    async function loadPosts() {
+        try {
+            const data = await fetchJson('../api/posts?limit=50&page=1');
+            const posts = data.posts || [];
+            document.getElementById('posts-tbody').innerHTML = posts.length
+                ? posts.map(post => `
+                    <tr>
+                        <td>
+                            <strong>${post.userId?.fullName || post.userId?.username || 'User'}</strong><br>
+                            <small class="text-muted">${post.userId?.email || ''}</small>
+                        </td>
+                        <td style="color:#d4af37; font-weight:600;">${post.destination}</td>
+                        <td>${(post.budget||0).toLocaleString()} EGP</td>
+                        <td>${post.travelers || 1}</td>
+                        <td>${post.travelDate ? new Date(post.travelDate).toLocaleDateString('en-GB') : '-'}</td>
+                        <td>
+                            <span class="badge ${post.status === 'published' ? 'badge-success' : 'badge-warning'} me-1">${post.status}</span>
+                            <button class="btn-action btn-delete ms-1" onclick="adminDeletePost('${post._id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).join('')
+                : emptyRow(6, 'No posts found');
+        } catch (error) {
+            document.getElementById('posts-tbody').innerHTML = emptyRow(6, error.message);
+        }
+    }
+
+    async function adminDeletePost(id) {
+        if (!confirm('Delete this post permanently?')) return;
+        try {
+            await fetchJson(`../api/posts/${id}`, { method: 'DELETE' });
+            showToast('Post deleted successfully', 'success');
+            loadPosts();
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
+    }
+
+    loadAnalytics();
+    loadUsers();
+    loadCompanies();
+    loadAttractions();
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Under Review - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container" style="max-width:560px">
+        <div class="auth-card" style="text-align:center;padding:40px 30px;">
+
+            <div id="status-icon" style="font-size:4rem;margin-bottom:16px;">⏳</div>
+            <h3 id="status-title" style="color:#d4af37;font-family:'Cinzel',serif;margin-bottom:12px;">
+                Application Under Review
+            </h3>
+            <p id="status-desc" style="color:rgba(255,255,255,0.8);line-height:1.8;margin-bottom:20px;">
+                Your company registration has been received and is currently being reviewed by our admin team.
+            </p>
+
+            <div id="status-card" style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.3);border-radius:16px;padding:20px;margin-bottom:20px;">
+                <div id="status-badge" style="display:inline-block;padding:8px 24px;border-radius:30px;font-size:1rem;font-weight:700;background:rgba(255,193,7,0.15);color:#ffc107;border:2px solid rgba(255,193,7,0.4);margin-bottom:12px;">
+                    <i class="fas fa-clock me-2"></i> WAITING FOR APPROVAL
+                </div>
+                <p id="status-sub" style="color:rgba(255,255,255,0.6);font-size:0.85rem;margin:0;">
+                    This usually takes 24–48 hours. This page updates automatically.
+                </p>
+            </div>
+
+            <div id="status-actions"></div>
+            <a href="company-login.html" class="btn btn-outline-light mt-2">
+                <i class="fas fa-arrow-left me-2"></i> Back to Company Login
+            </a>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script>
+    const params = new URLSearchParams(window.location.search);
+    const email  = params.get('email') || '';
+    let pollInterval = null;
+
+    if (!email) window.location.href = 'company-register.html';
+
+    function updateCard(status) {
+        const icon    = document.getElementById('status-icon');
+        const title   = document.getElementById('status-title');
+        const desc    = document.getElementById('status-desc');
+        const badge   = document.getElementById('status-badge');
+        const sub     = document.getElementById('status-sub');
+        const actions = document.getElementById('status-actions');
+
+        if (status === 'approved') {
+            clearInterval(pollInterval);
+            icon.textContent  = '✅';
+            title.textContent = 'Login Successfully';
+            title.style.color = '#28c76f';
+            desc.textContent  = 'Congratulations! Your company has been approved. You can now log in.';
+            badge.innerHTML   = '<i class="fas fa-check-circle me-2"></i> APPROVED';
+            badge.style.background   = 'rgba(40,199,111,0.15)';
+            badge.style.color        = '#28c76f';
+            badge.style.borderColor  = 'rgba(40,199,111,0.4)';
+            sub.textContent   = 'Redirecting to login…';
+            actions.innerHTML = `<a href="company-login.html" class="btn btn-gold px-5 mt-2"><i class="fas fa-sign-in-alt me-2"></i>Go to Login</a>`;
+            setTimeout(() => window.location.href = 'company-login.html', 3000);
+        } else if (status === 'rejected') {
+            clearInterval(pollInterval);
+            icon.textContent  = '❌';
+            title.textContent = 'Failed to login. Please check your information.';
+            title.style.color = '#ff4d4d';
+            desc.textContent  = 'Unfortunately, your application was not approved.';
+            badge.innerHTML   = '<i class="fas fa-times-circle me-2"></i> NOT APPROVED';
+            badge.style.background   = 'rgba(220,53,69,0.15)';
+            badge.style.color        = '#ff6b7a';
+            badge.style.borderColor  = 'rgba(220,53,69,0.4)';
+            sub.textContent   = 'Contact support for more information.';
+            actions.innerHTML = `<div id="rejection-reason" style="color:#ffd1d1;background:rgba(220,53,69,0.12);border:1px solid rgba(220,53,69,0.35);border-radius:10px;padding:12px;margin-bottom:10px;text-align:left;"></div><a href="company-register.html" class="btn btn-gold px-5 mt-2"><i class="fas fa-redo me-2"></i>Apply Again</a>`;
+            const reasonEl = document.getElementById('rejection-reason');
+            if (reasonEl) reasonEl.textContent = window.rejectionReason || 'No reason was provided.';
+        }
+    }
+
+    async function checkStatus() {
+        try {
+            const res  = await fetch(`${API_BASE}/companies/status?email=${encodeURIComponent(email)}`);
+            const data = await res.json();
+            if (data.status && data.status !== 'pending') {
+                window.rejectionReason = data.blockedReason || '';
+                updateCard(data.status);
+            }
+        } catch (_) {}
+    }
+
+    // Poll every 5 seconds for near-real-time updates
+    checkStatus();
+    pollInterval = setInterval(checkStatus, 5000);
+    </script>
+</body>
+</html>

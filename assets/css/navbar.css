@@ -1,0 +1,439 @@
+/* =================== SHARED NAVBAR - TRAVELNOW =================== */
+:root {
+    --navbar-height: 70px;
+}
+
+html {
+    scroll-padding-top: var(--navbar-height);
+}
+
+/* ═══════════════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════════════ */
+.tn-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--navbar-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 0 !important;
+    z-index: 1050;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    min-height: var(--navbar-height);
+}
+
+.tn-navbar.scrolled {
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* ═══════════════════════════════════════════════════════
+   CONTAINER — full width, flex row
+   ═══════════════════════════════════════════════════════ */
+.tn-navbar > .container {
+    max-width: 100% !important;
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+    min-height: var(--navbar-height);
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important; /* brand left, then collapse grows, then actions */
+    gap: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BRAND — far LEFT
+   ═══════════════════════════════════════════════════════ */
+.tn-navbar .navbar-brand {
+    flex: 0 0 auto !important;
+    order: 1;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #d4af37;
+    font-family: 'Cinzel', serif;
+    font-weight: 800;
+    font-size: 1.45rem;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+.tn-navbar .navbar-brand:hover { opacity: 0.85; }
+.tn-navbar .navbar-brand span  { color: #fff; }
+.tn-navbar .navbar-brand i     { color: #d4af37; font-size: 1.2rem; }
+
+/* ═══════════════════════════════════════════════════════
+   COLLAPSE — fills the middle space
+   ═══════════════════════════════════════════════════════ */
+.tn-navbar .navbar-collapse {
+    order: 2;
+    flex: 1 1 auto !important;
+    min-width: 0;
+    /* Desktop: show as flex, center the links */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ACTIONS — far RIGHT (desktop only)
+   ═══════════════════════════════════════════════════════ */
+.tn-navbar .tn-nav-actions {
+    flex: 0 0 auto !important;
+    order: 3;
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TOGGLER — hidden on desktop, shown on mobile
+   ═══════════════════════════════════════════════════════ */
+.tn-navbar .navbar-toggler {
+    flex: 0 0 auto !important;
+    order: 4;
+    display: none !important;   /* hidden desktop */
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 10px;
+    padding: 7px 10px;
+    background: rgba(255, 255, 255, 0.04);
+    transition: all 0.2s ease;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 0 !important;
+}
+.tn-navbar .navbar-toggler:hover,
+.tn-navbar .navbar-toggler:focus {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: #d4af37;
+    box-shadow: none !important;
+    outline: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAV LIST & LINKS
+   ═══════════════════════════════════════════════════════ */
+.tn-navbar .navbar-nav {
+    display: flex !important;
+    align-items: center;
+    flex-direction: row !important;
+    gap: 2px;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none;
+}
+
+.tn-navbar .nav-link {
+    position: relative;
+    color: rgba(255, 255, 255, 0.82) !important;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 6px 13px !important;
+    border-radius: 8px;
+    transition: color 0.25s ease, background 0.25s ease;
+    white-space: nowrap;
+    display: flex !important;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none !important;
+}
+.tn-navbar .nav-link:hover {
+    color: #d4af37 !important;
+    background: rgba(212, 175, 55, 0.08);
+}
+.tn-navbar .nav-link.active {
+    color: #d4af37 !important;
+    background: rgba(212, 175, 55, 0.12);
+}
+.tn-navbar .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: #d4af37;
+}
+
+/* ═══════════════════════════════════════════════════════
+   THEME TOGGLE & AUTH BUTTON
+   ═══════════════════════════════════════════════════════ */
+.tn-navbar .theme-toggle {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: #d4af37;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+.tn-navbar .theme-toggle:hover {
+    background: rgba(212, 175, 55, 0.18);
+    border-color: #d4af37;
+    transform: scale(1.08);
+}
+
+.tn-navbar .btn-gold {
+    padding: 8px 20px;
+    font-size: 0.85rem;
+    border-radius: 50px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE ACTIONS — inside collapse, hidden on desktop
+   ═══════════════════════════════════════════════════════ */
+.tn-navbar .tn-nav-actions-mobile {
+    display: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HAMBURGER ICON
+   ═══════════════════════════════════════════════════════ */
+.tn-navbar .navbar-toggler-icon {
+    background-image: none !important;
+    width: 20px;
+    height: 15px;
+    position: relative;
+    display: block;
+}
+.tn-navbar .navbar-toggler-icon::before,
+.tn-navbar .navbar-toggler-icon::after {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #d4af37;
+    border-radius: 2px;
+    transition: transform 0.3s ease;
+    position: absolute;
+    left: 0;
+}
+.tn-navbar .navbar-toggler-icon::before { top: 0; }
+.tn-navbar .navbar-toggler-icon::after  { bottom: 0; }
+.tn-navbar .navbar-toggler-icon > span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #d4af37;
+    border-radius: 2px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.tn-navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
+    top: 6.5px;
+    transform: rotate(45deg);
+}
+.tn-navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon > span {
+    opacity: 0;
+    transform: translateY(-50%) scaleX(0);
+}
+.tn-navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+    bottom: 6.5px;
+    transform: rotate(-45deg);
+}
+
+/* Hide extra nav items on mid screens */
+@media (min-width: 992px) and (max-width: 1280px) {
+    .nav-item-extra { display: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE  <992px
+   Row 1: [TRAVELNOW]          [☰]
+   Row 2: [links + actions  — collapse panel]
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 991px) {
+
+    .tn-navbar > .container {
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+        min-height: var(--navbar-height);
+    }
+
+    /* Brand stays LEFT, grows to push toggler right */
+    .tn-navbar .navbar-brand {
+        flex: 1 1 auto !important;
+        order: 1;
+    }
+
+    /* Toggler — far RIGHT, row 1 */
+    .tn-navbar .navbar-toggler {
+        display: flex !important;
+        order: 2;
+    }
+
+    /* Desktop actions — gone on mobile */
+    .tn-navbar .tn-nav-actions {
+        display: none !important;
+    }
+
+    /* Collapse — full-width panel, row 2 */
+    .tn-navbar .navbar-collapse {
+        order: 3;
+        flex: 0 0 100% !important;
+        width: 100%;
+        /* drop-down panel style */
+        background: rgba(8, 22, 36, 0.98);
+        border-top: 1px solid rgba(212, 175, 55, 0.15);
+        border-bottom: 2px solid rgba(212, 175, 55, 0.25);
+        border-radius: 0 0 18px 18px;
+        padding: 0 20px !important;
+        justify-content: flex-start;
+        /* Bootstrap handles show/hide via max-height */
+        overflow: hidden;
+    }
+
+    /* When collapsed — hidden */
+    .tn-navbar .navbar-collapse:not(.show):not(.collapsing) {
+        display: none !important;
+    }
+
+    /* When open — block layout */
+    .tn-navbar .navbar-collapse.show,
+    .tn-navbar .navbar-collapse.collapsing {
+        display: block !important;
+    }
+
+    /* Vertical link list */
+    .tn-navbar .navbar-nav {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0 !important;
+        padding: 12px 0 6px !important;
+    }
+
+    .tn-navbar .nav-link {
+        padding: 12px 10px !important;
+        border-radius: 10px;
+        font-size: 0.92rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex !important;
+    }
+    .tn-navbar .nav-link:last-child  { border-bottom: none; }
+    .tn-navbar .nav-link.active::after { display: none; }
+
+    /* Mobile actions strip at bottom of collapse */
+    .tn-navbar .tn-nav-actions-mobile {
+        display: flex !important;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0 18px;
+        border-top: 1px solid rgba(212, 175, 55, 0.15);
+        margin-top: 4px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════
+   BODY SPACING
+   ═══════════════════════════════════════════════════════ */
+body.has-tn-navbar {
+    padding-top: var(--navbar-height) !important;
+}
+body.has-tn-navbar .page-header {
+    padding-top: 40px !important;
+    margin-top: 0 !important;
+}
+body.has-tn-navbar .main-content {
+    padding-top: 30px !important;
+}
+@media (max-width: 768px) {
+    body.has-tn-navbar .main-content {
+        padding-top: 20px !important;
+    }
+}
+body.has-tn-navbar .dashboard-wrapper .sidebar {
+    top: var(--navbar-height);
+    height: calc(100vh - var(--navbar-height));
+}
+body.has-tn-navbar.map-page .map-layout {
+    height: calc(100vh - var(--navbar-height));
+    margin-top: 0;
+}
+body.has-tn-navbar.map-page {
+    overflow: hidden;
+    padding-top: var(--navbar-height) !important;
+}
+
+/* ═══════════════════════════════════════════
+   HISTORY NAVIGATION — bottom-right floating
+   ═══════════════════════════════════════════ */
+#tn-history-nav {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 1200;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.tn-hist-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #d4af37;
+    background: rgba(10, 29, 46, 0.92);
+    color: #d4af37;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.tn-hist-btn:hover:not(:disabled) {
+    background: #d4af37;
+    color: #0a1d2e;
+    transform: scale(1.1);
+    box-shadow: 0 6px 24px rgba(212, 175, 55, 0.4);
+}
+
+.tn-hist-btn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.tn-hist-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: rgba(212, 175, 55, 0.4);
+}
+
+@media (max-width: 576px) {
+    #tn-history-nav {
+        bottom: 18px;
+        right: 16px;
+    }
+    .tn-hist-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,355 @@
+/* =================== DARK MODE TRANSITIONS =================== */
+/*
+   The main dark mode logic has been moved to style.css using CSS Variables.
+   This file ensures smooth transitions when toggling.
+*/
+
+body,
+.navbar,
+.dashboard-card,
+.attraction-card,
+.offer-card,
+.category-card,
+.form-control,
+.form-select,
+.top-bar,
+.sidebar,
+.modal-content {
+    transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* =================== DARK MODE TEXT FIXES =================== */
+/* Any hardcoded dark/black text that becomes invisible on dark backgrounds */
+
+/* General elements */
+body.dark-mode,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode li,
+body.dark-mode label,
+body.dark-mode small,
+body.dark-mode strong,
+body.dark-mode b,
+body.dark-mode em,
+body.dark-mode td,
+body.dark-mode th,
+body.dark-mode caption,
+body.dark-mode blockquote,
+body.dark-mode dt,
+body.dark-mode dd {
+    color: var(--text);
+}
+
+/* Headings */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+    color: var(--text);
+}
+
+/* Cards — any remaining hardcoded dark text inside cards */
+body.dark-mode .dashboard-card,
+body.dark-mode .dashboard-card p,
+body.dark-mode .dashboard-card span,
+body.dark-mode .dashboard-card h1,
+body.dark-mode .dashboard-card h2,
+body.dark-mode .dashboard-card h3,
+body.dark-mode .dashboard-card h4,
+body.dark-mode .dashboard-card h5,
+body.dark-mode .dashboard-card h6 {
+    color: var(--text);
+}
+
+body.dark-mode .attraction-card .attraction-body,
+body.dark-mode .attraction-card .attraction-body p,
+body.dark-mode .attraction-card .attraction-body span,
+body.dark-mode .offer-card .offer-body,
+body.dark-mode .offer-card .offer-body p,
+body.dark-mode .offer-card .offer-body span,
+body.dark-mode .company-card .company-body,
+body.dark-mode .company-card .company-body p,
+body.dark-mode .company-card .company-body span {
+    color: var(--text);
+}
+
+/* Stat cards */
+body.dark-mode .stat-card,
+body.dark-mode .stat-card p,
+body.dark-mode .stat-card span,
+body.dark-mode .stat-card h3 {
+    color: var(--text);
+}
+
+/* Data table rows */
+body.dark-mode .data-table td {
+    color: var(--text);
+}
+
+/* Ministry badge — black text on gold bg, keep it readable */
+body.dark-mode .ministry-badge {
+    color: #000;
+}
+
+/* Badge warning (yellow bg) — keep black text */
+body.dark-mode .badge-warning {
+    color: #000;
+}
+
+/* Detail stat boxes in dark mode (inside modals/dashboard) */
+body.dark-mode .detail-stat-box,
+body.dark-mode .detail-stat-box strong,
+body.dark-mode .detail-stat-box span {
+    color: #fff;
+}
+
+/* Offer card mini */
+body.dark-mode .offer-card-mini,
+body.dark-mode .offer-card-mini p,
+body.dark-mode .offer-card-mini span {
+    color: #fff;
+}
+
+/* Comment bubbles */
+body.dark-mode .comment-bubble {
+    color: #eee;
+}
+
+/* Top bar text */
+body.dark-mode .top-bar,
+body.dark-mode .top-bar h2,
+body.dark-mode .top-bar span,
+body.dark-mode .top-bar p {
+    color: var(--text);
+}
+
+/* Category cards on landing */
+body.dark-mode .category-card,
+body.dark-mode .category-card p,
+body.dark-mode .category-card span {
+    color: #fff;
+}
+
+/* Any Bootstrap text-dark or text-body classes */
+body.dark-mode .text-dark,
+body.dark-mode .text-body {
+    color: var(--text) !important;
+}
+
+/* Bootstrap muted text */
+body.dark-mode .text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Form labels */
+body.dark-mode .form-label,
+body.dark-mode .form-check-label {
+    color: var(--text);
+    font-weight: 500;
+}
+
+/* Input group text (addon) */
+body.dark-mode .input-group-text {
+    background: var(--input-bg);
+    color: var(--text);
+    border-color: var(--input-border);
+}
+
+/* =================== PLACEHOLDER IMPROVEMENTS =================== */
+/* Better placeholder visibility in dark mode */
+body.dark-mode .form-control::placeholder,
+body.dark-mode .form-select::placeholder,
+body.dark-mode textarea::placeholder,
+body.dark-mode input::placeholder {
+    color: var(--placeholder) !important;
+    opacity: 0.85 !important;
+}
+
+/* Custom select placeholder */
+body.dark-mode .tn-select-trigger[data-placeholder]::before {
+    color: var(--placeholder) !important;
+    opacity: 0.85 !important;
+}
+
+/* Search input placeholders */
+body.dark-mode input[type="search"]::placeholder,
+body.dark-mode input[type="text"]::placeholder,
+body.dark-mode input[type="email"]::placeholder,
+body.dark-mode input[type="password"]::placeholder,
+body.dark-mode input[type="tel"]::placeholder {
+    color: var(--placeholder) !important;
+    opacity: 0.85 !important;
+}
+
+/* Navbar links */
+body.dark-mode .navbar-nav .nav-link,
+body.dark-mode .tn-navbar .nav-link {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* Footer text */
+body.dark-mode .landing-footer,
+body.dark-mode .landing-footer p,
+body.dark-mode .landing-footer span,
+body.dark-mode .landing-footer small {
+    color: #ccc;
+}
+
+/* hero-cta subtitle */
+body.dark-mode .cta-subtitle {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* Countdown / date display on hero/splash — fix the dark text shown in screenshot */
+body.dark-mode [class*="countdown"],
+body.dark-mode [class*="date"],
+body.dark-mode .countdown-item,
+body.dark-mode .countdown-item span,
+body.dark-mode .countdown-item p,
+body.dark-mode .hero-date {
+    color: #fff !important;
+}
+
+/* Any element that has inline color:#000 or color:#333 — Bootstrap overrides */
+body.dark-mode .list-group-item {
+    background: var(--card-bg);
+    color: var(--text);
+    border-color: var(--card-border);
+}
+
+body.dark-mode .card {
+    background: var(--card-bg);
+    color: var(--text);
+    border-color: var(--card-border);
+}
+
+body.dark-mode .card-body,
+body.dark-mode .card-title,
+body.dark-mode .card-text,
+body.dark-mode .card-header,
+body.dark-mode .card-footer {
+    color: var(--text);
+    background: transparent;
+}
+
+/* Dropdown menus */
+body.dark-mode .dropdown-menu {
+    background: var(--card-bg);
+    border-color: var(--card-border);
+}
+
+body.dark-mode .dropdown-item {
+    color: var(--text);
+}
+
+body.dark-mode .dropdown-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--primary);
+}
+
+/* Alert boxes */
+body.dark-mode .alert-info,
+body.dark-mode .alert-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    border-color: var(--card-border);
+}
+
+/* Pagination */
+body.dark-mode .page-link {
+    background: var(--card-bg);
+    color: var(--text);
+    border-color: var(--card-border);
+}
+
+body.dark-mode .page-item.active .page-link {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #000;
+}
+
+/* Tables */
+body.dark-mode table,
+body.dark-mode .table {
+    color: var(--text);
+}
+
+body.dark-mode .table > :not(caption) > * > * {
+    background-color: transparent;
+    color: var(--text);
+}
+
+body.dark-mode .table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Breadcrumb */
+body.dark-mode .breadcrumb-item,
+body.dark-mode .breadcrumb-item a {
+    color: var(--text-muted);
+}
+
+body.dark-mode .breadcrumb-item.active {
+    color: var(--text);
+}
+
+/* =================== BOOTSTRAP UTILITY OVERRIDES IN DARK MODE =================== */
+
+/* text-secondary Bootstrap class — too dark on dark backgrounds */
+body.dark-mode .text-secondary {
+    color: #adb5bd !important;
+}
+
+/* bg-white elements inside dark mode (e.g. company-profile cards) */
+body.dark-mode .bg-white {
+    background-color: var(--card-bg) !important;
+    color: var(--text) !important;
+}
+
+body.dark-mode .bg-white h1,
+body.dark-mode .bg-white h2,
+body.dark-mode .bg-white h3,
+body.dark-mode .bg-white h4,
+body.dark-mode .bg-white h5,
+body.dark-mode .bg-white h6,
+body.dark-mode .bg-white p,
+body.dark-mode .bg-white span,
+body.dark-mode .bg-white small {
+    color: var(--text);
+}
+
+/* profile-card (company-profile.html) */
+body.dark-mode .profile-card {
+    background: var(--card-bg) !important;
+    color: var(--text) !important;
+    border-color: var(--card-border) !important;
+}
+
+/* Notification border separator */
+body.dark-mode [style*="border-bottom:1px solid rgba(0,0,0"] {
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Footer links in landing page */
+body.dark-mode .footer-links a {
+    color: #adb5bd;
+}
+
+body.dark-mode .footer-links a:hover {
+    color: var(--primary);
+}
+
+/* Modal content text (privacy/terms modals) */
+body.dark-mode .modal-content p,
+body.dark-mode .modal-content h3,
+body.dark-mode .modal-content h4 {
+    color: var(--text);
+}
+
+body.dark-mode .modal-content.card {
+    background: var(--card-bg) !important;
+    color: var(--text) !important;
+    border-color: var(--card-border) !important;
+}

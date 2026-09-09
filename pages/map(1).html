@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --navy: #0a1d2e;
+            --navy2: #0f2840;
+            --gold: #d4af37;
+            --gold2: #c9a227;
+            --text-dim: rgba(255,255,255,0.55);
+            --border: rgba(212,175,55,0.2);
+        }
+        html, body { height: 100%; font-family: 'Poppins', sans-serif; background: var(--navy); overflow: hidden; }
+        /* ===== LAYOUT ===== */
+        .map-layout { display: grid; grid-template-columns: 340px 1fr; height: 100vh; }
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            background: var(--navy);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar-head {
+            padding: 18px 16px 10px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .sidebar-logo h5 {
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #fff;
+            border-radius: 8px;
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .search-box {
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .search-box input {
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #fff;
+            padding: 9px 12px 9px 36px;
+            font-size: 0.83rem;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.2s;
+        }
+        .search-box input::placeholder { color: var(--text-dim); }
+        .search-box input:focus { border-color: var(--gold); }
+        .search-box .si { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 0.8rem; }
+        .cat-select {
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #fff;
+            padding: 8px 12px;
+            font-size: 0.83rem;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23d4af37'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+        .cat-select option { background: #0a1d2e; color: #fff; }
+        .cat-select:focus { border-color: var(--gold); }
+        .count-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0 4px;
+        }
+        .count-row small { color: var(--text-dim); font-size: 0.75rem; }
+        .count-pill {
+            background: rgba(212,175,55,0.15);
+            color: var(--gold);
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 2px 12px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        /* ===== LIST ===== */
+        .sidebar-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 12px;
+        }
+        .sidebar-list::-webkit-scrollbar { width: 3px; }
+        .sidebar-list::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-list::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 4px; }
+        .place-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.18s;
+            margin-bottom: 4px;
+        }
+        .place-item:hover { background: rgba(212,175,55,0.06); border-color: rgba(212,175,55,0.15); }
+        .place-item.active { background: rgba(212,175,55,0.1); border-color: var(--gold); }
+        .place-icon {
+            width: 36px; height: 36px;
+            background: rgba(212,175,55,0.12);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .place-info { flex: 1; min-width: 0; }
+        .place-name { color: #fff; font-size: 0.84rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .place-sub { color: var(--text-dim); font-size: 0.73rem; margin-top: 1px; }
+        .place-stars { color: #ffc107; font-size: 0.68rem; }
+        /* ===== MAP PANEL ===== */
+        .map-panel { position: relative; }
+        #leaflet-map { height: 100vh; width: 100%; }
+        /* ===== FLOATING CARD ===== */
+        .map-card {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            z-index: 900;
+            width: 360px;
+            background: rgba(8,20,35,0.97);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 20px;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,175,55,0.08);
+            display: none;
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+            animation: cardIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes cardIn { from { opacity:0; transform:translateY(-16px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+        .card-img-wrap { position: relative; }
+        .card-img {
+            width: 100%;
+            height: 175px;
+            object-fit: cover;
+            display: block;
+            background: linear-gradient(135deg, var(--navy), #152d44);
+        }
+        .card-img-placeholder {
+            width: 100%;
+            height: 175px;
+            background: linear-gradient(135deg, #0a1d2e, #152d44);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: rgba(212,175,55,0.2);
+        }
+        .card-close {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: rgba(0,0,0,0.55);
+            border: none;
+            color: #fff;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+            z-index: 2;
+        }
+        .card-close:hover { background: rgba(0,0,0,0.8); }
+        .card-img-credit {
+            position: absolute;
+            bottom: 6px; right: 8px;
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.5);
+            background: rgba(0,0,0,0.35);
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+        .card-body { padding: 16px; }
+        .card-cat {
+            display: inline-block;
+            background: rgba(212,175,55,0.12);
+            color: var(--gold);
+            border: 1px solid rgba(212,175,55,0.25);
+            border-radius: 20px;
+            font-size: 0.68rem;
+            padding: 2px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+        .card-title {
+            color: var(--gold);
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
+            line-height: 1.3;
+            margin-bottom: 4px;
+        }
+        .card-loc { color: var(--text-dim); font-size: 0.78rem; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+        .card-stars { color: #ffc107; font-size: 0.78rem; margin-bottom: 8px; }
+        .card-desc {
+            color: rgba(255,255,255,0.72);
+            font-size: 0.8rem;
+            line-height: 1.55;
+            margin-bottom: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        /* Card actions */
+        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .card-btn {
+            border: none;
+            border-radius: 11px;
+            padding: 9px 10px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+        }
+        .card-btn.full { grid-column: 1 / -1; padding: 10px; font-size: 0.82rem; }
+        .btn-gold-fill { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: var(--navy); }
+        .btn-gold-fill:hover { background: linear-gradient(135deg, var(--gold2), #b8941f); color: var(--navy); transform: translateY(-1px); }
+        .btn-gmaps { background: rgba(66,133,244,0.13); color: #669df6; border: 1px solid rgba(66,133,244,0.25); }
+        .btn-gmaps:hover { background: rgba(66,133,244,0.22); }
+        .btn-gsearch { background: rgba(234,67,53,0.1); color: #f28b82; border: 1px solid rgba(234,67,53,0.22); }
+        .btn-gsearch:hover { background: rgba(234,67,53,0.2); }
+        .btn-heart { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.55); border: 1px solid rgba(255,255,255,0.1); }
+        .btn-heart:hover { background: rgba(220,53,69,0.1); color: #e74c3c; border-color: rgba(220,53,69,0.25); }
+        .btn-heart.saved { background: rgba(220,53,69,0.12); color: #e74c3c; border-color: rgba(220,53,69,0.3); }
+        /* ===== SKELETON ===== */
+        .sk { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200%; animation: shimmer 1.3s infinite; border-radius: 8px; }
+        @keyframes shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
+        .place-item.sk { height: 54px; cursor: default; border: none; margin-bottom: 5px; }
+        /* ===== CUSTOM MARKERS ===== */
+        .lf-marker-pin {
+            width: 34px; height: 34px;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            border: 2.5px solid rgba(255,255,255,0.8);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+        .lf-marker-pin.active {
+            border-color: var(--gold) !important;
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.35), 0 6px 18px rgba(0,0,0,0.5) !important;
+            z-index: 999 !important;
+        }
+        .lf-marker-inner {
+            transform: rotate(45deg);
+            font-size: 14px;
+            line-height: 1;
+        }
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            html, body { overflow: auto; }
+            .map-layout { grid-template-columns: 1fr; grid-template-rows: auto 65vh; height: auto; }
+            .sidebar { height: auto; overflow: visible; }
+            .sidebar-list { max-height: 180px; }
+            #leaflet-map { height: 65vh; }
+            .map-card { width: calc(100vw - 32px); right: 16px; top: auto; bottom: 16px; }
+        }
+    </style>
+</head>
+<body class="map-page">
+<div id="tn-navbar" data-page="map"></div>
+<div class="map-layout">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-head">
+            <div class="sidebar-logo">
+                <h5><i class="fas fa-map-marked-alt"></i> Attractions Map</h5>
+                <a href="attractions.html" class="back-btn"><i class="fas fa-arrow-left"></i> Attractions</a>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search si"></i>
+                <input type="text" id="sb-search" placeholder="Search attractions...">
+            </div>
+            <select id="sb-cat" class="cat-select" style="margin-top:6px;">
+                <option value="">🗺️ All Categories</option>
+                <option value="historical">🏛️ Historical</option>
+                <option value="religious">🕌 Religious</option>
+                <option value="museums">🏛 Museums</option>
+                <option value="beach">🏖️ Beach</option>
+                <option value="adventure">🧗 Adventure</option>
+                <option value="natural">🌿 Natural</option>
+                <option value="cultural">🎭 Cultural</option>
+            </select>
+            <div class="count-row">
+                <small>Egyptian attractions</small>
+                <span class="count-pill" id="count-pill">Loading...</span>
+            </div>
+        </div>
+        <div class="sidebar-list" id="sb-list">
+            <!-- Skeletons -->
+            <div class="place-item sk"></div>
+            <div class="place-item sk"></div>
+            <div class="place-item sk"></div>
+            <div class="place-item sk"></div>
+            <div class="place-item sk"></div>
+        </div>
+    </aside>
+
+    <!-- ===== MAP ===== -->
+    <section class="map-panel">
+        <div id="leaflet-map"></div>
+
+        <!-- Floating attraction card -->
+        <div class="map-card" id="map-card">
+            <div id="card-inner"></div>
+        </div>
+    </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/navbar.js"></script>
+<script>
+// ===================================================
+// STATE
+// ===================================================
+const token    = Storage.getToken();
+const authUser = Storage.get('travelnow-user');
+const authHdr  = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+let allAttractions  = [];
+let filtered        = [];
+let leafletMap;
+let markerLayer     = L.featureGroup();
+let lightTileLayer;
+let darkTileLayer;
+let currentTileLayer;
+let markers         = {};       // id -> { marker, attraction }
+let activeId        = null;
+let favCache        = {};       // attractionId -> favoriteDoc._id | true | null
+let favLoaded       = false;
+
+// ===================================================
+// CATEGORY HELPERS
+// ===================================================
+const CAT_EMOJI = {
+    historical: '🏛️', religious: '🕌', museums: '🏛',
+    beach: '🏖️', adventure: '🧗', natural: '🌿', cultural: '🎭'
+};
+const CAT_COLOR = {
+    historical: '#c0a030', religious: '#7b68ee', museums: '#20b2aa',
+    beach: '#00bcd4', adventure: '#ff7043', natural: '#66bb6a', cultural: '#ab47bc'
+};
+function catEmoji(cat) { return CAT_EMOJI[String(cat).toLowerCase()] || '📍'; }
+function catColor(cat) { return CAT_COLOR[String(cat).toLowerCase()] || '#d4af37'; }
+
+// ===================================================
+// API HELPER
+// ===================================================
+async function api(url, opts = {}) {
+    const r = await fetch(url, {
+        headers: { 'Content-Type': 'application/json', ...authHdr, ...(opts.headers || {}) },
+        ...opts
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.message || `HTTP ${r.status}`);
+    return d;
+}
+
+// ===================================================
+// MAP INIT
+// ===================================================
+function initMap() {
+    leafletMap = L.map('leaflet-map', {
+        center: [26.5, 30.0],
+        zoom: 6,
+        zoomControl: true,
+        attributionControl: true
+    });
+
+    // Light and dark base tiles
+    lightTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+    });
+
+    darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+    });
+
+    currentTileLayer = document.body.classList.contains('dark-mode') ? darkTileLayer : lightTileLayer;
+    currentTileLayer.addTo(leafletMap);
+
+    markerLayer.addTo(leafletMap);
+
+    // Close card on map background click
+    leafletMap.on('click', () => closeCard());
+
+    document.addEventListener('travelnow-theme-changed', () => {
+        const nextLayer = document.body.classList.contains('dark-mode') ? darkTileLayer : lightTileLayer;
+        if (nextLayer !== currentTileLayer) {
+            leafletMap.removeLayer(currentTileLayer);
+            currentTileLayer = nextLayer;
+            currentTileLayer.addTo(leafletMap);
+        }
+    });
+}
+
+// ===================================================
+// MARKERS
+// ===================================================
+function buildIcon(cat, active) {
+    const color  = catColor(cat);
+    const border = active ? '#fff' : 'rgba(255,255,255,0.85)';
+    const shadow = active
+        ? '0 0 0 4px rgba(212,175,55,0.4), 0 6px 20px rgba(0,0,0,0.55)'
+        : '0 4px 14px rgba(0,0,0,0.45)';
+    const scale = active ? 'scale(1.2)' : 'scale(1)';
+    return L.divIcon({
+        className: '',
+        html: `<div style="
+            background:${color};
+            border:2.5px solid ${border};
+            border-radius:50% 50% 50% 0;
+            width:34px; height:34px;
+            transform:rotate(-45deg) ${scale};
+            box-shadow:${shadow};
+            transition:all 0.2s;
+        "><div style="
+            width:100%; height:100%;
+            display:flex; align-items:center; justify-content:center;
+            transform:rotate(45deg);
+            font-size:14px; line-height:1;
+        ">${catEmoji(cat)}</div></div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 34],
+        popupAnchor: [0, -38]
+    });
+}
+
+function renderMarkers() {
+    markerLayer.clearLayers();
+    markers = {};
+
+    filtered.forEach(att => {
+        const lat = att.coordinates?.lat;
+        const lng = att.coordinates?.lng;
+        if (!lat || !lng) return;
+
+        const m = L.marker([lat, lng], { icon: buildIcon(att.category, false) });
+        m.on('click', e => {
+            L.DomEvent.stopPropagation(e);
+            selectAttraction(att._id);
+        });
+        markerLayer.addLayer(m);
+        markers[att._id] = { marker: m, attraction: att };
+    });
+}
+
+function fitMapToMarkers() {
+    const bounds = markerLayer.getBounds();
+    if (bounds.isValid()) {
+        leafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 7 });
+    }
+}
+
+function setActiveMarker(id) {
+    // Reset old
+    if (activeId && markers[activeId]) {
+        markers[activeId].marker.setIcon(buildIcon(markers[activeId].attraction.category, false));
+    }
+    activeId = id;
+    if (id && markers[id]) {
+        markers[id].marker.setIcon(buildIcon(markers[id].attraction.category, true));
+        markers[id].marker.setZIndexOffset(999);
+    }
+}
+
+// ===================================================
+// SIDEBAR LIST
+// ===================================================
+function renderList() {
+    const list = document.getElementById('sb-list');
+    const pill = document.getElementById('count-pill');
+    pill.textContent = filtered.length + ' places';
+
+    if (!filtered.length) {
+        list.innerHTML = '<p style="color:rgba(255,255,255,0.35); text-align:center; padding:28px 0; font-size:0.82rem;">No results found</p>';
+        return;
+    }
+
+    list.innerHTML = filtered.map(att => `
+        <div class="place-item ${activeId === String(att._id) ? 'active' : ''}"
+             id="li-${att._id}"
+             onclick="selectAttraction('${att._id}')">
+            <div class="place-icon" style="background:rgba(${hexToRgb(catColor(att.category))},0.15);">
+                ${catEmoji(att.category)}
+            </div>
+            <div class="place-info">
+                <div class="place-name">${att.name}</div>
+                <div class="place-sub">
+                    <i class="fas fa-map-marker-alt" style="color:var(--gold);font-size:0.65rem;margin-right:3px;"></i>
+                    ${att.governorate}
+                    <span class="place-stars" style="margin-left:6px;">
+                        ${'★'.repeat(Math.round(att.rating || 0))}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function hexToRgb(hex) {
+    const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return r ? `${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}` : '212,175,55';
+}
+
+// ===================================================
+// SELECT ATTRACTION (sidebar click or marker click)
+// ===================================================
+function selectAttraction(id) {
+    const att = allAttractions.find(a => String(a._id) === String(id));
+    if (!att) return;
+
+    const lat = att.coordinates?.lat;
+    const lng = att.coordinates?.lng;
+    if (lat && lng) {
+        leafletMap.flyTo([lat, lng], 14, { animate: true, duration: 0.8 });
+    }
+
+    setActiveMarker(id);
+    openCard(att);
+
+    // Sidebar highlight
+    document.querySelectorAll('.place-item').forEach(el => el.classList.remove('active'));
+    const li = document.getElementById(`li-${id}`);
+    if (li) { li.classList.add('active'); li.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+}
+
+// ===================================================
+// ATTRACTION CARD
+// ===================================================
+function closeCard() {
+    document.getElementById('map-card').style.display = 'none';
+    if (activeId) {
+        if (markers[activeId]) markers[activeId].marker.setIcon(buildIcon(markers[activeId].attraction.category, false));
+        // Remove sidebar active
+        document.querySelectorAll('.place-item').forEach(el => el.classList.remove('active'));
+        activeId = null;
+    }
+}
+
+function gmapsUrl(att) {
+    const lat = att.coordinates?.lat, lng = att.coordinates?.lng;
+    return lat && lng
+        ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
+        : `https://www.google.com/maps/search/${encodeURIComponent(att.name + ' Egypt')}`;
+}
+function gimagesUrl(name) {
+    return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(name + ' Egypt attraction')}`;
+}
+
+function isFaved(id) { return favCache[id] !== undefined && favCache[id] !== null; }
+
+function openCard(att) {
+    const card = document.getElementById('map-card');
+    card.style.display = 'block';
+
+    const imgHtml = att.images?.[0]
+        ? `<img class="card-img" src="${att.images[0]}" alt="${att.name}"
+               onerror="this.style.display='none';document.getElementById('img-ph-${att._id}').style.display='flex'">
+           <div id="img-ph-${att._id}" class="card-img-placeholder" style="display:none;">${catEmoji(att.category)}</div>`
+        : `<div class="card-img-placeholder">${catEmoji(att.category)}</div>`;
+
+    const faved  = isFaved(String(att._id));
+    const favBtn = authUser
+        ? `<button class="card-btn btn-heart ${faved ? 'saved' : ''}"
+                   id="card-fav-${att._id}"
+                   onclick="toggleFav('${att._id}')">
+               <i class="${faved ? 'fas' : 'far'} fa-heart"></i>
+               ${faved ? 'Saved' : 'Save'}
+           </button>`
+        : `<a class="card-btn btn-heart" href="login.html">
+               <i class="far fa-heart"></i> Login
+           </a>`;
+
+    const stars = att.rating
+        ? `<div class="card-stars">${'★'.repeat(Math.floor(att.rating))}${'☆'.repeat(5 - Math.floor(att.rating))} <span style="color:rgba(255,255,255,0.4);font-size:0.72rem;">${att.rating}/5 · ${Number(att.reviews || 0).toLocaleString()} reviews</span></div>`
+        : '';
+
+    document.getElementById('card-inner').innerHTML = `
+        <div class="card-img-wrap">
+            ${imgHtml}
+            <button class="card-close" onclick="closeCard()" title="Close">
+                <i class="fas fa-times"></i>
+            </button>
+            ${att.images?.[0] ? '<div class="card-img-credit">© Wikimedia Commons</div>' : ''}
+        </div>
+        <div class="card-body">
+            <span class="card-cat">${catEmoji(att.category)} ${String(att.category).toUpperCase()}</span>
+            <div class="card-title">${att.name}</div>
+            <div class="card-loc">
+                <i class="fas fa-map-marker-alt" style="color:var(--gold)"></i>
+                ${att.governorate}${att.location ? ', ' + att.location : ''}
+            </div>
+            ${stars}
+            <p class="card-desc">${att.description || 'No description available.'}</p>
+            <div class="card-actions">
+                <a href="attraction-details.html?id=${att._id}" class="card-btn btn-gold-fill full">
+                    <i class="fas fa-eye"></i> View Full Details
+                </a>
+                <a href="${gmapsUrl(att)}" target="_blank" rel="noopener" class="card-btn btn-gmaps">
+                    <i class="fas fa-route"></i> Go There
+                </a>
+                <a href="${gimagesUrl(att.name)}" target="_blank" rel="noopener" class="card-btn btn-gsearch">
+                    <i class="fab fa-google"></i> Images
+                </a>
+                ${favBtn}
+            </div>
+        </div>
+    `;
+}
+
+// ===================================================
+// FAVORITES TOGGLE
+// ===================================================
+async function toggleFav(attractionId) {
+    if (!authUser || !token) {
+        showToast('Please login to save favorites', 'error');
+        return;
+    }
+    const btn = document.getElementById(`card-fav-${attractionId}`);
+    if (btn) btn.disabled = true;
+
+    try {
+        if (isFaved(attractionId)) {
+            await api(`../api/favorites/by-attraction/${attractionId}`, { method: 'DELETE' });
+            favCache[attractionId] = null;
+            if (btn) {
+                btn.className = 'card-btn btn-heart';
+                btn.innerHTML = '<i class="far fa-heart"></i> Save';
+            }
+            showToast('Removed from favorites');
+        } else {
+            const data = await api('../api/favorites', {
+                method: 'POST',
+                body: JSON.stringify({ attractionId })
+            });
+            favCache[attractionId] = data.favorite?._id || true;
+            if (btn) {
+                btn.className = 'card-btn btn-heart saved';
+                btn.innerHTML = '<i class="fas fa-heart"></i> Saved';
+            }
+            showToast('❤️ Saved to favorites!');
+        }
+    } catch (err) {
+        if (err.message?.toLowerCase().includes('already')) {
+            favCache[attractionId] = true;
+            if (btn) { btn.className = 'card-btn btn-heart saved'; btn.innerHTML = '<i class="fas fa-heart"></i> Saved'; }
+        } else {
+            showToast(err.message || 'Error', 'error');
+        }
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+// ===================================================
+// FAVORITES CACHE LOAD
+// ===================================================
+async function loadFavCache() {
+    if (!authUser || !token || favLoaded) return;
+    try {
+        const data = await api('../api/favorites');
+        (data.favorites || []).forEach(f => {
+            const aId = String(f.attractionId?._id || f.attractionId);
+            favCache[aId] = f._id;
+        });
+        favLoaded = true;
+    } catch (_) {}
+}
+
+// ===================================================
+// FILTERS
+// ===================================================
+function applyFilters() {
+    const q   = document.getElementById('sb-search').value.toLowerCase().trim();
+    const cat = document.getElementById('sb-cat').value.toLowerCase().trim();
+
+    filtered = allAttractions.filter(att => {
+        const text = [att.name, att.governorate, att.description, att.location].join(' ').toLowerCase();
+        const matchQ   = !q   || text.includes(q);
+        const matchCat = !cat || String(att.category).toLowerCase() === cat;
+        return matchQ && matchCat;
+    });
+
+    renderList();
+    renderMarkers();
+}
+
+// ===================================================
+// LOAD ATTRACTIONS
+// ===================================================
+async function loadAttractions() {
+    try {
+        const data = await api('../api/attractions?limit=300&sort=rating');
+        allAttractions = data.attractions || [];
+        filtered = [...allAttractions];
+
+        await loadFavCache();
+        renderList();
+        renderMarkers();
+        fitMapToMarkers();
+    } catch (err) {
+        document.getElementById('sb-list').innerHTML =
+            `<p style="color:#ef5350; padding:20px; text-align:center; font-size:0.82rem;">${err.message}</p>`;
+        document.getElementById('count-pill').textContent = 'Error';
+        showToast('Failed to load attractions', 'error');
+    }
+}
+
+// ===================================================
+// EVENTS
+// ===================================================
+document.getElementById('sb-search').addEventListener('input',  applyFilters);
+document.getElementById('sb-cat').addEventListener('change', applyFilters);
+
+// ===================================================
+// INIT
+// ===================================================
+initMap();
+loadAttractions();
+</script>
+</body>
+</html>

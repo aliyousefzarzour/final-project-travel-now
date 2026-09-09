@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>body { background: var(--light); }</style>
+</head>
+<body>
+    <div id="tn-navbar" data-page="contact"></div>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <button class="close-sidebar" onclick="document.querySelector('.sidebar').classList.remove('open')">
+                    <i class="fas fa-times"></i>
+                </button>
+                <i class="fas fa-pyramid fa-2x" style="color:#d4af37"></i>
+                <h3>TRAVELNOW</h3>
+                <p id="user-side">Welcome</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-home"></i> Profile</a></li>
+                <li><a href="attractions.html"><i class="fas fa-landmark"></i> Attractions</a></li>
+                <li><a href="trip-planner.html">🗺️ Yala Plan</a></li>
+                <li><a href="posts.html"><i class="fas fa-bullhorn"></i> Posts</a></li>
+                <li><a href="companies.html"><i class="fas fa-building"></i> Companies</a></li>
+                <li><a href="bookings.html"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="favorites.html"><i class="fas fa-heart"></i> Favorites</a></li>
+                <li><a href="feedback.html" class="active"><i class="fas fa-comment-dots"></i> Feedback</a></li>
+                <li><a href="javascript:void(0)" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
+                        <h4 style="color:var(--text)">Submit Feedback</h4>
+                        <form onsubmit="submitFeedback(event)">
+                            <div class="mb-3">
+                                <label class="form-label" style="color:#d4af37">Rating *</label>
+                                <div id="star-rating" style="font-size:2rem; color:#ffc107; cursor:pointer;">
+                                    <i class="far fa-star" data-r="1"></i>
+                                    <i class="far fa-star" data-r="2"></i>
+                                    <i class="far fa-star" data-r="3"></i>
+                                    <i class="far fa-star" data-r="4"></i>
+                                    <i class="far fa-star" data-r="5"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="rating-input" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color:#d4af37">Subject *</label>
+                                <input type="text" class="form-control" name="subject" required style="background:rgba(212,175,55,0.05); color:var(--text); border-color:rgba(212,175,55,0.3)">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color:#d4af37">Message *</label>
+                                <textarea class="form-control" name="message" rows="4" required style="background:rgba(212,175,55,0.05); color:var(--text); border-color:rgba(212,175,55,0.3)"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color:#d4af37">Attach Image (optional)</label>
+                                <input type="file" class="form-control" name="image" accept="image/*" style="background:rgba(212,175,55,0.05); color:var(--text); border-color:rgba(212,175,55,0.3)">
+                            </div>
+                            <button type="submit" class="btn btn-gold w-100"><i class="fas fa-paper-plane"></i> Submit Feedback</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
+                        <h4 style="color:var(--text)">Your Feedback History</h4>
+                        <div id="feedback-history">
+                            <p class="text-muted text-center py-4">No feedback yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script>
+    const user = requireAuth();
+    if (user) document.getElementById('user-side').textContent = 'Welcome, ' + user.name;
+
+    // Star rating
+    let selectedRating = 0;
+    document.querySelectorAll('#star-rating i').forEach(star => {
+        star.addEventListener('click', () => {
+            selectedRating = parseInt(star.dataset.r);
+            document.getElementById('rating-input').value = selectedRating;
+            document.querySelectorAll('#star-rating i').forEach((s, i) => {
+                s.className = i < selectedRating ? 'fas fa-star' : 'far fa-star';
+            });
+        });
+    });
+
+    function submitFeedback(e) {
+        e.preventDefault();
+        if (selectedRating === 0) { showToast('Please select a rating', 'error'); return; }
+        const f = e.target;
+        const feedback = {
+            id: Date.now(),
+            userId: user.id,
+            userName: user.name,
+            rating: selectedRating,
+            subject: f.subject.value,
+            message: f.message.value,
+            date: new Date().toISOString()
+        };
+        const list = Storage.get('travelnow-feedback') || [];
+        list.push(feedback);
+        Storage.set('travelnow-feedback', list);
+        showToast('Thank you for your feedback! 🌟');
+        f.reset();
+        selectedRating = 0;
+        document.querySelectorAll('#star-rating i').forEach(s => s.className = 'far fa-star');
+        render();
+    }
+
+    function render() {
+        const list = Storage.get('travelnow-feedback') || [];
+        const myFeedback = list.filter(f => f.userId === user.id);
+        const container = document.getElementById('feedback-history');
+        if (myFeedback.length === 0) {
+            container.innerHTML = '<p class="text-muted text-center py-4">No feedback yet</p>';
+            return;
+        }
+        container.innerHTML = myFeedback.reverse().map(f => `
+            <div style="border-left:3px solid #d4af37; padding-left:15px; margin-bottom:15px;">
+                <div style="color:#ffc107">${'★'.repeat(f.rating)}${'☆'.repeat(5 - f.rating)}</div>
+                <h6 style="color:var(--text); margin:5px 0;">${f.subject}</h6>
+                <p style="color:#666; font-size:0.9rem">${f.message}</p>
+                <small class="text-muted">${new Date(f.date).toLocaleString()}</small>
+            </div>
+        `).join('');
+    }
+
+    render();
+    </script>
+</body>
+</html>

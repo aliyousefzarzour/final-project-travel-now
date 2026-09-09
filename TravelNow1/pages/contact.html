@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - TravelNow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Reduced to 2 weights per family -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+        --gold: #d4af37;
+        --card-border: rgba(212,175,55,0.18);
+        --text-muted: rgba(255,255,255,0.52);
+        --input-bg: rgba(255,255,255,0.04);
+        --input-border: rgba(212,175,55,0.2);
+    }
+
+    body {
+        background: #060f18;
+        color: #e8edf2;
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* Static background — no animated orbs, no fixed blur layers */
+    body::before {
+        content: '';
+        position: fixed; inset: 0; z-index: 0; pointer-events: none;
+        background:
+            radial-gradient(ellipse 65% 50% at 10% 8%,  rgba(212,175,55,0.06) 0%, transparent 55%),
+            radial-gradient(ellipse 55% 45% at 90% 90%, rgba(15,41,66,0.50)   0%, transparent 60%);
+    }
+
+    .page-wrap { position: relative; z-index: 1; }
+
+    /* ── HERO ── */
+    .ct-hero {
+        min-height: 46vh;
+        display: flex; align-items: center; justify-content: center;
+        text-align: center; padding: 130px 24px 60px;
+        position: relative;
+    }
+    .ct-hero::before {
+        content: ''; position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse 75% 65% at 50% 50%, rgba(212,175,55,0.065) 0%, transparent 60%);
+    }
+
+    .eyebrow {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25);
+        border-radius: 50px; padding: 6px 18px; font-size: 0.76rem;
+        font-weight: 600; letter-spacing: 2px; color: var(--gold);
+        text-transform: uppercase; margin-bottom: 22px;
+        animation: fade-up 0.55s ease both;
+    }
+
+    .ct-hero h1 {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(2.5rem, 6vw, 4.8rem);
+        font-weight: 800; line-height: 1.1; margin-bottom: 16px;
+        animation: fade-up 0.65s 0.08s ease both;
+    }
+
+    /* Safe gradient text — always include unprefixed background-clip */
+    .ct-hero h1 .g,
+    .section-title .g {
+        background: linear-gradient(135deg, #d4af37 0%, #f4e090 50%, #d4af37 100%);
+        -webkit-background-clip: text;
+                background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: #d4af37; /* fallback */
+    }
+
+    .ct-hero p {
+        color: var(--text-muted); font-size: 1rem; max-width: 480px;
+        margin: 0 auto; line-height: 1.8;
+        animation: fade-up 0.65s 0.16s ease both;
+    }
+
+    @keyframes fade-up {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 80px 0; }
+
+    .section-label {
+        display: inline-flex; align-items: center; gap: 8px;
+        color: var(--gold); font-size: 0.73rem; font-weight: 700;
+        letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-label::before, .section-label::after { content: ''; display: block; width: 26px; height: 1px; background: var(--gold); }
+
+    .section-title {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+        font-weight: 700; color: #fff; margin-bottom: 10px;
+    }
+
+    .gold-divider { width: 48px; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 14px auto; }
+
+    /* ── GLASS CARD — no backdrop-filter ── */
+    .glass-card {
+        background: rgba(14, 28, 44, 0.85);
+        border: 1px solid var(--card-border);
+        border-radius: 22px;
+        /* Only compositable transitions */
+        transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+        will-change: transform;
+    }
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 44px rgba(0,0,0,0.4);
+        border-color: rgba(212,175,55,0.3);
+    }
+
+    /* ── INFO CARDS ── */
+    .info-card { padding: 24px 22px; display: flex; gap: 16px; align-items: flex-start; }
+    .info-icon {
+        width: 48px; height: 48px; flex-shrink: 0; border-radius: 14px;
+        background: rgba(212,175,55,0.1);
+        border: 1px solid rgba(212,175,55,0.2);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem; color: var(--gold);
+        transition: transform 0.28s ease, background 0.28s ease;
+    }
+    .glass-card:hover .info-icon { background: rgba(212,175,55,0.18); transform: scale(1.08) rotate(-4deg); }
+    .info-body h5 { color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 5px; }
+    .info-body p { color: rgba(255,255,255,0.72); font-size: 0.88rem; line-height: 1.6; margin: 0; }
+    .info-body a { color: rgba(255,255,255,0.72); text-decoration: none; transition: color 0.2s; }
+    .info-body a:hover { color: var(--gold); }
+
+    /* ── FORM ── */
+    .form-card { padding: 36px; }
+    @media (max-width: 576px) { .form-card { padding: 22px 16px; } }
+
+    .form-card h3 { font-family: 'Cinzel', serif; font-size: 1.45rem; color: #fff; margin-bottom: 6px; }
+    .form-card .sub { color: var(--text-muted); font-size: 0.86rem; margin-bottom: 28px; }
+
+    /* Floating label */
+    .fl-group { position: relative; margin-bottom: 22px; }
+    .fl-group input,
+    .fl-group textarea,
+    .fl-group select {
+        width: 100%;
+        background: var(--input-bg);
+        border: 1px solid var(--input-border);
+        border-radius: 13px;
+        padding: 20px 16px 8px;
+        color: #e8edf2; font-size: 0.88rem; font-family: 'Poppins', sans-serif;
+        outline: none; resize: vertical;
+        transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .fl-group textarea { min-height: 125px; }
+    .fl-group select {
+        padding: 14px 16px;
+        -webkit-appearance: none; appearance: none; cursor: pointer;
+    }
+    .fl-group select option { background: #0a1d2e; color: #e8edf2; }
+
+    .fl-group input:focus,
+    .fl-group textarea:focus,
+    .fl-group select:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+        background: rgba(212,175,55,0.03);
+    }
+
+    .fl-group label {
+        position: absolute; top: 13px; left: 16px;
+        color: var(--text-muted); font-size: 0.84rem; pointer-events: none;
+        transition: top 0.22s ease, font-size 0.22s ease, color 0.22s ease;
+    }
+
+    /* Float the label when focused or filled */
+    .fl-group input:focus ~ label,
+    .fl-group input:not(:placeholder-shown) ~ label,
+    .fl-group textarea:focus ~ label,
+    .fl-group textarea:not(:placeholder-shown) ~ label,
+    .fl-group select:focus ~ label,
+    .fl-group.has-val label {
+        top: 4px; font-size: 0.66rem; color: var(--gold); letter-spacing: 0.4px;
+    }
+
+    .fl-group input::placeholder,
+    .fl-group textarea::placeholder { color: transparent; }
+
+    /* Validation */
+    .fl-group.is-valid   input,
+    .fl-group.is-valid   textarea { border-color: #22c55e; }
+    .fl-group.is-invalid input,
+    .fl-group.is-invalid textarea { border-color: #ef4444; }
+
+    .fl-msg { font-size: 0.73rem; margin-top: 4px; padding-left: 2px; display: none; }
+    .is-valid   .fl-msg { display: block; color: #4ade80; }
+    .is-invalid .fl-msg { display: block; color: #f87171; }
+
+    /* Submit button */
+    .btn-submit {
+        width: 100%; padding: 14px; border: none; border-radius: 13px;
+        background: linear-gradient(135deg, #d4af37, #c9a227);
+        color: #0a1d2e; font-weight: 700; font-size: 0.92rem;
+        letter-spacing: 0.4px; cursor: pointer;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        display: flex; align-items: center; justify-content: center; gap: 9px;
+        position: relative; overflow: hidden;
+        will-change: transform;
+    }
+    .btn-submit:hover   { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,175,55,0.3); }
+    .btn-submit:active  { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+    /* Ripple — pure CSS animation, no JS timeout needed for removal */
+    .ripple {
+        position: absolute; border-radius: 50%;
+        background: rgba(255,255,255,0.28);
+        transform: scale(0);
+        animation: ripple-anim 0.55s linear forwards;
+        pointer-events: none;
+    }
+    @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+    /* Feedback banners */
+    .form-feedback {
+        display: none; padding: 16px 18px; border-radius: 13px;
+        margin-top: 18px; font-size: 0.88rem; font-weight: 500;
+        align-items: center; gap: 10px;
+    }
+    .form-feedback.success { background: rgba(34,197,94,0.1);  border: 1px solid rgba(34,197,94,0.28);  color: #86efac; }
+    .form-feedback.error   { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.28);   color: #fca5a5; }
+    .form-feedback.show    { display: flex; }
+
+    /* ── SOCIAL ── */
+    .social-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .soc-btn {
+        display: flex; align-items: center; gap: 9px;
+        background: rgba(255,255,255,0.03); border: 1px solid var(--card-border);
+        border-radius: 13px; padding: 11px 16px; color: rgba(255,255,255,0.72);
+        text-decoration: none; font-size: 0.83rem; font-weight: 500;
+        transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+        flex: 1; min-width: 110px;
+        will-change: transform;
+    }
+    .soc-btn:hover { background: rgba(212,175,55,0.08); border-color: rgba(212,175,55,0.32); color: var(--gold); transform: translateY(-2px); }
+    .soc-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; }
+    .soc-fb .soc-icon { background: #1877f2; color: #fff; }
+    .soc-ig .soc-icon { background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color: #fff; }
+    .soc-tw .soc-icon { background: #1da1f2; color: #fff; }
+    .soc-yt .soc-icon { background: #ff0000; color: #fff; }
+    .soc-tk .soc-icon { background: #111; color: #fff; }
+
+    /* ── MAP ── */
+    .map-wrapper { border-radius: 20px; overflow: hidden; border: 1px solid var(--card-border); }
+    /* CSS filter on iframe — no JS, no extra layers */
+    .map-wrapper iframe {
+        display: block; width: 100%; height: 275px; border: none;
+    }
+
+    /* ── FAQ ── */
+    .faq-section { background: linear-gradient(135deg, rgba(10,29,46,0.42) 0%, transparent 100%); }
+    .faq-item { margin-bottom: 10px; }
+
+    .faq-btn {
+        width: 100%; background: rgba(14,28,44,0.85);
+        border: 1px solid var(--card-border); border-radius: 13px;
+        padding: 16px 20px; color: rgba(255,255,255,0.82);
+        font-size: 0.88rem; font-weight: 600; text-align: left; cursor: pointer;
+        transition: background 0.25s, border-color 0.25s, color 0.25s;
+        display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .faq-btn:hover  { background: rgba(212,175,55,0.05); border-color: rgba(212,175,55,0.28); color: var(--gold); }
+    .faq-btn.open   { background: rgba(212,175,55,0.08); border-color: rgba(212,175,55,0.32); color: var(--gold); border-radius: 13px 13px 0 0; }
+
+    .faq-icon { flex-shrink: 0; color: var(--gold); transition: transform 0.28s ease; }
+    .faq-btn.open .faq-icon { transform: rotate(45deg); }
+
+    .faq-answer {
+        background: rgba(212,175,55,0.03);
+        border: 1px solid rgba(212,175,55,0.14); border-top: none;
+        border-radius: 0 0 13px 13px;
+        max-height: 0; overflow: hidden;
+        transition: max-height 0.38s ease;
+    }
+    .faq-answer.open { max-height: 220px; }
+    .faq-inner { padding: 16px 20px; color: var(--text-muted); font-size: 0.86rem; line-height: 1.8; }
+
+    /* ── REVEAL ── */
+    .reveal {
+        opacity: 0; transform: translateY(22px);
+        transition: opacity 0.55s ease, transform 0.55s ease;
+        will-change: opacity, transform;
+    }
+    .reveal.visible {
+        opacity: 1; transform: translateY(0);
+        will-change: auto;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 991px) { section { padding: 60px 0; } }
+    @media (max-width: 576px) { .info-card { flex-direction: column; gap: 10px; } }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .reveal, .eyebrow, .ct-hero h1, .ct-hero p { animation: none; transition: none; opacity: 1; transform: none; }
+    }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+    <div id="tn-navbar" data-page="contact"></div>
+
+    <!-- ═══════════ HERO ═══════════ -->
+    <section class="ct-hero">
+        <div>
+            <div class="eyebrow"><i class="fas fa-paper-plane" aria-hidden="true"></i> Get In Touch</div>
+            <h1>Let's <span class="g">Connect</span></h1>
+            <p>Have a question, partnership idea, or just want to say hello? We'd love to hear from you.</p>
+        </div>
+    </section>
+
+    <!-- ═══════════ CONTACT MAIN ═══════════ -->
+    <section>
+        <div class="container">
+            <div class="row g-4 align-items-start">
+
+                <!-- Form -->
+                <div class="col-lg-7 reveal">
+                    <div class="glass-card">
+                        <div class="form-card">
+                            <h3>Send Us a Message</h3>
+                            <p class="sub">We typically respond within 2 business hours.</p>
+
+                            <form id="contactForm" novalidate>
+                                <div class="row g-3">
+                                    <div class="col-sm-6">
+                                        <div class="fl-group" id="grp-name">
+                                            <input type="text" id="ct-name" placeholder=" " autocomplete="name">
+                                            <label for="ct-name">Full Name *</label>
+                                            <div class="fl-msg" role="alert"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="fl-group" id="grp-email">
+                                            <input type="email" id="ct-email" placeholder=" " autocomplete="email">
+                                            <label for="ct-email">Email Address *</label>
+                                            <div class="fl-msg" role="alert"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="fl-group" id="grp-phone">
+                                            <input type="tel" id="ct-phone" placeholder=" " autocomplete="tel">
+                                            <label for="ct-phone">Phone Number</label>
+                                            <div class="fl-msg" role="alert"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="fl-group has-val" id="grp-subject">
+                                            <select id="ct-subject" aria-label="Select subject">
+                                                <option value="">Select a topic</option>
+                                                <option>General Inquiry</option>
+                                                <option>Booking Support</option>
+                                                <option>Company Partnership</option>
+                                                <option>Technical Issue</option>
+                                                <option>Media &amp; Press</option>
+                                                <option>Other</option>
+                                            </select>
+                                            <label for="ct-subject">Subject *</label>
+                                            <div class="fl-msg" role="alert"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="fl-group" id="grp-message">
+                                            <textarea id="ct-message" placeholder=" "></textarea>
+                                            <label for="ct-message">Your Message *</label>
+                                            <div class="fl-msg" role="alert"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn-submit mt-3" id="submitBtn">
+                                    <i class="fas fa-paper-plane" aria-hidden="true"></i> Send Message
+                                </button>
+
+                                <div class="form-feedback success" id="formSuccess" role="status">
+                                    <i class="fas fa-check-circle" aria-hidden="true"></i>
+                                    <span><strong>Message sent!</strong> We'll get back to you within 2 hours.</span>
+                                </div>
+                                <div class="form-feedback error" id="formError" role="alert">
+                                    <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                                    <span id="errorText">Something went wrong. Please try again.</span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="col-lg-5">
+                    <div class="d-flex flex-column gap-3">
+                        <div class="glass-card reveal">
+                            <div class="info-card">
+                                <div class="info-icon"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>
+                                <div class="info-body"><h5>Location</h5><p>Tahrir Square, Downtown Cairo<br>Cairo Governorate, Egypt</p></div>
+                            </div>
+                        </div>
+                        <div class="glass-card reveal" style="transition-delay:.08s">
+                            <div class="info-card">
+                                <div class="info-icon"><i class="fas fa-phone-alt" aria-hidden="true"></i></div>
+                                <div class="info-body"><h5>Phone</h5><p><a href="tel:+201234567890">+20 127 096 9187</a><br><a href="tel:+201234567891">+20 109 282 5153</a></p></div>
+                            </div>
+                        </div>
+                        <div class="glass-card reveal" style="transition-delay:.16s">
+                            <div class="info-card">
+                                <div class="info-icon" style="background:rgba(37,211,102,0.12);border-color:rgba(37,211,102,0.25);color:#25d366"><i class="fab fa-whatsapp" aria-hidden="true"></i></div>
+                                <div class="info-body">
+                                    <h5>WhatsApp</h5>
+                                    <p>Chat with us directly on WhatsApp for fast support.</p>
+                                    <a href="https://wa.me/201092825153?text=Hello%20TravelNow%2C%20I%20need%20help%20with%20my%20trip"
+                                       target="_blank" rel="noopener noreferrer"
+                                       style="display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:#25d366;color:#fff;padding:9px 18px;border-radius:50px;font-size:0.82rem;font-weight:700;text-decoration:none;transition:all 0.25s ease"
+                                       onmouseover="this.style.background='#1fba58';this.style.transform='translateY(-2px)'"
+                                       onmouseout="this.style.background='#25d366';this.style.transform='translateY(0)'">
+                                        <i class="fab fa-whatsapp" aria-hidden="true"></i> Chat on WhatsApp
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card reveal" style="transition-delay:.24s">
+                            <div class="info-card">
+                                <div class="info-icon"><i class="fas fa-envelope" aria-hidden="true"></i></div>
+                                <div class="info-body"><h5>Email</h5><p><a href="mailto:info@travelnow.com">info@travelnow.com</a><br><a href="mailto:support@travelnow.com">support@travelnow.com</a></p></div>
+                            </div>
+                        </div>
+                        <div class="glass-card reveal" style="transition-delay:.32s">
+                            <div class="info-card">
+                                <div class="info-icon"><i class="fas fa-clock" aria-hidden="true"></i></div>
+                                <div class="info-body"><h5>Working Hours</h5><p>Sunday – Thursday: 9:00 AM – 6:00 PM<br>Friday – Saturday: Closed</p></div>
+                            </div>
+                        </div>
+                        <div class="glass-card reveal" style="transition-delay:.32s">
+                            <div style="padding:22px">
+                                <p style="color:var(--gold);font-size:0.73rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px">Follow Us</p>
+                                <div class="social-grid">
+                                    <a href="https://www.facebook.com/profile.php?id=61590899690554" target="_blank" rel="noopener noreferrer" class="soc-btn soc-fb"><div class="soc-icon"><i class="fab fa-facebook-f" aria-hidden="true"></i></div>Facebook</a>
+                                    <a href="https://www.instagram.com/travelnow.eg/"               target="_blank" rel="noopener noreferrer" class="soc-btn soc-ig"><div class="soc-icon"><i class="fab fa-instagram"  aria-hidden="true"></i></div>Instagram</a>
+                                    <a href="https://x.com/egTravelNow"                             target="_blank" rel="noopener noreferrer" class="soc-btn soc-tw"><div class="soc-icon"><i class="fab fa-twitter"    aria-hidden="true"></i></div>Twitter</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ MAP ═══════════ -->
+    <section style="padding-top:0">
+        <div class="container reveal">
+            <div class="map-wrapper">
+                <iframe
+                    src="https://maps.google.com/maps?q=30.601852,32.275054&hl=ar&z=15&output=embed"
+                    width="600"
+                    height="450"
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="TravelNow office location — Tahrir Square, Cairo">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ FAQ ═══════════ -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="text-center mb-5 reveal">
+                <div class="section-label">Quick Answers</div>
+                <h2 class="section-title">Frequently Asked <span class="g">Questions</span></h2>
+                <div class="gold-divider"></div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div id="faqList"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/navbar.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    /* ── Scroll reveal ── */
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+    /* ── FAQ ── */
+    var faqs = [
+        { q: 'How do I book a trip on TravelNow?',
+          a: 'Browse attractions or company offers, select your preferred package, and complete the booking through our secure checkout. You\'ll receive a confirmation email instantly.' },
+        { q: 'Are the tourism companies on the platform verified?',
+          a: 'Yes — every company undergoes a rigorous verification process including licence checks, document review, and quality assessments before being listed on TravelNow.' },
+        { q: 'Can I cancel or modify a booking?',
+          a: 'Cancellation and modification policies vary by company. You can manage your bookings from your dashboard, and our support team is always available to help.' },
+        { q: 'Is my payment information secure?',
+          a: 'Absolutely. We use Stripe for payment processing — a PCI-DSS Level 1 certified provider. We never store your full card details on our servers.' },
+        { q: 'How does Yala Plan work?',
+          a: 'Yala Plan takes your destinations, budget, travel style, and duration and generates a personalised day-by-day itinerary with accommodation and attraction recommendations for each location.' },
+        { q: 'How can I list my tourism company on TravelNow?',
+          a: 'Click "Register as Company" from the main menu, complete the registration form, and our team will review your application within 3–5 business days.' },
+    ];
+
+    var list = document.getElementById('faqList');
+    faqs.forEach(function (faq, i) {
+        var item = document.createElement('div');
+        item.className = 'faq-item reveal';
+        item.style.transitionDelay = (i * 0.06) + 's';
+        var btnId = 'faq-ans-' + i;
+        item.innerHTML =
+            '<button class="faq-btn" aria-expanded="false" aria-controls="' + btnId + '">' +
+                '<span>' + faq.q + '</span>' +
+                '<i class="fas fa-plus faq-icon" aria-hidden="true"></i>' +
+            '</button>' +
+            '<div class="faq-answer" id="' + btnId + '" role="region">' +
+                '<div class="faq-inner">' + faq.a + '</div>' +
+            '</div>';
+        list.appendChild(item);
+        io.observe(item);
+    });
+
+    list.addEventListener('click', function (e) {
+        var btn = e.target.closest('.faq-btn');
+        if (!btn) return;
+        var answer = btn.nextElementSibling;
+        var isOpen = btn.classList.contains('open');
+        // close all
+        list.querySelectorAll('.faq-btn.open').forEach(function (b) {
+            b.classList.remove('open');
+            b.nextElementSibling.classList.remove('open');
+            b.setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+            btn.classList.add('open');
+            answer.classList.add('open');
+            btn.setAttribute('aria-expanded', 'true');
+        }
+    });
+
+    /* ── Form validation ── */
+    var rules = {
+        'ct-name':    { grp: 'grp-name',    fn: function(v){ return v.trim().length >= 2 ? '' : 'Please enter your full name.'; } },
+        'ct-email':   { grp: 'grp-email',   fn: function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'Please enter a valid email address.'; } },
+        'ct-subject': { grp: 'grp-subject', fn: function(v){ return v ? '' : 'Please select a subject.'; } },
+        'ct-message': { grp: 'grp-message', fn: function(v){ return v.trim().length >= 10 ? '' : 'Message must be at least 10 characters.'; } },
+    };
+
+    function validateField(id) {
+        var rule = rules[id];
+        var val  = document.getElementById(id).value;
+        var msg  = rule.fn(val);
+        var grp  = document.getElementById(rule.grp);
+        grp.classList.toggle('is-valid',   !msg);
+        grp.classList.toggle('is-invalid', !!msg);
+        grp.querySelector('.fl-msg').textContent = msg || '✓ Looks good';
+        return !msg;
+    }
+
+    Object.keys(rules).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('blur', function () { validateField(id); });
+    });
+
+    /* Ripple on submit button */
+    var submitBtn = document.getElementById('submitBtn');
+    submitBtn.addEventListener('click', function (e) {
+        var r    = document.createElement('span');
+        r.className = 'ripple';
+        var rect = this.getBoundingClientRect();
+        var size = Math.max(rect.width, rect.height);
+        r.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + (e.clientX - rect.left - size / 2) + 'px;top:' + (e.clientY - rect.top - size / 2) + 'px';
+        this.appendChild(r);
+        // Remove after animation ends
+        r.addEventListener('animationend', function () { r.remove(); });
+    });
+
+    /* Form submit */
+    document.getElementById('contactForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var valid = Object.keys(rules).map(validateField).every(Boolean);
+        if (!valid) return;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Sending…';
+
+        // Simulate API — replace with real fetch
+        setTimeout(function () {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane" aria-hidden="true"></i> Send Message';
+
+            var success = document.getElementById('formSuccess');
+            var error   = document.getElementById('formError');
+            success.classList.add('show');
+            error.classList.remove('show');
+
+            document.getElementById('contactForm').reset();
+            Object.keys(rules).forEach(function (id) {
+                var g = document.getElementById(rules[id].grp);
+                g.classList.remove('is-valid', 'is-invalid');
+                g.querySelector('.fl-msg').textContent = '';
+            });
+
+            setTimeout(function () { success.classList.remove('show'); }, 6000);
+        }, 1300);
+    });
+
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - TravelNow</title>
+    <!-- Preconnect for faster font load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Only 2 weights per family instead of 5 -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+    /* ── Reset only what's needed ── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+        --gold: #d4af37;
+        --card-border: rgba(212,175,55,0.18);
+        --text-muted: rgba(255,255,255,0.55);
+        --page-bg: #060f18;
+    }
+
+    body {
+        background: var(--page-bg);
+        color: #e8edf2;
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+        /* Smooth scroll without JS overhead */
+        scroll-behavior: smooth;
+    }
+
+    /* ── Static background — NO animation, NO fixed, NO blur ── */
+    /* Simple CSS gradient on body — zero GPU cost */
+    body::before {
+        content: '';
+        position: fixed; inset: 0; z-index: 0; pointer-events: none;
+        background:
+            radial-gradient(ellipse 70% 50% at 15% 5%,  rgba(212,175,55,0.06) 0%, transparent 55%),
+            radial-gradient(ellipse 55% 45% at 85% 90%, rgba(15,41,66,0.50)   0%, transparent 60%);
+        /* will-change: nothing — it's static */
+    }
+
+    .page-wrap { position: relative; z-index: 1; }
+
+    /* ── HERO ── */
+    .about-hero {
+        min-height: 88vh;
+        display: flex; align-items: center; justify-content: center;
+        padding: 120px 24px 80px;
+        text-align: center;
+        position: relative;
+    }
+    .about-hero::before {
+        content: '';
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse 80% 65% at 50% 40%, rgba(212,175,55,0.07) 0%, transparent 60%);
+    }
+
+    .hero-eyebrow {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25);
+        border-radius: 50px; padding: 6px 18px; font-size: 0.78rem;
+        font-weight: 600; letter-spacing: 2px; color: var(--gold);
+        text-transform: uppercase; margin-bottom: 28px;
+        animation: fade-up 0.55s ease both;
+    }
+
+    .hero-headline {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(2.8rem, 7vw, 6rem);
+        font-weight: 800; line-height: 1.08;
+        margin-bottom: 24px;
+        animation: fade-up 0.65s 0.08s ease both;
+    }
+
+    /* ── SAFE gradient text — includes unprefixed standard property ── */
+    .gold-text,
+    .section-title .g,
+    .stat-number,
+    .ct-hero h1 .g {
+        background: linear-gradient(135deg, #d4af37 0%, #f4e090 50%, #d4af37 100%);
+        -webkit-background-clip: text;
+                background-clip: text;          /* standard — fixes Safari warning */
+        -webkit-text-fill-color: transparent;
+        color: #d4af37;                         /* fallback for old BROWSErs */
+    }
+
+    .hero-sub {
+        font-size: clamp(1rem, 2.2vw, 1.15rem);
+        color: var(--text-muted);
+        max-width: 620px; margin: 0 auto 40px; line-height: 1.8;
+        animation: fade-up 0.65s 0.16s ease both;
+    }
+
+    .hero-cta-row {
+        display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+        animation: fade-up 0.65s 0.24s ease both;
+    }
+
+    .btn-primary-gold {
+        background: linear-gradient(135deg, #d4af37, #c9a227);
+        color: #0a1d2e; font-weight: 700; padding: 13px 32px;
+        border-radius: 50px; border: none; font-size: 0.9rem;
+        letter-spacing: 0.5px; cursor: pointer;
+        /* Only transition compositable properties */
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+        will-change: transform;
+    }
+    .btn-primary-gold:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(212,175,55,0.3); color: #0a1d2e; }
+
+    .btn-ghost-gold {
+        background: transparent; color: var(--gold);
+        border: 1px solid rgba(212,175,55,0.4); padding: 13px 32px;
+        border-radius: 50px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+        transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+        text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+        will-change: transform;
+    }
+    .btn-ghost-gold:hover { background: rgba(212,175,55,0.1); border-color: var(--gold); color: var(--gold); transform: translateY(-3px); }
+
+    /* Scroll hint — lightweight, only opacity + scaleY */
+    .scroll-hint {
+        position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+        display: flex; flex-direction: column; align-items: center; gap: 6px;
+        color: var(--text-muted); font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase;
+        animation: fade-up 0.8s 0.5s ease both;
+    }
+    .scroll-hint .line {
+        width: 1px; height: 36px;
+        background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+        animation: scroll-line 2.2s ease-in-out infinite;
+        will-change: opacity, transform;
+    }
+    @keyframes scroll-line { 0%,100%{opacity:0.25;transform:scaleY(0.5)} 50%{opacity:1;transform:scaleY(1)} }
+
+    /* Floating badges — NO backdrop-filter, lighter shadow */
+    .hero-badge {
+        position: absolute; display: flex; align-items: center; gap: 10px;
+        background: rgba(10,29,46,0.88);
+        border: 1px solid var(--card-border); border-radius: 50px;
+        padding: 10px 18px; font-size: 0.8rem; font-weight: 600; color: #fff;
+        animation: badge-float 6s ease-in-out infinite;
+        will-change: transform;
+    }
+    .hero-badge .dot {
+        width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+        /* Use box-shadow pulse instead of scale animation — cheaper */
+        animation: pulse-dot 2.4s ease infinite;
+    }
+    .hero-badge-1 { top: 22%; left: 8%; animation-delay: 0s; }
+    .hero-badge-2 { top: 30%; right: 8%; animation-delay: -2.5s; }
+    .hero-badge-3 { bottom: 22%; left: 12%; animation-delay: -1.2s; }
+    @keyframes badge-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.5)} 50%{box-shadow:0 0 0 4px rgba(34,197,94,0)} }
+    @media (max-width: 768px) { .hero-badge { display: none; } }
+
+    /* ── SECTIONS ── */
+    section { padding: 90px 0; }
+
+    .section-label {
+        display: inline-flex; align-items: center; gap: 8px;
+        color: var(--gold); font-size: 0.74rem; font-weight: 700;
+        letter-spacing: 3px; text-transform: uppercase; margin-bottom: 14px;
+    }
+    .section-label::before, .section-label::after {
+        content: ''; display: block; width: 28px; height: 1px; background: var(--gold);
+    }
+
+    .section-title {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        font-weight: 700; color: #fff; margin-bottom: 14px; line-height: 1.2;
+    }
+
+    .section-desc { color: var(--text-muted); font-size: 1rem; line-height: 1.8; max-width: 540px; }
+    .gold-divider { width: 52px; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 18px auto; }
+    .mb-60 { margin-bottom: 60px; }
+
+    /* ── GLASS CARD — NO backdrop-filter ── */
+    /* backdrop-filter creates a new composite layer per element = O(n) GPU layers
+       Replaced with opaque-enough solid background that looks identical */
+    .glass-card {
+        background: rgba(14, 28, 44, 0.85);
+        border: 1px solid var(--card-border);
+        border-radius: 22px;
+        /* Only transition compositable props — NO 'all' */
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        will-change: transform;
+    }
+    .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 48px rgba(0,0,0,0.45);
+        border-color: rgba(212,175,55,0.32);
+    }
+
+    /* ── STATS ── */
+    .stats-section {
+        background: linear-gradient(135deg, rgba(10,29,46,0.7) 0%, rgba(6,15,24,0.85) 100%);
+    }
+    .stat-item { text-align: center; padding: 38px 16px; }
+    .stat-number {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(2.4rem, 5vw, 3.8rem);
+        font-weight: 800; display: block; line-height: 1;
+    }
+    .stat-suffix { font-size: 0.6em; }
+    .stat-label { color: var(--text-muted); font-size: 0.86rem; font-weight: 500; letter-spacing: 0.3px; margin-top: 8px; }
+    .stat-divider { width: 1px; background: rgba(212,175,55,0.15); align-self: stretch; margin: 16px 0; }
+
+    /* ── MISSION / VISION ── */
+    .mv-card { padding: 36px; }
+    .mv-icon-wrap {
+        width: 60px; height: 60px; border-radius: 16px;
+        background: rgba(212,175,55,0.1);
+        border: 1px solid rgba(212,175,55,0.2);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem; color: var(--gold); margin-bottom: 22px;
+        transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .glass-card:hover .mv-icon-wrap { background: rgba(212,175,55,0.18); transform: scale(1.08) rotate(-4deg); }
+    .mv-card h3 { font-family: 'Cinzel', serif; font-size: 1.25rem; color: #fff; margin-bottom: 12px; }
+    .mv-card p { color: var(--text-muted); line-height: 1.8; font-size: 0.93rem; }
+
+    /* ── VALUES ── */
+    .value-card { padding: 30px; }
+    .value-num { font-family: 'Cinzel', serif; font-size: 2.6rem; font-weight: 800; color: rgba(212,175,55,0.1); line-height: 1; margin-bottom: 8px; }
+    .value-card h4 { color: var(--gold); font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .value-card p { color: var(--text-muted); font-size: 0.86rem; line-height: 1.7; }
+
+    /* ── TIMELINE ── */
+    .timeline { position: relative; padding: 10px 0; }
+    .timeline::before {
+        content: ''; position: absolute; left: 50%; top: 0; bottom: 0;
+        width: 1px; background: linear-gradient(to bottom, transparent, rgba(212,175,55,0.35), transparent);
+        transform: translateX(-50%);
+    }
+    .tl-item { display: flex; gap: 36px; margin-bottom: 52px; align-items: flex-start; }
+    .tl-item:nth-child(even) { flex-direction: row-reverse; }
+    .tl-content { flex: 1; }
+    .tl-item:nth-child(odd)  .tl-content { text-align: right; }
+    .tl-item:nth-child(even) .tl-content { text-align: left; }
+    .tl-dot-wrap { flex: 0 0 auto; z-index: 1; }
+    .tl-dot {
+        width: 46px; height: 46px; border-radius: 50%;
+        background: linear-gradient(135deg, #d4af37, #c9a227);
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Cinzel', serif; font-size: 0.72rem; font-weight: 700; color: #0a1d2e;
+        box-shadow: 0 0 0 5px rgba(212,175,55,0.1), 0 6px 18px rgba(0,0,0,0.3);
+    }
+    .tl-card { padding: 22px 26px; }
+    .tl-year { color: var(--gold); font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+    .tl-card h4 { color: #fff; font-family: 'Cinzel', serif; font-size: 1rem; margin-bottom: 8px; }
+    .tl-card p { color: var(--text-muted); font-size: 0.86rem; line-height: 1.7; margin: 0; }
+
+    @media (max-width: 768px) {
+        .timeline::before { left: 23px; }
+        .tl-item, .tl-item:nth-child(even) { flex-direction: row; gap: 16px; }
+        .tl-item:nth-child(odd) .tl-content,
+        .tl-item:nth-child(even) .tl-content { text-align: left; }
+    }
+
+    /* ── FEATURES ── */
+    .feature-card { padding: 32px 26px; position: relative; overflow: hidden; }
+    .feature-card::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        transform: scaleX(0);
+        transition: transform 0.35s ease;
+    }
+    .glass-card:hover .feature-card::before { transform: scaleX(1); }
+    .feature-icon {
+        width: 52px; height: 52px; border-radius: 14px;
+        background: rgba(212,175,55,0.1);
+        border: 1px solid rgba(212,175,55,0.18);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem; color: var(--gold); margin-bottom: 18px;
+    }
+    .feature-card h4 { color: #fff; font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.7; margin: 0; }
+
+    /* ── TEAM ── */
+    .team-card { padding: 32px 22px; text-align: center; }
+    .team-avatar {
+        width: 88px; height: 88px; border-radius: 50%; margin: 0 auto 18px;
+        background: linear-gradient(135deg, #d4af37, #c9a227);
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Cinzel', serif; font-size: 1.35rem; font-weight: 800; color: #0a1d2e;
+        box-shadow: 0 0 0 4px rgba(212,175,55,0.1), 0 10px 28px rgba(0,0,0,0.35);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover .team-avatar { transform: scale(1.07); box-shadow: 0 0 0 5px rgba(212,175,55,0.18), 0 14px 36px rgba(0,0,0,0.45); }
+    .team-card h5 { color: #fff; font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .team-role { color: var(--gold); font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+    .team-desc { color: var(--text-muted); font-size: 0.82rem; line-height: 1.6; margin-bottom: 14px; }
+    .team-socials { display: flex; gap: 8px; justify-content: center; }
+    .team-socials a {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: rgba(212,175,55,0.07); border: 1px solid rgba(212,175,55,0.18);
+        display: flex; align-items: center; justify-content: center;
+        color: var(--gold); font-size: 0.78rem; text-decoration: none;
+        transition: background 0.25s ease, transform 0.25s ease;
+    }
+    .team-socials a:hover { background: var(--gold); color: #0a1d2e; transform: translateY(-2px); }
+
+    /* ── PARTNERS ── */
+    .partner-card { padding: 28px 18px; text-align: center; }
+    .partner-icon { font-size: 2rem; color: var(--gold); margin-bottom: 10px; opacity: 0.75; transition: opacity 0.25s; }
+    .glass-card:hover .partner-icon { opacity: 1; }
+    .partner-card p { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; margin: 0; }
+
+    /* ── CTA ── */
+    .cta-section {
+        text-align: center; padding: 90px 24px;
+        background: linear-gradient(135deg, rgba(10,29,46,0.92) 0%, rgba(6,15,24,0.96) 100%);
+        position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+        content: ''; position: absolute;
+        top: -40%; left: 50%; transform: translateX(-50%);
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 65%);
+        pointer-events: none;
+    }
+    .cta-section h2 { font-family: 'Cinzel', serif; font-size: clamp(1.7rem, 3.8vw, 2.8rem); color: #fff; margin-bottom: 14px; }
+    .cta-section p { color: var(--text-muted); font-size: 1rem; max-width: 480px; margin: 0 auto 32px; line-height: 1.8; }
+
+    /* ── REVEAL — use opacity + transform only (GPU compositable) ── */
+    .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+        will-change: opacity, transform;
+    }
+    .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+        will-change: auto; /* release after animation */
+    }
+
+    @keyframes fade-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 991px) { section { padding: 65px 0; } }
+    @media (max-width: 576px) {
+        section { padding: 50px 0; }
+        .mv-card, .tl-card, .feature-card, .team-card, .partner-card, .value-card { padding: 20px 16px; }
+    }
+    /* Reduce motion for users who prefer it */
+    @media (prefers-reduced-motion: reduce) {
+        .reveal, .hero-eyebrow, .hero-headline, .hero-sub, .hero-cta-row,
+        .scroll-hint, .hero-badge, .scroll-hint .line { animation: none; transition: none; opacity: 1; transform: none; }
+    }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+    <div id="tn-navbar" data-page="about"></div>
+
+    <!-- ═══════════ HERO ═══════════ -->
+    <section class="about-hero">
+        <div class="hero-badge hero-badge-1" aria-hidden="true"><div class="dot"></div> Est. 2024 · Cairo, Egypt</div>
+        <div class="hero-badge hero-badge-2" aria-hidden="true"><i class="fas fa-shield-alt" style="color:#d4af37"></i> Verified Platform</div>
+        <div class="hero-badge hero-badge-3" aria-hidden="true"><i class="fas fa-star" style="color:#d4af37"></i> 4.9 / 5 Rating</div>
+
+        <div>
+            <div class="hero-eyebrow"><i class="fas fa-pyramid" aria-hidden="true"></i> Smart Tourism System · Team 305-201</div>
+            <h1 class="hero-headline">We Are<br><span class="gold-text">TravelNow</span></h1>
+            <p class="hero-sub">A capstone project by Grade 2 students at We Applied Technology School — building Egypt's most trusted digital tourism platform to connect travelers with verified local agencies.</p>
+            <div class="hero-cta-row">
+                <a href="attractions.html" class="btn-primary-gold"><i class="fas fa-compass" aria-hidden="true"></i> Explore Egypt</a>
+                <a href="contact.html"     class="btn-ghost-gold"><i class="fas fa-envelope" aria-hidden="true"></i> Get in Touch</a>
+            </div>
+        </div>
+
+        <div class="scroll-hint" aria-hidden="true"><div class="line"></div>Scroll</div>
+    </section>
+
+    <!-- ═══════════ STATS ═══════════ -->
+    <section class="stats-section" aria-label="Platform statistics">
+        <div class="container">
+            <div class="row g-0 justify-content-center align-items-center">
+                <div class="col-6 col-md-3 reveal">
+                    <div class="stat-item">
+                        <span class="stat-number"><span class="count" data-target="50">0</span><span class="stat-suffix">K+</span></span>
+                        <div class="stat-label">Happy Travelers</div>
+                    </div>
+                </div>
+                <div class="d-none d-md-flex col-md-auto align-self-stretch"><div class="stat-divider"></div></div>
+                <div class="col-6 col-md-3 reveal" style="transition-delay:.1s">
+                    <div class="stat-item">
+                        <span class="stat-number"><span class="count" data-target="120">0</span><span class="stat-suffix">+</span></span>
+                        <div class="stat-label">Partner Companies</div>
+                    </div>
+                </div>
+                <div class="d-none d-md-flex col-md-auto align-self-stretch"><div class="stat-divider"></div></div>
+                <div class="col-6 col-md-3 reveal" style="transition-delay:.2s">
+                    <div class="stat-item">
+                        <span class="stat-number"><span class="count" data-target="300">0</span><span class="stat-suffix">+</span></span>
+                        <div class="stat-label">Attractions Listed</div>
+                    </div>
+                </div>
+                <div class="d-none d-md-flex col-md-auto align-self-stretch"><div class="stat-divider"></div></div>
+                <div class="col-6 col-md-3 reveal" style="transition-delay:.3s">
+                    <div class="stat-item">
+                        <span class="stat-number"><span class="count" data-target="27">0</span></span>
+                        <div class="stat-label">Governorates Covered</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ MISSION / VISION / PROMISE ═══════════ -->
+    <section aria-label="Mission and Vision">
+        <div class="container">
+            <div class="text-center mb-60 reveal">
+                <div class="section-label">Who We Are</div>
+                <h2 class="section-title">Driven by <span class="g">Purpose</span></h2>
+                <div class="gold-divider"></div>
+            </div>
+            <div class="row g-4 mt-2">
+                <div class="col-md-4 reveal">
+                    <div class="glass-card h-100"><div class="mv-card">
+                        <div class="mv-icon-wrap"><i class="fas fa-bullseye" aria-hidden="true"></i></div>
+                        <h3>The Problem</h3>
+                        <p>Travelers visiting Egypt face last-minute cancellations, hidden fees, poor communication with operators, weak complaint handling, and a lack of an organized, reliable platform to find accurate information and trusted services.</p>
+                    </div></div>
+                </div>
+                <div class="col-md-4 reveal" style="transition-delay:.1s">
+                    <div class="glass-card h-100"><div class="mv-card">
+                        <div class="mv-icon-wrap"><i class="fas fa-lightbulb" aria-hidden="true"></i></div>
+                        <h3>Our Solution</h3>
+                        <p>A seamless, all-in-one web platform connecting tourists with local Egyptian agencies — featuring an interactive map, searchable historical guide, verified company listings, and <strong>Yala Plan</strong> smart trip planner. No more text-heavy lists.</p>
+                    </div></div>
+                </div>
+                <div class="col-md-4 reveal" style="transition-delay:.2s">
+                    <div class="glass-card h-100"><div class="mv-card">
+                        <div class="mv-icon-wrap"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
+                        <h3>Our Impact</h3>
+                        <p>For users: saves time and ensures confident trip planning. For businesses: direct promotion boosts local tour company sales. For the economy: drives overall tourism growth and job creation across Egypt.</p>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ CHALLENGES & SDGs ═══════════ -->
+    <section style="background:linear-gradient(135deg,rgba(10,29,46,0.45) 0%,transparent 100%)" aria-label="Challenges and SDGs">
+        <div class="container">
+            <div class="row g-5 align-items-start">
+                <div class="col-lg-6 reveal">
+                    <div class="section-label">What We Solve</div>
+                    <h2 class="section-title" style="text-align:left">Project <span class="g">Challenges</span></h2>
+                    <div class="gold-divider" style="margin:16px 0"></div>
+                    <div class="d-flex flex-column gap-3 mt-4">
+                        <div class="glass-card" style="padding:18px 22px;display:flex;gap:14px;align-items:flex-start">
+                            <i class="fas fa-times-circle" style="color:#ef4444;margin-top:3px;flex-shrink:0" aria-hidden="true"></i>
+                            <span style="color:rgba(255,255,255,0.78);font-size:0.9rem">Last-minute trip cancellations causing major inconvenience for travelers.</span>
+                        </div>
+                        <div class="glass-card" style="padding:18px 22px;display:flex;gap:14px;align-items:flex-start">
+                            <i class="fas fa-times-circle" style="color:#ef4444;margin-top:3px;flex-shrink:0" aria-hidden="true"></i>
+                            <span style="color:rgba(255,255,255,0.78);font-size:0.9rem">Unclear pricing and hidden extra fees charged by operators.</span>
+                        </div>
+                        <div class="glass-card" style="padding:18px 22px;display:flex;gap:14px;align-items:flex-start">
+                            <i class="fas fa-times-circle" style="color:#ef4444;margin-top:3px;flex-shrink:0" aria-hidden="true"></i>
+                            <span style="color:rgba(255,255,255,0.78);font-size:0.9rem">Poor communication with tour operators, delaying booking confirmations.</span>
+                        </div>
+                        <div class="glass-card" style="padding:18px 22px;display:flex;gap:14px;align-items:flex-start">
+                            <i class="fas fa-times-circle" style="color:#ef4444;margin-top:3px;flex-shrink:0" aria-hidden="true"></i>
+                            <span style="color:rgba(255,255,255,0.78);font-size:0.9rem">Technical issues with online booking and identity/payment verification.</span>
+                        </div>
+                        <div class="glass-card" style="padding:18px 22px;display:flex;gap:14px;align-items:flex-start">
+                            <i class="fas fa-times-circle" style="color:#ef4444;margin-top:3px;flex-shrink:0" aria-hidden="true"></i>
+                            <span style="color:rgba(255,255,255,0.78);font-size:0.9rem">Weak complaint-handling during the trip and lack of transparency in official channels.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 reveal" style="transition-delay:.15s">
+                    <div class="section-label">Global Goals</div>
+                    <h2 class="section-title" style="text-align:left">Aligned <span class="g">SDGs</span></h2>
+                    <div class="gold-divider" style="margin:16px 0"></div>
+                    <div class="d-flex flex-column gap-3 mt-4">
+                        <div class="glass-card" style="padding:22px 24px">
+                            <div style="display:flex;gap:16px;align-items:center">
+                                <div style="width:52px;height:52px;border-radius:12px;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.22);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:800;color:var(--gold);font-size:1.1rem;flex-shrink:0">8</div>
+                                <div>
+                                    <div style="color:var(--gold);font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">SDG 8</div>
+                                    <div style="color:#fff;font-weight:700;font-size:0.9rem">Decent Work &amp; Economic Growth</div>
+                                    <div style="color:var(--text-muted);font-size:0.82rem;margin-top:4px">Boosting local tourism businesses and creating sustainable employment across Egypt.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card" style="padding:22px 24px">
+                            <div style="display:flex;gap:16px;align-items:center">
+                                <div style="width:52px;height:52px;border-radius:12px;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.22);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:800;color:var(--gold);font-size:1.1rem;flex-shrink:0">9</div>
+                                <div>
+                                    <div style="color:var(--gold);font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">SDG 9</div>
+                                    <div style="color:#fff;font-weight:700;font-size:0.9rem">Industry, Innovation &amp; Infrastructure</div>
+                                    <div style="color:var(--text-muted);font-size:0.82rem;margin-top:4px">Building a modern digital infrastructure for Egypt's tourism industry through tech innovation.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card" style="padding:22px 24px">
+                            <div style="display:flex;gap:16px;align-items:center">
+                                <div style="width:52px;height:52px;border-radius:12px;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.22);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:800;color:var(--gold);font-size:1.1rem;flex-shrink:0">10</div>
+                                <div>
+                                    <div style="color:var(--gold);font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">SDG 10</div>
+                                    <div style="color:#fff;font-weight:700;font-size:0.9rem">Reduced Inequalities</div>
+                                    <div style="color:var(--text-muted);font-size:0.82rem;margin-top:4px">Giving smaller tourism companies equal digital visibility alongside larger operators.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ VALUES ═══════════ -->
+    <section style="background:linear-gradient(135deg,rgba(10,29,46,0.4) 0%,transparent 100%)" aria-label="Core values">
+        <div class="container">
+            <div class="text-center mb-5 reveal">
+                <div class="section-label">What Drives Us</div>
+                <h2 class="section-title">Our Core <span class="g">Values</span></h2>
+                <div class="gold-divider"></div>
+            </div>
+            <div class="row g-4">
+                <div class="col-sm-6 col-lg-3 reveal"><div class="glass-card"><div class="value-card"><div class="value-num">01</div><h4>Authenticity</h4><p>Real experiences, real reviews, real Egypt — we never compromise on truth or transparency.</p></div></div></div>
+                <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.1s"><div class="glass-card"><div class="value-card"><div class="value-num">02</div><h4>Innovation</h4><p>Leveraging cutting-edge technology to make discovery, planning and booking seamless.</p></div></div></div>
+                <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.2s"><div class="glass-card"><div class="value-card"><div class="value-num">03</div><h4>Sustainability</h4><p>Committed to eco-conscious tourism that protects Egypt's natural and cultural heritage.</p></div></div></div>
+                <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.3s"><div class="glass-card"><div class="value-card"><div class="value-num">04</div><h4>Community</h4><p>Empowering local tourism businesses to grow and thrive on a global stage.</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ TIMELINE ═══════════ -->
+    <section aria-label="Company timeline">
+        <div class="container">
+            <div class="text-center mb-5 reveal">
+                <div class="section-label">Our Journey</div>
+                <h2 class="section-title">How We <span class="g">Got Here</span></h2>
+                <div class="gold-divider"></div>
+            </div>
+            <div class="timeline mt-5">
+                <div class="tl-item reveal">
+                    <div class="tl-content"><div class="glass-card"><div class="tl-card"><div class="tl-year">2023</div><h4>The Idea Sparks</h4><p>A group of passionate Egyptians saw a gap — world-class destinations, but no unified digital platform. TravelNow was born in a Cairo café.</p></div></div></div>
+                    <div class="tl-dot-wrap"><div class="tl-dot" aria-label="2023">23</div></div>
+                    <div class="tl-content"></div>
+                </div>
+                <div class="tl-item reveal">
+                    <div class="tl-content"></div>
+                    <div class="tl-dot-wrap"><div class="tl-dot" aria-label="2024">24</div></div>
+                    <div class="tl-content"><div class="glass-card"><div class="tl-card"><div class="tl-year">2024</div><h4>Platform Launch</h4><p>Beta launch with 50+ attractions and 20 verified partners. First 1,000 users onboarded in the first month of operation.</p></div></div></div>
+                </div>
+                <div class="tl-item reveal">
+                    <div class="tl-content"><div class="glass-card"><div class="tl-card"><div class="tl-year">2025</div><h4>Rapid Growth</h4><p>Expanded to 300+ attractions, integrated Yala Plan smart trip planner, partnered with the Ministry of Tourism. Reached 50,000 registered users.</p></div></div></div>
+                    <div class="tl-dot-wrap"><div class="tl-dot" aria-label="2025">25</div></div>
+                    <div class="tl-content"></div>
+                </div>
+                <div class="tl-item reveal">
+                    <div class="tl-content"></div>
+                    <div class="tl-dot-wrap"><div class="tl-dot" aria-label="2026">26</div></div>
+                    <div class="tl-content"><div class="glass-card"><div class="tl-card"><div class="tl-year">2026</div><h4>The Future</h4><p>Launching mobile apps, VR attraction previews, and an expanded AI personalisation engine. Egypt's digital tourism era begins now.</p></div></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ FEATURES ═══════════ -->
+    <section style="background:linear-gradient(135deg,rgba(10,29,46,0.5) 0%,transparent 100%)" aria-label="Platform features">
+        <div class="container">
+            <div class="text-center mb-5 reveal">
+                <div class="section-label">What We Offer</div>
+                <h2 class="section-title">Platform <span class="g">Highlights</span></h2>
+                <div class="gold-divider"></div>
+            </div>
+            <div class="row g-4">
+                <div class="col-sm-6 col-lg-4 reveal"><div class="glass-card h-100"><div class="feature-card"><div class="feature-icon">🗺️</div><h4>Yala Plan</h4><p>Builds personalised multi-destination itineraries based on your budget, interests, and travel style.</p></div></div></div>
+                <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.1s"><div class="glass-card h-100"><div class="feature-card"><div class="feature-icon"><i class="fas fa-map-marked-alt" aria-hidden="true"></i></div><h4>Interactive Map</h4><p>Explore attractions on a dark-mode map with live filtering by category and governorate.</p></div></div></div>
+                <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.2s"><div class="glass-card h-100"><div class="feature-card"><div class="feature-icon"><i class="fas fa-shield-alt" aria-hidden="true"></i></div><h4>Verified Companies</h4><p>Every tourism company passes a rigorous verification process. Book with total confidence.</p></div></div></div>
+                <div class="col-sm-6 col-lg-4 reveal"><div class="glass-card h-100"><div class="feature-card"><div class="feature-icon"><i class="fas fa-credit-card" aria-hidden="true"></i></div><h4>Secure Payments</h4><p>PCI-DSS compliant flow powered by Stripe. Your card data never touches our servers.</p></div></div></div>
+                <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.1s"><div class="glass-card h-100"><div class="feature-card"><div class="feature-icon"><i class="fas fa-star" aria-hidden="true"></i></div><h4>Real Reviews</h4><p>Genuine reviews from verified travelers. No fake ratings, no paid promotions.</p></div></div></div>
+                <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.2s"><div class="glass-card h-100"><div class="feature-card"><div class="feature-icon"><i class="fas fa-headset" aria-hidden="true"></i></div><h4>24/7 Support</h4><p>Our dedicated team is available around the clock for bookings, questions, and more.</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ TEAM ═══════════ -->
+    <section aria-label="Team members">
+        <div class="container">
+            <div class="text-center mb-5 reveal">
+                <div class="section-label">The People</div>
+                <h2 class="section-title">Meet the <span class="g">Team</span></h2>
+                <p class="section-desc mx-auto text-center">Grade 2 · We Applied Technology School · Team 305-201</p>
+                <div class="gold-divider"></div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-sm-6 col-lg-4 reveal"><div class="glass-card"><div class="team-card"><div class="team-avatar" aria-hidden="true">KA</div><h5>Kareem Ahmed</h5><div class="team-role">Developer</div><p class="team-desc">Implements the project — coding and building the platform to make sure everything functions properly.</p><div class="team-socials"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a></div></div></div></div>
+                <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.1s"><div class="glass-card"><div class="team-card"><div class="team-avatar" aria-hidden="true">AM</div><h5>Alaa Mamdouh</h5><div class="team-role">Researcher</div><p class="team-desc">Collects and analyzes information and data, providing clear summaries to guide the team's decisions.</p><div class="team-socials"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a></div></div></div></div>
+                <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.2s"><div class="glass-card"><div class="team-card"><div class="team-avatar" aria-hidden="true">NH</div><h5>Noureen Hazem</h5><div class="team-role">Designer</div><p class="team-desc">Creates the project's visual UI/UX, choosing colors, styles, and structure for a premium experience.</p><div class="team-socials"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a></div></div></div></div>
+                <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.1s"><div class="glass-card"><div class="team-card"><div class="team-avatar" aria-hidden="true">AY</div><h5>Ali Youssef</h5><div class="team-role">Tester</div><p class="team-desc">Tests the project at every stage, finds errors, suggests improvements, and ensures a problem-free final version.</p><div class="team-socials"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a></div></div></div></div>
+                <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.2s"><div class="glass-card"><div class="team-card"><div class="team-avatar" aria-hidden="true">AA</div><h5>Ammar Abdelsalam</h5><div class="team-role">Content Creator</div><p class="team-desc">Writes project content, creates user scenarios, and keeps all information clear and well-structured.</p><div class="team-socials"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a></div></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ PARTNERS ═══════════ -->
+    <section style="background:linear-gradient(135deg,rgba(10,29,46,0.5) 0%,transparent 100%)" aria-label="Trusted partners">
+        <div class="container">
+            <div class="text-center mb-5 reveal">
+                <div class="section-label">Trusted By</div>
+                <h2 class="section-title">Our <span class="g">Partners</span></h2>
+                <div class="gold-divider"></div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-6 col-md-4 col-lg-2 reveal"><div class="glass-card"><div class="partner-card"><div class="partner-icon"><i class="fas fa-building" aria-hidden="true"></i></div><p>Ministry of Tourism</p></div></div></div>
+                <div class="col-6 col-md-4 col-lg-2 reveal" style="transition-delay:.07s"><div class="glass-card"><div class="partner-card"><div class="partner-icon"><i class="fas fa-plane" aria-hidden="true"></i></div><p>IATA</p></div></div></div>
+                <div class="col-6 col-md-4 col-lg-2 reveal" style="transition-delay:.14s"><div class="glass-card"><div class="partner-card"><div class="partner-icon"><i class="fas fa-university" aria-hidden="true"></i></div><p>Egyptian Museum</p></div></div></div>
+                <div class="col-6 col-md-4 col-lg-2 reveal" style="transition-delay:.21s"><div class="glass-card"><div class="partner-card"><div class="partner-icon"><i class="fas fa-landmark" aria-hidden="true"></i></div><p>Council of Antiquities</p></div></div></div>
+                <div class="col-6 col-md-4 col-lg-2 reveal" style="transition-delay:.28s"><div class="glass-card"><div class="partner-card"><div class="partner-icon"><i class="fas fa-hotel" aria-hidden="true"></i></div><p>Hotels Association</p></div></div></div>
+                <div class="col-6 col-md-4 col-lg-2 reveal" style="transition-delay:.35s"><div class="glass-card"><div class="partner-card"><div class="partner-icon"><i class="fas fa-shuttle-van" aria-hidden="true"></i></div><p>Tourism Federation</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ CTA ═══════════ -->
+    <section class="cta-section reveal">
+        <div class="container" style="position:relative;z-index:1">
+            <div class="hero-eyebrow" style="display:inline-flex;margin-bottom:18px"><i class="fas fa-rocket" aria-hidden="true"></i> Start Your Journey</div>
+            <h2>Ready to Discover Egypt?</h2>
+            <p>Join over 50,000 travelers who trust TravelNow to unlock the wonders of the ancient world.</p>
+            <div class="hero-cta-row">
+                <a href="attractions.html" class="btn-primary-gold"><i class="fas fa-compass" aria-hidden="true"></i> Explore Attractions</a>
+                <a href="trip-planner.html" class="btn-ghost-gold">🗺️ Yala Plan</a>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/navbar.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    // ── Single shared IntersectionObserver for reveal + counters ──
+    let countersStarted = false;
+
+    const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+
+            // Scroll reveal
+            if (e.target.classList.contains('reveal')) {
+                e.target.classList.add('visible');
+                io.unobserve(e.target);
+            }
+
+            // Counter trigger — fire once when stats section enters view
+            if (e.target.classList.contains('stats-section') && !countersStarted) {
+                countersStarted = true;
+                io.unobserve(e.target);
+                e.target.querySelectorAll('.count').forEach(function (el) {
+                    var target = parseInt(el.dataset.target, 10);
+                    var start  = performance.now();
+                    var dur    = 1800;
+                    function step(now) {
+                        var p = Math.min((now - start) / dur, 1);
+                        // Ease-out cubic
+                        var ease = 1 - Math.pow(1 - p, 3);
+                        el.textContent = Math.floor(ease * target);
+                        if (p < 1) requestAnimationFrame(step);
+                        else el.textContent = target;
+                    }
+                    requestAnimationFrame(step);
+                });
+            }
+        });
+    }, { threshold: 0.12 });
+
+    // Observe all reveal elements
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+    // Observe stats section for counter
+    var statsSection = document.querySelector('.stats-section');
+    if (statsSection) io.observe(statsSection);
+
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+node_modules
+.env
+backend/.env
+backend/uploads/
+.browser-smoke-pids
+
+.vscode/
+.idea/
+
+*.log

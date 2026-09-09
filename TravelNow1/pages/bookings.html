@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+</head>
+<body>
+    <div id="tn-navbar" data-page="bookings"></div>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <button class="close-sidebar" onclick="document.querySelector('.sidebar').classList.remove('open')">
+                    <i class="fas fa-times"></i>
+                </button>
+                <i class="fas fa-user-circle fa-2x" style="color:#d4af37"></i>
+                <h3>PROFILE</h3>
+                <p id="user-side">Welcome</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a href="bookings.html" class="active"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="favorites.html"><i class="fas fa-heart"></i> Favorites</a></li>
+                <li><a href="saved-trips.html"><i class="fas fa-route"></i> Saved Trips</a></li>
+                <li><a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="javascript:void(0)" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <a href="attractions.html" class="btn btn-gold"><i class="fas fa-plus"></i> New Booking</a>
+            </div>
+            <div id="bookings-container"></div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="bookingModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background:#0a1d2e; color:#fff; border:2px solid #d4af37; border-radius: 20px; overflow: hidden;">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(212,175,55,0.2); padding: 20px 25px;">
+                    <h5 class="modal-title" style="color:#d4af37; font-family: 'Cinzel', serif; letter-spacing: 1px;">
+                        <i class="fas fa-ticket-alt me-2"></i> Booking Receipt
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="padding: 30px 25px;">
+                    <div id="booking-details-view">
+                        <!-- Content will be injected here -->
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid rgba(212,175,55,0.1); padding: 15px 25px;">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="cancelFromModal()">
+                        <i class="fas fa-trash-alt me-1"></i> Remove Booking
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-gold btn-sm" onclick="window.print()">
+                        <i class="fas fa-print me-1"></i> Print
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script>
+    const user = requireAuth();
+    const token = Storage.getToken();
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+    let selectedBooking = null;
+
+    if (user) document.getElementById('user-side').textContent = 'Welcome, ' + (user.fullName || user.name || 'Traveler');
+
+    async function fetchJson(url, options = {}) {
+        const response = await fetch(url, {
+            headers: { ...authHeaders, ...(options.headers || {}) },
+            ...options
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Request failed');
+        return data;
+    }
+
+    function renderLoading() {
+        document.getElementById('bookings-container').innerHTML = '<div class="dashboard-card text-center py-5"><div class="spinner-border" style="color:#d4af37"></div><p class="mt-3 text-muted">Loading bookings...</p></div>';
+    }
+
+    function getDemoBookings() {
+        return Storage.get('travelnow-demo-bookings') || [];
+    }
+
+    async function loadBookings() {
+        renderLoading();
+        try {
+            let bookings = [];
+            try {
+                const data = await fetchJson('../api/bookings/my');
+                bookings = data.bookings || [];
+            } catch (apiError) {
+                bookings = getDemoBookings();
+                if (!bookings.length) throw apiError;
+                showToast('Showing locally saved demo bookings', 'info');
+            }
+            const container = document.getElementById('bookings-container');
+            if (!bookings.length) {
+                container.innerHTML = `
+                    <div class="dashboard-card text-center py-5">
+                            <i class="fas fa-calendar-times" style="font-size:4rem; color:#d4af37"></i>
+                            <h3 class="mt-3" style="color:var(--text)">No bookings yet</h3>
+                            <p class="text-secondary">Start exploring and book your first trip.</p>
+                            <a href="companies.html" class="btn btn-gold mt-3"><i class="fas fa-search"></i> BROWSE Offers & Trips</a>
+                        </div>`;
+                return;
+            }
+
+            container.innerHTML = bookings.map(booking => `
+                <div class="dashboard-card mb-3">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                        <div>
+                            <h4 style="color:#d4af37">${booking.title}</h4>
+                            <p class="mb-1"><strong>Order ID:</strong> ${booking.orderId || booking._id}</p>
+                            <p class="mb-1"><strong>Date:</strong> ${booking.travelDate ? new Date(booking.travelDate).toLocaleDateString() : '-'}</p>
+                            <p class="mb-1"><strong>Amount:</strong> ${(booking.amount || 0).toLocaleString()} EGP</p>
+                            <p class="mb-0"><strong>Status:</strong> ${booking.status}</p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge ${booking.status === 'confirmed' ? 'badge-success' : booking.status === 'cancelled' ? 'badge-danger' : 'badge-warning'}">${booking.status}</span>
+                            <div class="mt-2 d-flex gap-2 justify-content-end">
+                                <button class="btn btn-action btn-edit" onclick="openBooking('${booking._id}')"><i class="fas fa-eye"></i> View</button>
+                                <button class="btn btn-action btn-delete" onclick="cancelBooking('${booking._id}', this)"><i class="fas fa-times"></i> Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            document.getElementById('bookings-container').innerHTML = `<div class="dashboard-card text-center py-5 text-danger">${error.message}</div>`;
+        }
+    }
+
+    async function cancelBooking(id, btn) {
+        const ok = await showConfirm('Are you sure you want to cancel and remove this booking?');
+        if (!ok) return;
+
+        try {
+            await fetchJson(`../api/bookings/${id}`, { method: 'DELETE' });
+            showToast('Booking removed successfully');
+            loadBookings();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function openBooking(id) {
+        try {
+            const data = await fetchJson(`../api/bookings/${id}`);
+            selectedBooking = data.booking;
+
+            const b = selectedBooking;
+            const dateStr = b.travelDate ? new Date(b.travelDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Flexible';
+
+            document.getElementById('booking-details-view').innerHTML = `
+                <div class="text-center mb-4">
+                    <h3 style="color:#d4af37; margin-bottom:5px;">${b.title}</h3>
+                    <span class="badge ${b.status === 'confirmed' ? 'badge-success' : 'badge-warning'}" style="font-size:0.9rem">${b.status.toUpperCase()}</span>
+                </div>
+
+                <div class="row g-4 mt-2">
+                    <div class="col-6">
+                        <small class="text-muted d-block text-uppercase" style="letter-spacing:1px; font-size:0.7rem">Order ID</small>
+                        <strong style="color:#fff">#${(b.orderId || b._id).slice(-8).toUpperCase()}</strong>
+                    </div>
+                    <div class="col-6 text-end">
+                        <small class="text-muted d-block text-uppercase" style="letter-spacing:1px; font-size:0.7rem">Travel Date</small>
+                        <strong style="color:#fff">${dateStr}</strong>
+                    </div>
+
+                    <div class="col-6">
+                        <small class="text-muted d-block text-uppercase" style="letter-spacing:1px; font-size:0.7rem">Travelers</small>
+                        <strong style="color:#fff"><i class="fas fa-users me-1"></i> ${b.travelers || 1} Person(s)</strong>
+                    </div>
+                    <div class="col-6 text-end">
+                        <small class="text-muted d-block text-uppercase" style="letter-spacing:1px; font-size:0.7rem">Total Paid</small>
+                        <strong style="color:#d4af37; font-size:1.2rem">${(b.amount || 0).toLocaleString()} EGP</strong>
+                    </div>
+                </div>
+
+                <div class="mt-5 p-3" style="background:rgba(255,255,255,0.03); border-radius:12px; border-left:3px solid #d4af37">
+                    <h6 style="color:#d4af37; font-size:0.8rem" class="text-uppercase mb-2">Customer Information</h6>
+                    <p class="mb-1 small"><i class="fas fa-user me-2 text-muted"></i> ${b.contactInfo?.name || user.fullName}</p>
+                    <p class="mb-1 small"><i class="fas fa-envelope me-2 text-muted"></i> ${b.contactInfo?.email || user.email}</p>
+                    <p class="mb-0 small"><i class="fas fa-phone me-2 text-muted"></i> ${b.contactInfo?.phone || 'N/A'}</p>
+                </div>
+
+                <div class="text-center mt-4 opacity-50">
+                    <i class="fas fa-qrcode fa-4x"></i>
+                    <p class="small mt-2">Scan for check-in</p>
+                </div>
+            `;
+
+            new bootstrap.Modal(document.getElementById('bookingModal')).show();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function cancelFromModal() {
+        if (!selectedBooking) return;
+        const ok = await showConfirm('Permanently remove this booking from your history?');
+        if (!ok) return;
+        try {
+            await fetchJson(`../api/bookings/${selectedBooking._id}`, { method: 'DELETE' });
+            showToast('Booking removed');
+            bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
+            loadBookings();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    loadBookings();
+
+    // Auto-refresh bookings every 30 seconds
+    setInterval(() => {
+        loadBookings().catch(err => console.log('Bookings refresh error:', err.message));
+    }, 30000);
+
+    // Listen for theme changes and refresh
+    window.addEventListener('travelnow-theme-changed', () => {
+        loadBookings().catch(err => console.log('Bookings refresh error:', err.message));
+    });
+
+    // --- CUSTOM CONFIRM MODAL (centered, elegant) ---
+    function showConfirm(message, options = {}) {
+        return new Promise(resolve => {
+            const existing = document.getElementById('confirm-overlay');
+            if (existing) existing.remove();
+
+            const overlay = document.createElement('div');
+            overlay.id = 'confirm-overlay';
+            overlay.innerHTML = `
+                <div class="confirm-backdrop"></div>
+                <div class="confirm-modal" role="dialog" aria-modal="true">
+                    <div class="confirm-content">
+                        <div class="confirm-icon">⚠️</div>
+                        <div>
+                            <div class="confirm-text">${message}</div>
+                            ${options.subtext ? `<div class="confirm-sub">${options.subtext}</div>` : ''}
+                        </div>
+                        <div class="confirm-actions">
+                            <button class="btn btn-action btn-delete" id="confirm-no">No</button>
+                            <button class="btn btn-action btn-edit" id="confirm-yes">Yes, remove</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            // animate in
+            overlay.classList.add('confirm-init');
+            requestAnimationFrame(() => overlay.classList.add('confirm-enter'));
+
+            // Focus and accessibility
+            const yesBtn = overlay.querySelector('#confirm-yes');
+            const noBtn = overlay.querySelector('#confirm-no');
+            setTimeout(() => yesBtn && yesBtn.focus(), 120);
+
+            const cleanup = (result) => {
+                overlay.classList.remove('confirm-enter');
+                overlay.classList.add('confirm-leave');
+                setTimeout(() => overlay.remove(), 360);
+                resolve(result);
+            };
+
+            noBtn.addEventListener('click', () => cleanup(false));
+            yesBtn.addEventListener('click', () => cleanup(true));
+
+            const onKey = (e) => {
+                if (e.key === 'Escape') cleanup(false);
+                if (e.key === 'Enter') cleanup(true);
+            };
+            document.addEventListener('keydown', onKey, { once: true });
+        });
+    }
+
+    // Styles for centered confirm modal
+    (function injectConfirmStyles(){
+        const s = document.createElement('style');
+        s.textContent = `
+            /* Overlay base */
+            #confirm-overlay { position: fixed; inset: 0; z-index: 2200; display:flex; align-items:center; justify-content:center; }
+            #confirm-overlay .confirm-backdrop { position:absolute; inset:0; background: linear-gradient(180deg, rgba(2,6,23,0.55), rgba(2,6,23,0.65)); backdrop-filter: blur(6px); }
+
+            /* Modal container (portrait) */
+            #confirm-overlay .confirm-modal { position:relative; z-index:2; width:460px; max-width:92%; }
+            #confirm-overlay .confirm-content { background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,248,246,0.98)); color: var(--text); border-radius:20px; padding:36px 30px; box-shadow: 0 34px 120px rgba(2,6,23,0.5); display:flex; gap:20px; align-items:center; border:1px solid rgba(10,10,10,0.04); min-height:560px; flex-direction:column; text-align:center; justify-content:space-between; }
+            body.dark-mode #confirm-overlay .confirm-content { background: linear-gradient(180deg, rgba(7,20,30,0.96), rgba(6,16,26,0.96)); color: var(--text); border-color: rgba(212,175,55,0.10); }
+
+            /* Icon */
+            #confirm-overlay .confirm-icon { font-size:44px; width:84px; height:84px; display:flex; align-items:center; justify-content:center; border-radius:18px; background: linear-gradient(135deg, rgba(212,175,55,0.22), rgba(212,175,55,0.06)); color: var(--primary); font-weight:900; margin-top:8px; }
+
+            /* Text */
+            #confirm-overlay .confirm-text { flex:1; font-size:1.18rem; font-weight:700; line-height:1.5; margin-top:18px; margin-bottom:6px; color: inherit; }
+            #confirm-overlay .confirm-sub { font-size:0.98rem; color: rgba(0,0,0,0.52); margin-top:6px; }
+            body.dark-mode #confirm-overlay .confirm-sub { color: rgba(255,255,255,0.62); }
+
+            /* Actions */
+            #confirm-overlay .confirm-actions { display:flex; gap:14px; justify-content:center; margin-bottom:12px; }
+            #confirm-overlay .confirm-actions .btn-action { padding:12px 20px; font-size:1rem; border-radius:12px; transition: all 0.18s ease; }
+            #confirm-overlay .confirm-actions .btn-edit { padding:12px 22px; }
+
+            /* Overlay-specific modern buttons */
+            #confirm-overlay .btn-edit { background: var(--gradient-gold); color: var(--dark) !important; box-shadow: 0 14px 36px rgba(212,175,55,0.18); border: none; }
+            #confirm-overlay .btn-edit:hover { transform: translateY(-5px); box-shadow: 0 22px 56px rgba(212,175,55,0.22); }
+            #confirm-overlay .btn-delete { background: transparent; color: #c92a2a; border: 1px solid rgba(201,42,42,0.12); }
+            #confirm-overlay .btn-delete:hover { background: rgba(201,42,42,0.06); color: #fff; border-color: rgba(201,42,42,0.18); }
+
+            /* Entrance/exit animations */
+            #confirm-overlay.confirm-init { opacity:0; transform: scale(0.98); }
+            #confirm-overlay.confirm-enter { opacity:1; transform: scale(1); transition: all 320ms cubic-bezier(.2,.9,.3,1); }
+            #confirm-overlay.confirm-leave { opacity:0; transform: scale(0.96); transition: all 260ms ease-in; }
+
+            @media(max-width:700px){ #confirm-overlay .confirm-content{width:calc(100% - 40px); min-height:440px; padding:20px; } #confirm-overlay .confirm-icon{margin:0 auto;} }
+        `;
+        document.head.appendChild(s);
+    })();
+    </script>
+</body>
+</html>

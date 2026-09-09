@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yala Plan - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        body { background: linear-gradient(135deg, #0a1d2e 0%, #1a3a5c 100%); min-height:100vh; color:#fff; }
+
+        /* Yala Plan Logo Icon */
+        .yala-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-gold);
+            border-radius: 22px;
+            font-size: 2rem;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 30px rgba(212,175,55,0.35);
+            transform: rotate(-5deg);
+            transition: transform 0.3s ease;
+        }
+        .yala-icon:hover { transform: rotate(0deg) scale(1.05); }
+
+        .planner-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 720px;
+            margin: 0 auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            color: #fff;
+            border-radius: 12px;
+            padding: 12px 18px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+            color: #fff;
+        }
+        .form-control::placeholder { color: rgba(255,255,255,0.45); }
+        .form-label { color: #d4af37; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+
+        /* Destination tags */
+        .dest-tags-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 42px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 12px;
+            cursor: text;
+            transition: border-color 0.2s;
+        }
+        .dest-tags-wrap:focus-within {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.1);
+        }
+        .dest-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(212,175,55,0.2);
+            border: 1px solid rgba(212,175,55,0.4);
+            color: #f4e5a3;
+            border-radius: 20px;
+            padding: 3px 12px 3px 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            animation: tagPop 0.2s ease;
+        }
+        @keyframes tagPop {
+            from { opacity:0; transform:scale(0.8); }
+            to   { opacity:1; transform:scale(1); }
+        }
+        .dest-tag .remove-tag {
+            cursor: pointer;
+            opacity: 0.6;
+            font-size: 0.75rem;
+            line-height: 1;
+            transition: opacity 0.15s;
+        }
+        .dest-tag .remove-tag:hover { opacity: 1; color: #ff6b7a; }
+        .dest-tag-input {
+            flex: 1;
+            min-width: 120px;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 0.9rem;
+            padding: 2px 4px;
+        }
+        .dest-tag-input::placeholder { color: rgba(255,255,255,0.4); }
+
+        .itinerary-day { background: rgba(255, 255, 255, 0.05); border-left: 4px solid #d4af37; padding: 25px; margin-bottom: 15px; border-radius: 15px; }
+        .itinerary-item {
+            display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 14px 18px;
+        }
+        .itinerary-item span { color: #f5f2e8; }
+        .btn-remove {
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-remove:hover { background: #ff4d4d; border-color: #ff4d4d; color: #fff; transform: translateY(-1px); }
+
+        .suggestion-pill {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: #f4e5a3;
+            cursor: pointer;
+            margin: 4px;
+            transition: all 0.2s;
+        }
+        .suggestion-pill:hover { background: #d4af37; color: #0a1d2e; transform: scale(1.05); }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .btn-outline-danger {
+            background: rgba(220, 53, 69, 0.08);
+            border: 1.5px solid rgba(220, 53, 69, 0.5);
+            color: #ff6b7a;
+            border-radius: 50px;
+            padding: 8px 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.25s ease;
+        }
+        .btn-outline-danger:hover {
+            background: rgba(220, 53, 69, 0.85);
+            border-color: #dc3545;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.35);
+        }
+
+        /* Itinerary destination badge */
+        .dest-badge {
+            display: inline-block;
+            background: rgba(212,175,55,0.15);
+            border: 1px solid rgba(212,175,55,0.3);
+            color: #d4af37;
+            border-radius: 20px;
+            padding: 2px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="tn-navbar" data-page="trip-planner"></div>
+
+    <div class="container pb-5">
+        <div class="text-center mb-5 pt-5">
+            <!-- Yala Plan Icon -->
+            <div class="d-flex justify-content-center">
+                <div class="yala-icon">🗺️</div>
+            </div>
+            <h1 style="color:#d4af37; font-size: 3rem; letter-spacing:2px;">YALA PLAN</h1>
+            <p class="opacity-75">Tell us where you want to go — we'll build the perfect Egyptian journey for you.</p>
+        </div>
+
+        <div class="planner-card" id="planner-form-card">
+            <form id="planner-form">
+                <div class="row g-4">
+
+                    <!-- Multi-destination input -->
+                    <div class="col-md-12">
+                        <label class="form-label"><i class="fas fa-map-marker-alt me-1"></i> Destinations <small style="text-transform:none; letter-spacing:0; opacity:0.6; font-weight:400;">(add one or more)</small></label>
+                        <div class="dest-tags-wrap" id="dest-tags-wrap" onclick="document.getElementById('dest-tag-input').focus()">
+                            <!-- tags rendered here by JS -->
+                            <input type="text" id="dest-tag-input" class="dest-tag-input" placeholder="Type a destination and press Enter...">
+                        </div>
+                        <input type="hidden" id="planner-dest" name="destinations">
+                        <div class="mt-2">
+                            <span class="suggestion-pill" onclick="addDestTag('Luxor & Aswan')">Nile Cruise 🚢</span>
+                            <span class="suggestion-pill" onclick="addDestTag('Sharm El Sheikh')">Sharm 🏖️</span>
+                            <span class="suggestion-pill" onclick="addDestTag('Cairo & Giza')">Pyramids 🏛️</span>
+                            <span class="suggestion-pill" onclick="addDestTag('Hurghada')">Hurghada 🌊</span>
+                            <span class="suggestion-pill" onclick="addDestTag('Siwa Oasis')">Siwa 🌴</span>
+                            <span class="suggestion-pill" onclick="addDestTag('Dahab')">Dahab ⛺</span>
+                            <span class="suggestion-pill" onclick="addDestTag('Alexandria')">Alex 🏛</span>
+                            <span class="suggestion-pill" onclick="addDestTag('Marsa Alam')">Marsa Alam 🐠</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-wallet"></i> Budget (EGP) *</label>
+                        <div class="input-group">
+                            <button class="btn btn-outline-gold" type="button" onclick="adjustBudget('planner-budget', false)" style="border-radius: 12px 0 0 12px; border-color: rgba(212,175,55,0.3); color: #d4af37;">-</button>
+                            <input type="number" class="form-control text-center" name="budget" id="planner-budget" value="5000" required style="border-radius:0;">
+                            <button class="btn btn-outline-gold" type="button" onclick="adjustBudget('planner-budget', true)" style="border-radius: 0 12px 12px 0; border-color: rgba(212,175,55,0.3); color: #d4af37;">+</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-users"></i> Travelers *</label>
+                        <div class="input-group">
+                            <button class="btn btn-outline-gold" type="button" onclick="adjustCount('planner-travelers', false)" style="border-radius: 12px 0 0 12px; border-color: rgba(212,175,55,0.3); color: #d4af37;">-</button>
+                            <input type="number" class="form-control text-center" name="travelers" id="planner-travelers" value="2" required style="border-radius:0;">
+                            <button class="btn btn-outline-gold" type="button" onclick="adjustCount('planner-travelers', true)" style="border-radius: 0 12px 12px 0; border-color: rgba(212,175,55,0.3); color: #d4af37;">+</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-calendar-day"></i> Duration (Days) *</label>
+                        <div class="input-group">
+                            <button class="btn btn-outline-gold" type="button" onclick="adjustCount('planner-days', false)" style="border-radius: 12px 0 0 12px; border-color: rgba(212,175,55,0.3); color: #d4af37;">-</button>
+                            <input type="number" class="form-control text-center" name="days" id="planner-days" value="5" required style="border-radius:0;">
+                            <button class="btn btn-outline-gold" type="button" onclick="adjustCount('planner-days', true)" style="border-radius: 0 12px 12px 0; border-color: rgba(212,175,55,0.3); color: #d4af37;">+</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-compass"></i> Travel Style *</label>
+                        <select class="form-select" name="style" required>
+                            <option value="historical">Historical</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="luxury">Luxury</option>
+                            <option value="family">Family</option>
+                            <option value="religious">Religious</option>
+                            <option value="beach">Beach</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-gold btn-lg w-100 mt-4">
+                    <span style="font-size:1.1rem;">🗺️</span> YALA — GENERATE MY PLAN
+                </button>
+            </form>
+        </div>
+
+        <div id="itinerary-result" class="mt-4" style="display:none;"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/custom-select.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script>
+    const user = requireAuth();
+    const token = Storage.getToken();
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+    const YALA_ITINERARY_KEY  = 'travelnow-trip-planner-itinerary';
+    const YALA_PLAN_KEY       = 'travelnow-trip-planner-plan';
+    let currentPlan = null;
+    let currentAttractions = [];
+    let destTags = []; // array of destination strings
+
+    async function fetchJson(url, options = {}) {
+        const response = await fetch(url, {
+            headers: { 'Content-Type': 'application/json', ...authHeaders, ...(options.headers || {}) },
+            ...options
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.message || data.error || `Server error (${response.status})`);
+        return data;
+    }
+
+    // ── Multi-destination tag input ──
+    function renderDestTags() {
+        const wrap = document.getElementById('dest-tags-wrap');
+        const input = document.getElementById('dest-tag-input');
+        // Remove old tags
+        wrap.querySelectorAll('.dest-tag').forEach(t => t.remove());
+        // Insert tags before input
+        destTags.forEach((tag, idx) => {
+            const el = document.createElement('span');
+            el.className = 'dest-tag';
+            el.innerHTML = `<i class="fas fa-map-pin" style="font-size:0.65rem;"></i>${tag}<span class="remove-tag" onclick="removeDestTag(${idx})">✕</span>`;
+            wrap.insertBefore(el, input);
+        });
+        // Sync hidden input
+        document.getElementById('planner-dest').value = destTags.join(', ');
+    }
+
+    function addDestTag(val) {
+        const v = (val || document.getElementById('dest-tag-input').value).trim();
+        if (!v) return;
+        if (destTags.some(t => t.toLowerCase() === v.toLowerCase())) {
+            showToast(`"${v}" already added`, 'warning');
+            document.getElementById('dest-tag-input').value = '';
+            return;
+        }
+        destTags.push(v);
+        document.getElementById('dest-tag-input').value = '';
+        renderDestTags();
+    }
+
+    function removeDestTag(idx) {
+        destTags.splice(idx, 1);
+        renderDestTags();
+    }
+
+    document.getElementById('dest-tag-input').addEventListener('keydown', e => {
+        const val = e.target.value.trim();
+        if ((e.key === 'Enter' || e.key === ',') && val) {
+            e.preventDefault();
+            addDestTag(val);
+        } else if (e.key === 'Backspace' && !val && destTags.length) {
+            destTags.pop();
+            renderDestTags();
+        }
+    });
+
+    // ── Storage helpers ──
+    function loadSavedItinerary() {
+        const saved = Storage.get(YALA_ITINERARY_KEY);
+        return Array.isArray(saved) ? saved : [];
+    }
+    function saveItinerary() { Storage.set(YALA_ITINERARY_KEY, currentAttractions); }
+    function loadSavedPlan() {
+        const saved = Storage.get(YALA_PLAN_KEY);
+        return saved && typeof saved === 'object' ? saved : null;
+    }
+    function savePlan() { if (currentPlan) Storage.set(YALA_PLAN_KEY, currentPlan); }
+
+    function goToAttractionsForPlan() {
+        window.location.href = 'attractions.html?source=trip-planner';
+    }
+
+    function adjustBudget(id, isIncrease) {
+        const input = document.getElementById(id);
+        let val = parseInt(input.value) || 0;
+        let step = val >= 1000 ? 500 : val >= 100 ? 50 : 10;
+        if (isIncrease) val += step;
+        else val = Math.max(1000, val - step);
+        input.value = val;
+    }
+
+    function adjustCount(id, isIncrease) {
+        const input = document.getElementById(id);
+        let val = parseInt(input.value) || 1;
+        if (isIncrease) val++;
+        else val = Math.max(1, val - 1);
+        input.value = val;
+    }
+
+    // ── Render itinerary result ──
+    function renderPlan(plan) {
+        const destList = Array.isArray(plan.destTags) && plan.destTags.length
+            ? plan.destTags
+            : (plan.destinations || '').split(',').map(d => d.trim()).filter(Boolean);
+
+        document.getElementById('itinerary-result').innerHTML = `
+            <div class="planner-card">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span style="font-size:1.4rem;">🗺️</span>
+                            <h2 style="color:#d4af37; margin:0;">Your Yala Plan</h2>
+                        </div>
+                        <div class="mb-1">
+                            ${destList.length ? destList.map(d => `<span class="dest-badge"><i class="fas fa-map-pin me-1"></i>${d}</span>`).join('') : ''}
+                        </div>
+                        <small style="opacity:0.7;">${plan.travelers} traveler(s) • ${plan.days} day(s) • ${plan.style.toUpperCase()}</small>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-outline-light btn-sm" onclick="goToAttractionsForPlan()"><i class="fas fa-plus me-1"></i> Add Attraction</button>
+                        <button class="btn btn-outline-gold btn-sm" onclick="saveTrip()"><i class="fas fa-save me-1"></i> Save Trip</button>
+                        <button class="btn btn-gold btn-sm" onclick="bookWithCompany()"><i class="fas fa-building me-1"></i> Book With Company</button>
+                        <button class="btn btn-outline-danger" onclick="clearPlan()" title="Start over">
+                            <i class="fas fa-redo me-1"></i> New Plan
+                        </button>
+                    </div>
+                </div>
+                <div class="row text-center mb-4">
+                    <div class="col-4"><div class="stat-card" style="background:rgba(212,175,55,0.2); padding:15px; border-radius:10px;"><small>Total Budget</small><h4>${plan.budget.toLocaleString()} EGP</h4></div></div>
+                    <div class="col-4"><div class="stat-card" style="background:rgba(212,175,55,0.2); padding:15px; border-radius:10px;"><small>Per Person</small><h4>${Math.floor(plan.budget / plan.travelers).toLocaleString()} EGP</h4></div></div>
+                    <div class="col-4"><div class="stat-card" style="background:rgba(212,175,55,0.2); padding:15px; border-radius:10px;"><small>Daily Budget</small><h4>${Math.floor(plan.budget / plan.days).toLocaleString()} EGP</h4></div></div>
+                </div>
+                <div id="days-list"></div>
+            </div>
+        `;
+        renderDays(plan);
+    }
+
+    function renderDays(plan) {
+        const container = document.getElementById('days-list');
+        const daysHtml = plan.itinerary.map(day => `
+            <div class="itinerary-day">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">📅 Day ${day.day}${day.destination ? ` — <span class="dest-badge">${day.destination}</span>` : ''}</h5>
+                    <button class="btn btn-sm btn-remove" onclick="removeDayAttraction(${day.day})"><i class="fas fa-trash"></i> Remove</button>
+                </div>
+                <p class="mb-1"><strong>🌅 Morning:</strong> ${day.morning}</p>
+                <p class="mb-1"><strong>☀️ Afternoon:</strong> ${day.afternoon}</p>
+                <p class="mb-1"><strong>🌙 Evening:</strong> ${day.evening}</p>
+                <p class="mb-0"><strong>🏨 Stay:</strong> ${day.accommodation}</p>
+            </div>
+        `).join('');
+        container.innerHTML = `
+            <div class="mb-4">
+                <h4 style="color:#d4af37;">🗺️ Your Selected Attractions</h4>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="new-attraction-name" placeholder="Add an attraction name">
+                    <button class="btn btn-gold" type="button" onclick="addAttractionFromField()"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                ${itemsMarkup()}
+            </div>
+            ${daysHtml}
+        `;
+    }
+
+    function itemsMarkup() {
+        if (!currentAttractions.length) return '<p class="text-secondary">No custom attractions added yet.</p>';
+        return currentAttractions.map((item, index) => `
+            <div class="itinerary-item">
+                <span>${item.name}</span>
+                <button class="btn btn-sm btn-remove" onclick="removeAttraction(${index})">Remove</button>
+            </div>
+        `).join('');
+    }
+
+    function addAttractionFromField() {
+        const input = document.getElementById('new-attraction-name');
+        const name = input?.value?.trim();
+        if (!name) { showToast('Enter an attraction name first', 'warning'); return; }
+        if (currentAttractions.some(item => item.name.toLowerCase() === name.toLowerCase())) {
+            showToast('Already in your itinerary', 'warning');
+            return;
+        }
+        currentAttractions.push({ name });
+        saveItinerary();
+        if (input) input.value = '';
+        renderPlan(currentPlan);
+    }
+
+    function removeAttraction(index) {
+        currentAttractions.splice(index, 1);
+        saveItinerary();
+        renderPlan(currentPlan);
+    }
+
+    function removeDayAttraction(dayNumber) {
+        showToast(`Tip: add or remove attractions above to adjust your plan.`, 'info');
+    }
+
+    function clearPlan() {
+        Storage.remove(YALA_PLAN_KEY);
+        Storage.remove(YALA_ITINERARY_KEY);
+        currentPlan = null;
+        currentAttractions = [];
+        destTags = [];
+        renderDestTags();
+
+        document.getElementById('planner-form').reset();
+        document.getElementById('planner-budget').value = '5000';
+        document.getElementById('planner-travelers').value = '2';
+        document.getElementById('planner-days').value = '5';
+
+        const resultEl = document.getElementById('itinerary-result');
+        const formCard = document.getElementById('planner-form-card');
+        resultEl.style.transition = 'opacity 0.3s ease';
+        resultEl.style.opacity = '0';
+        setTimeout(() => {
+            resultEl.style.display = 'none';
+            resultEl.style.opacity = '';
+            resultEl.innerHTML = '';
+            formCard.style.display = 'block';
+            formCard.style.opacity = '0';
+            formCard.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => { formCard.style.opacity = '1'; }, 30);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 300);
+        showToast('Plan cleared — Yala, plan again! 🗺️', 'success');
+    }
+
+    // Load saved plan on page load
+    currentPlan = loadSavedPlan();
+    currentAttractions = loadSavedItinerary();
+    if (currentPlan) {
+        // Restore destination tags
+        if (currentPlan.destTags?.length) {
+            destTags = [...currentPlan.destTags];
+        } else if (currentPlan.destinations) {
+            destTags = currentPlan.destinations.split(',').map(d => d.trim()).filter(Boolean);
+        }
+        renderDestTags();
+        document.getElementById('planner-form-card').style.display = 'none';
+        document.getElementById('itinerary-result').style.display = 'block';
+        renderPlan(currentPlan);
+    }
+
+    async function saveTrip() {
+        if (!currentPlan) return;
+        try {
+            await fetchJson('../api/trips', {
+                method: 'POST',
+                body: JSON.stringify({
+                    title: `${destTags.length ? destTags.join(' & ') : currentPlan.style} trip`,
+                    budget: currentPlan.budget,
+                    travelers: currentPlan.travelers,
+                    days: currentPlan.days,
+                    style: currentPlan.style,
+                    destination: destTags.join(', ') || currentPlan.destinations || '',
+                    attractions: currentAttractions,
+                    itinerary: currentPlan.itinerary
+                })
+            });
+            showToast('Trip saved successfully! ✅');
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function bookWithCompany() {
+        if (!currentPlan) return;
+        try {
+            await fetchJson('../api/posts/draft', {
+                method: 'POST',
+                body: JSON.stringify({
+                    destination: destTags.join(', ') || currentPlan.destinations || currentPlan.style,
+                    budget: currentPlan.budget,
+                    travelers: currentPlan.travelers,
+                    travelDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
+                    requiredText: `Yala Plan trip: ${destTags.join(', ') || currentPlan.style}`,
+                    description: `Generated from Yala Plan. Style: ${currentPlan.style}`,
+                    attractions: currentAttractions,
+                    sourceType: 'trip_plan'
+                })
+            });
+            showToast('Draft post created. You can publish it from Posts.');
+            setTimeout(() => window.location.href = 'posts.html', 1200);
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    document.getElementById('planner-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const form = event.target;
+        const budgetVal   = Number(document.getElementById('planner-budget').value);
+        const travelersVal = Number(document.getElementById('planner-travelers').value);
+        const daysVal     = Number(document.getElementById('planner-days').value);
+
+        // Collect any typed-but-not-confirmed destination
+        const typedDest = document.getElementById('dest-tag-input').value.trim();
+        if (typedDest) addDestTag(typedDest);
+
+        const destinationsStr = destTags.join(', ');
+
+        if (!budgetVal || budgetVal < 1000) { showToast('Minimum budget is 1,000 EGP', 'error'); return; }
+        if (!daysVal || daysVal < 1)        { showToast('Duration must be at least 1 day', 'error'); return; }
+
+        const btn = form.querySelector('[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Generating your plan...';
+
+        try {
+            const data = await fetchJson('../api/trip-planner/generate', {
+                method: 'POST',
+                body: JSON.stringify({
+                    budget: budgetVal,
+                    travelers: travelersVal,
+                    days: daysVal,
+                    style: form.style.value,
+                    destinations: destinationsStr,
+                    destTags: destTags  // pass array for per-day assignment
+                })
+            });
+
+            currentPlan = {
+                budget: budgetVal,
+                travelers: travelersVal,
+                days: daysVal,
+                style: form.style.value,
+                destinations: destinationsStr,
+                destTags: [...destTags],
+                itinerary: data.tripPlan.itinerary || []
+            };
+            savePlan();
+            currentAttractions = loadSavedItinerary();
+            document.getElementById('planner-form-card').style.display = 'none';
+            document.getElementById('itinerary-result').style.display = 'block';
+            renderPlan(currentPlan);
+        } catch (error) {
+            showToast(error.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<span style="font-size:1.1rem;">🗺️</span> YALA — GENERATE MY PLAN';
+        }
+    });
+    </script>
+</body>
+</html>

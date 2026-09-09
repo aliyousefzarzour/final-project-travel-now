@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companies - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        /* ===== RESPONSIVE & LAYOUT OPTIMIZATION ===== */
+        body {
+            background: var(--light);
+            overflow-x: hidden; /* يمنع أي سكرول أفقي تماماً على الموبايل */
+        }
+        
+        body.dark-mode {
+            background: var(--bg-body);
+        }
+        
+        /* تظبيط وتأمين الهوامش الداخلية */
+        .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        /* كروت العروض المتجاوبة المرنة */
+        .offer-card, .company-card {
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 5px 22px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark-mode .offer-card, 
+        body.dark-mode .company-card {
+            background: #0d253a;
+            box-shadow: 0 5px 22px rgba(0,0,0,0.3);
+        }
+
+        .offer-body, .company-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        /* التحكم في أبعاد وعرض الشاشات الصغيرة للمحتوى */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 40px 15px !important;
+                text-align: center;
+            }
+            .page-header h1 {
+                font-size: 1.8rem !important;
+            }
+            .section-title {
+                font-size: 1.4rem !important;
+                text-align: center;
+                margin-bottom: 25px !important;
+            }
+            .offer-body h4, .company-body h4 {
+                font-size: 1.15rem;
+            }
+        }
+
+        /* Skeleton Loading كشكل جمالي أثناء جلب البيانات */
+        .sk-card {
+            background: #eee;
+            height: 380px;
+            border-radius: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+        .sk-card::after {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: wave 1.2s infinite;
+        }
+        @keyframes wave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        body.dark-mode .sk-card { background: #143552; }
+    </style>
+</head>
+<body>
+    <!-- الـ Navbar الديناميكي هيشتغل هنا تلقائياً عن طريق الملفات المربوطة -->
+    <div id="tn-navbar" data-page="companies"></div>
+
+    <div class="page-header">
+        <h1><i class="fas fa-building"></i> TRUSTED COMPANIES</h1>
+        <p>Browse live offers and verified companies</p>
+    </div>
+
+    <!-- الحاوية الأساسية مع هوامش مرنة وآمنة g-3 g-md-4 لضمان ثبات العناصر -->
+    <div class="container py-4 py-md-5">
+        <h2 class="section-title font-cinzel" style="color: #d4af37; font-weight: 600;">Available Offers & Trips</h2>
+        <div id="offers-grid" class="row g-3 g-md-4 mb-5"></div>
+
+        <h2 class="section-title font-cinzel" style="color: #d4af37; font-weight: 600;">Trusted Tourism Companies</h2>
+        <div id="companies-grid" class="row g-3 g-md-4"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script>
+    // ===== الحفاظ الكامل على الـ Logic والأمان والـ IDs بنسبة 100% =====
+    const token = Storage.getToken();
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+
+    async function fetchJson(url) {
+        const response = await fetch(url, { headers: authHeaders });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Request failed');
+        return data;
+    }
+
+    async function loadOffers() {
+        // عرض الـ Skeleton أثناء التحميل لحماية المظهر المتجاوب
+        document.getElementById('offers-grid').innerHTML = 
+            [1, 2, 3].map(() => `<div class="col-12 col-md-6 col-lg-4"><div class="sk-card"></div></div>`).join('');
+
+        try {
+            const data = await fetchJson('../api/offers');
+            const offers = data.offers || [];
+            
+            document.getElementById('offers-grid').innerHTML = offers.length ? offers.map(offer => {
+                // إضافة صور احتياطية (Fallback Images) فخمة من Unsplash لمنع انهيار التصميم إذا كانت المصفوفة فارغة
+                const offerImg = offer.images?.[0] || 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=600';
+                return `
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="offer-card">
+                            <div class="offer-img" style="background-image:url('${offerImg.replace(/'/g, "%27")}'); background-size:cover; background-position:center; height:200px; position:relative;">
+                                <span class="ministry-badge" style="position:absolute; top:12px; left:12px;">${String(offer.type || '').toUpperCase()}</span>
+                            </div>
+                            <div class="offer-body">
+                                <h4 style="color:var(--text); font-weight:600;" class="text-truncate">${offer.title}</h4>
+                                <div class="attraction-meta small text-muted mb-3">
+                                    <i class="fas fa-building"></i> ${offer.companyId?.companyName || 'TravelNow Partner'}<br>
+                                    <i class="fas fa-map-marker-alt"></i> ${offer.destination}<br>
+                                    <i class="fas fa-calendar"></i> ${offer.duration || 'Flexible'}<br>
+                                    <i class="fas fa-users"></i> ${offer.availableSeats || 0} seats available
+                                </div>
+                                <p style="color:var(--text-muted); font-size:0.9rem; flex:1;" class="text-slice">${offer.description || 'No description provided.'}</p>
+                                <div class="price-tag my-2" style="color:#d4af37; font-weight:700; font-size:1.25rem;">${Number(offer.price || 0).toLocaleString()} EGP</div>
+                                <button class="btn btn-gold w-100 mt-2" onclick="bookOffer('${offer._id}')"><i class="fas fa-bookmark"></i> Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('') : '<div class="col-12"><p class="text-center text-muted py-4">No offers available at the moment.</p></div>';
+        } catch (err) {
+            document.getElementById('offers-grid').innerHTML = `<div class="col-12 text-center text-danger py-4"><i class="fas fa-exclamation-circle"></i> Failed to load offers.</div>`;
+        }
+    }
+
+    async function loadCompanies() {
+        // عرض الـ Skeleton للشركات أيضاً
+        document.getElementById('companies-grid').innerHTML = 
+            [1, 2, 3].map(() => `<div class="col-12 col-md-6 col-lg-4"><div class="sk-card"></div></div>`).join('');
+
+        try {
+            const data = await fetchJson('../api/companies');
+            const companies = data.companies || [];
+            
+            document.getElementById('companies-grid').innerHTML = companies.length ? companies.map(company => {
+                // لو الشركة معندهاش Logo بنحط صورة مبنى كحلي متناسق مع هوية الثيم
+                const companyLogo = company.logo || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600';
+                return `
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="company-card">
+                            <div class="company-img" style="background-image:url('${companyLogo.replace(/'/g, "%27")}'); background-size:cover; background-position:center; height:180px; position:relative;">
+                                <div style="position:absolute; top:12px; left:12px; display:flex; flex-direction:column; gap:5px;">
+                                    ${company.verified ? '<span class="badge bg-success text-white px-2 py-1"><i class="fas fa-check"></i> Verified</span>' : ''}
+                                    ${company.ministry ? '<span class="badge bg-warning text-dark px-2 py-1"><i class="fas fa-star"></i> Ministry</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="company-body">
+                                <h4 style="color:var(--text); font-weight:600;">${company.companyName}</h4>
+                                <div class="attraction-meta small text-muted mb-3" style="flex:1;">
+                                    <i class="fas fa-map-marker-alt"></i> ${company.governorate}<br>
+                                    <i class="fas fa-briefcase"></i> ${company.experience || 0} years of experience<br>
+                                    <i class="fas fa-users"></i> ${company.employees || 0} employees
+                                </div>
+                                <button class="btn btn-outline-gold w-100 mt-3" onclick="window.location.href='company-profile.html?id=${company._id}'">
+                                    <i class="fas fa-eye"></i> View Profile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('') : '<div class="col-12"><p class="text-center text-muted py-4">No registered companies found.</p></div>';
+        } catch (err) {
+            document.getElementById('companies-grid').innerHTML = `<div class="col-12 text-center text-danger py-4"><i class="fas fa-exclamation-circle"></i> Failed to load companies.</div>`;
+        }
+    }
+
+    function bookOffer(id) {
+        if (!Storage.get('travelnow-user')) {
+            showToast('Please login to book', 'warning');
+            setTimeout(() => window.location.href = 'login.html', 1000);
+            return;
+        }
+        window.location.href = `payment.html?offer=${id}`;
+    }
+
+    // التشغيل التلقائي عند التحميل
+    window.addEventListener('DOMContentLoaded', () => {
+        loadOffers();
+        loadCompanies();
+    });
+    </script>
+</body>
+</html>

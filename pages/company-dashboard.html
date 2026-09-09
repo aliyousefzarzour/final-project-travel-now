@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        body:not(.dark-mode) #section-posts {
+            color: #26364a;
+        }
+        body:not(.dark-mode) #section-posts > div:first-child p {
+            color: #64748b !important;
+        }
+        body:not(.dark-mode) #posts-search-input {
+            background: #ffffff !important;
+            color: #1e293b !important;
+        }
+        body:not(.dark-mode) #company-posts .dashboard-card {
+            background: #ffffff !important;
+            border-color: #e1e6eb !important;
+            box-shadow: 0 8px 24px rgba(23,43,77,0.08);
+        }
+        body:not(.dark-mode) #company-posts [style*="color:#fff"],
+        body:not(.dark-mode) #company-posts [style*="color: #fff"],
+        body:not(.dark-mode) #company-posts [style*="color:rgba(255,255,255"],
+        body:not(.dark-mode) #company-posts [style*="color: rgba(255,255,255"] {
+            color: #26364a !important;
+        }
+        body:not(.dark-mode) #company-posts [style*="background:rgba(255,255,255"],
+        body:not(.dark-mode) #company-posts [style*="background: rgba(255,255,255"] {
+            background: #f8fafc !important;
+        }
+        body:not(.dark-mode) #company-posts [style*="background:rgba(212,175,55,0.04"],
+        body:not(.dark-mode) #company-posts [style*="background:rgba(212,175,55,0.06"] {
+            background: #fffaf0 !important;
+        }
+        body:not(.dark-mode) #company-posts input,
+        body:not(.dark-mode) #company-posts textarea,
+        body:not(.dark-mode) #company-posts select {
+            background: #ffffff !important;
+            color: #1e293b !important;
+        }
+        body:not(.dark-mode) #company-posts input::placeholder,
+        body:not(.dark-mode) #company-posts textarea::placeholder {
+            color: #64748b !important;
+        }
+        body:not(.dark-mode) #company-posts button[style*="background:rgba(255,255,255"],
+        body:not(.dark-mode) #company-posts button[style*="background: rgba(255,255,255"] {
+            background: #f1f5f9 !important;
+            color: #334155 !important;
+            border-color: #cbd5e1 !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="tn-navbar" data-page="companies"></div>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-building fa-2x" style="color:#d4af37"></i>
+                <h3>COMPANY</h3>
+                <p id="company-name">Loading...</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-section="overview"><i class="fas fa-chart-pie"></i> Overview</a></li>
+                <li><a href="#" data-section="bookings"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="#" data-section="offers"><i class="fas fa-tags"></i> My Offers</a></li>
+                <li><a href="#" data-section="posts"><i class="fas fa-bullhorn"></i> Posts</a></li>
+                <li><a href="#" id="sidebar-profile-link"><i class="fas fa-user-tie"></i> Company Profile</a></li>
+                <li><a href="javascript:void(0)" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <h2 id="section-title">Company Dashboard</h2>
+            </div>
+
+            <div id="section-overview" class="admin-section">
+                <div class="welcome-banner">
+                    <h2>Welcome, <span id="welcome-name">Company</span></h2>
+                    <p>Live company activity and offers from the backend</p>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-calendar-check"></i><h3 id="booking-count">0</h3><p>Total Bookings</p></div></div>
+                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-tags"></i><h3 id="my-offers-count">0</h3><p>Active Offers</p></div></div>
+                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-bullhorn"></i><h3 id="my-posts-count">0</h3><p>Visible Posts</p></div></div>
+                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-star"></i><h3 id="my-rating">0</h3><p>Avg Rating</p></div></div>
+                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-heart" style="color:#e74c3c"></i><h3 id="my-followers">0</h3><p>Followers</p></div></div>
+                </div>
+            </div>
+
+            <div id="section-bookings" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4><i class="fas fa-calendar-check"></i> Customer Bookings</h4>
+                    <div id="company-bookings" class="mt-4"></div>
+                </div>
+            </div>
+
+            <div id="section-offers" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4>My Offers</h4>
+                        <button class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#offerModal"><i class="fas fa-plus"></i> Create Offer</button>
+                    </div>
+                    <div id="my-offers-list" class="mt-4"></div>
+                </div>
+            </div>
+
+            <div id="section-posts" class="admin-section" style="display:none;">
+                <!-- Header -->
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+                    <div>
+                        <h3 style="color:#d4af37;font-family:'Cinzel',serif;margin:0;font-size:1.2rem">
+                            <i class="fas fa-bullhorn me-2"></i>Travel Requests Feed
+                        </h3>
+                        <p style="color:rgba(255,255,255,0.45);font-size:0.82rem;margin:4px 0 0">Browse traveler requests and send your best proposal</p>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:center;">
+                        <input type="text" id="posts-search-input" placeholder="🔍 Search destination..."
+                            oninput="filterPostsUI()"
+                            style="background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:8px 14px;color:#fff;font-size:0.83rem;outline:none;width:200px;">
+                        <span id="posts-feed-count" style="background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.3);border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:600;"></span>
+                    </div>
+                </div>
+                <div id="company-posts" class="mt-2"></div>
+            </div>
+
+            <div id="section-profile" class="admin-section" style="display:none;">
+                <div class="dashboard-card">
+                    <h4><i class="fas fa-user-tie"></i> Company Profile</h4>
+                    <p class="text-secondary">Manage your approved company details from the backend.</p>
+                    <div id="company-profile-details"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="offerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background:#0a1d2e; color:#fff; border:1px solid #d4af37;">
+                <div class="modal-header" style="border-color:rgba(212,175,55,0.3)">
+                    <h5 style="color:#d4af37">Create New Offer</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="offer-form">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3"><label class="form-label" style="color:#d4af37">Title *</label><input type="text" class="form-control" name="title" required></div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" style="color:#d4af37">Type *</label>
+                                <select class="form-select" name="type" required>
+                                    <option value="domestic">Domestic Trip</option>
+                                    <option value="international">International</option>
+                                    <option value="hajj">Hajj</option>
+                                    <option value="umrah">Umrah</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3"><label class="form-label" style="color:#d4af37">Destination *</label><input type="text" class="form-control" name="destination" required></div>
+                            <div class="col-md-6 mb-3"><label class="form-label" style="color:#d4af37">Price (EGP) *</label><input type="number" class="form-control" name="price" required></div>
+                            <div class="col-md-6 mb-3"><label class="form-label" style="color:#d4af37">Duration *</label><input type="text" class="form-control" name="duration" required></div>
+                            <div class="col-md-6 mb-3"><label class="form-label" style="color:#d4af37">Available Seats *</label><input type="number" class="form-control" name="availableSeats" required></div>
+                            <div class="col-12 mb-3"><label class="form-label" style="color:#d4af37">Booking Deadline *</label><input type="date" class="form-control" name="bookingDeadline" required></div>
+                            <div class="col-12 mb-3"><label class="form-label" style="color:#d4af37">Description *</label><textarea class="form-control" name="description" rows="3" required></textarea></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-color:rgba(212,175,55,0.3)">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-gold">Create Offer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Post Details Modal ── -->
+    <div class="modal fade" id="postDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:520px;">
+            <div class="modal-content" style="background:#0a1d2e;border:1px solid rgba(212,175,55,0.35);border-radius:20px;overflow:hidden;">
+                <div class="modal-body" id="post-details-body" style="padding:0;max-height:80vh;overflow-y:auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Premium Proposal Modal ── -->
+    <div class="modal fade" id="proposalModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width:860px;">
+            <div class="modal-content" style="background:#060f18;border:1px solid rgba(212,175,55,0.25);border-radius:22px;overflow:hidden;">
+                <!-- Header -->
+                <div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(10,29,46,0.8));padding:22px 28px;border-bottom:1px solid rgba(212,175,55,0.2);display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <h4 style="color:#d4af37;font-family:'Cinzel',serif;margin:0;font-size:1.1rem">✈️ Submit Trip Proposal</h4>
+                        <p id="proposal-post-dest" style="color:rgba(255,255,255,0.5);font-size:0.8rem;margin:4px 0 0"></p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="proposal-form">
+                    <input type="hidden" id="proposal-post-id">
+                    <div class="modal-body px-0 py-0" style="max-height:72vh;overflow-y:auto;">
+
+                        <!-- Post summary strip -->
+                        <div id="proposal-post-summary" style="background:rgba(212,175,55,0.06);border-bottom:1px solid rgba(212,175,55,0.12);padding:14px 28px;">
+                            <div style="display:flex;gap:20px;flex-wrap:wrap;">
+                                <span style="font-size:0.78rem;color:rgba(255,255,255,0.55)"><i class="fas fa-wallet me-1" style="color:#d4af37"></i><span id="proposal-post-budget"></span></span>
+                                <span style="font-size:0.78rem;color:rgba(255,255,255,0.55)"><i class="fas fa-users me-1" style="color:#d4af37"></i><span id="proposal-post-travelers"></span> travelers</span>
+                                <span style="font-size:0.78rem;color:rgba(255,255,255,0.55)"><i class="fas fa-calendar me-1" style="color:#d4af37"></i><span id="proposal-post-date"></span></span>
+                            </div>
+                            <p id="proposal-post-required" style="color:rgba(255,255,255,0.7);font-size:0.82rem;margin:8px 0 0;line-height:1.5"></p>
+                        </div>
+
+                        <div style="padding:22px 28px;display:flex;flex-direction:column;gap:20px;">
+
+                            <!-- Section 1: Pricing -->
+                            <div style="background:rgba(212,175,55,0.04);border:1px solid rgba(212,175,55,0.15);border-radius:14px;padding:18px 20px;">
+                                <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:14px">💰 Pricing</div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Trip Price (EGP) *</label>
+                                        <input type="number" id="proposal-price" min="1" required placeholder="e.g. 8500"
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;">
+                                    </div>
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Currency</label>
+                                        <select id="proposal-currency" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;">
+                                            <option value="EGP">EGP</option>
+                                            <option value="USD">USD</option>
+                                            <option value="EUR">EUR</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 2: Trip Details -->
+                            <div style="background:rgba(212,175,55,0.04);border:1px solid rgba(212,175,55,0.15);border-radius:14px;padding:18px 20px;">
+                                <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:14px">🏨 Trip Details</div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Number of Days</label>
+                                        <input type="number" id="proposal-days" min="1" placeholder="5"
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;">
+                                    </div>
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Number of Nights</label>
+                                        <input type="number" id="proposal-nights" min="0" placeholder="4"
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;">
+                                    </div>
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Hotel Name</label>
+                                        <input type="text" id="proposal-hotel-name" placeholder="e.g. Marriott Cairo"
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;">
+                                    </div>
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Hotel Rating ⭐</label>
+                                        <select id="proposal-hotel-rating" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;">
+                                            <option value="">Select rating</option>
+                                            <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                                            <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                                            <option value="3">⭐⭐⭐ 3 Stars</option>
+                                            <option value="2">⭐⭐ 2 Stars</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Transportation</label>
+                                        <input type="text" id="proposal-transport" placeholder="e.g. Private AC bus"
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;">
+                                    </div>
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Meals Included</label>
+                                        <input type="text" id="proposal-meals" placeholder="e.g. Breakfast & Dinner"
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 3: Inclusions -->
+                            <div style="background:rgba(212,175,55,0.04);border:1px solid rgba(212,175,55,0.15);border-radius:14px;padding:18px 20px;">
+                                <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:14px">✅ What's Included</div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Included ✅</label>
+                                        <textarea id="proposal-included" rows="3" placeholder="Accommodation, meals, transport..."
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.85rem;resize:vertical;font-family:inherit;"></textarea>
+                                    </div>
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Not Included ❌</label>
+                                        <textarea id="proposal-not-included" rows="3" placeholder="Flights, visa, personal expenses..."
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.85rem;resize:vertical;font-family:inherit;"></textarea>
+                                    </div>
+                                </div>
+                                <!-- Places -->
+                                <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:8px">Places Covered 📍</label>
+                                <div id="proposal-attractions-container"></div>
+                                <button type="button" onclick="addProposalAttractionField()"
+                                    style="background:rgba(212,175,55,0.08);border:1px dashed rgba(212,175,55,0.35);color:#d4af37;border-radius:10px;padding:7px 18px;font-size:0.8rem;cursor:pointer;margin-top:8px;">
+                                    <i class="fas fa-plus-circle me-1"></i> Add Place
+                                </button>
+                            </div>
+
+                            <!-- Section 4: Description -->
+                            <div style="background:rgba(212,175,55,0.04);border:1px solid rgba(212,175,55,0.15);border-radius:14px;padding:18px 20px;">
+                                <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:14px">📝 Description</div>
+                                <textarea id="proposal-description" rows="4" required placeholder="Describe the full trip experience..."
+                                    style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:12px 14px;color:#fff;outline:none;font-size:0.87rem;resize:vertical;font-family:inherit;margin-bottom:12px;"></textarea>
+                                <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Special Notes</label>
+                                <textarea id="proposal-special-notes" rows="2" placeholder="Any special requirements or notes..."
+                                    style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.85rem;resize:vertical;font-family:inherit;"></textarea>
+                            </div>
+
+                            <!-- Section 5: Validity & Contact -->
+                            <div style="background:rgba(212,175,55,0.04);border:1px solid rgba(212,175,55,0.15);border-radius:14px;padding:18px 20px;">
+                                <div style="color:#d4af37;font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:14px">📋 Offer Details</div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Offer Expiry Date</label>
+                                        <input type="date" id="proposal-expiry"
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;color-scheme:dark;">
+                                    </div>
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Response Time</label>
+                                        <input type="text" id="proposal-response-time" placeholder="e.g. Within 2 hours"
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;">
+                                    </div>
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">Contact Person</label>
+                                        <input type="text" id="proposal-contact-person" placeholder="Name of contact"
+                                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:10px 12px;color:#fff;outline:none;font-size:0.88rem;">
+                                    </div>
+                                    <div>
+                                        <label style="color:rgba(255,255,255,0.55);font-size:0.75rem;display:block;margin-bottom:5px">WhatsApp (auto-filled)</label>
+                                        <input type="text" id="proposal-whatsapp" readonly
+                                            style="width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.1);border-radius:10px;padding:10px 12px;color:rgba(255,255,255,0.5);outline:none;font-size:0.88rem;cursor:not-allowed;">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div style="padding:16px 28px;border-top:1px solid rgba(212,175,55,0.15);display:flex;justify-content:flex-end;gap:12px;background:rgba(6,15,24,0.8);">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal" style="border-radius:10px;padding:10px 22px;">Cancel</button>
+                        <button type="submit" class="btn btn-gold px-5" id="proposal-submit-btn">
+                            <i class="fas fa-paper-plane me-1"></i>Send Proposal
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/custom-select.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/realtime.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    const user = requireCompany();
+    const token = Storage.getToken();
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+    let offersCache = [];
+    let postsCache = [];
+
+    async function fetchJson(url, options = {}) {
+        const response = await fetch(url, {
+            headers: { 'Content-Type': 'application/json', ...authHeaders, ...(options.headers || {}) },
+            ...options
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.message || data.error || `Server error (${response.status})`);
+        return data;
+    }
+
+    if (user) {
+        document.getElementById('company-name').textContent = user.fullName || user.name || 'Company';
+        document.getElementById('welcome-name').textContent = user.fullName || user.name || 'Company';
+    }
+
+    document.querySelectorAll('.sidebar-menu a[data-section]').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            link.classList.add('active');
+            document.querySelectorAll('.admin-section').forEach(section => section.style.display = 'none');
+            const target = link.dataset.section;
+            document.getElementById(`section-${target}`).style.display = 'block';
+            document.getElementById('section-title').textContent = link.textContent.trim();
+        });
+    });
+
+    async function loadDashboard() {
+        const [offersData, postsData, companyData, bookingsData] = await Promise.all([
+            fetchJson('../api/offers'),
+            fetchJson('../api/posts?limit=50&page=1'),
+            fetchJson('../api/companies'),
+            fetchJson('../api/bookings/company/bookings').catch(() => ({ bookings: [] }))
+        ]);
+        offersCache = (offersData.offers || []).filter(offer => String(offer.companyId?.userId || offer.companyId?._id) === String(user.id));
+        postsCache = postsData.posts || [];
+        const bookings = bookingsData.bookings || [];
+        const company = (companyData.companies || []).find(item => String(item.userId) === String(user.id));
+
+        document.getElementById('booking-count').textContent = bookings.length;
+        document.getElementById('my-offers-count').textContent = offersCache.length;
+        document.getElementById('my-posts-count').textContent = postsCache.length;
+        document.getElementById('my-rating').textContent = company?.rating || 0;
+
+        // Followers count
+        if (company?._id) {
+            fetchJson(`../api/companies/${company._id}/followers`)
+                .then(d => {
+                    const el = document.getElementById('my-followers');
+                    if (el) el.textContent = d.followersCount || 0;
+                }).catch(() => {});
+        }
+        document.getElementById('company-profile-details').innerHTML = company ? `
+            <p><strong>Company:</strong> ${company.companyName}</p>
+            <p><strong>Email:</strong> ${company.email}</p>
+            <p><strong>Status:</strong> ${company.status}</p>
+            <p><strong>Governorate:</strong> ${company.governorate}</p>
+        ` : '<p class="text-secondary">No company profile found.</p>';
+
+        // set sidebar profile link to open standalone profile page
+        const profileLink = document.getElementById('sidebar-profile-link');
+        if (profileLink) {
+            if (company && company._id) {
+                profileLink.href = `company-profile.html?id=${company._id}`;
+                profileLink.addEventListener('click', e => {
+                    e.preventDefault();
+                    window.location.href = profileLink.href;
+                });
+            } else {
+                profileLink.addEventListener('click', e => {
+                    e.preventDefault();
+                    showToast('Company profile not available', 'warning');
+                });
+            }
+        }
+
+        // Render bookings
+        document.getElementById('company-bookings').innerHTML = bookings.length ? bookings.map(booking => {
+            const statusBadge = {
+                'pending': '<span class="badge bg-warning text-dark">Pending</span>',
+                'confirmed': '<span class="badge bg-success">Confirmed</span>',
+                'cancelled': '<span class="badge bg-danger">Cancelled</span>',
+                'completed': '<span class="badge bg-info">Completed</span>'
+            }[booking.status] || '<span class="badge bg-secondary">Unknown</span>';
+            
+            return `
+                <div class="dashboard-card mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 style="color:#d4af37">${booking.title}</h5>
+                            <p class="mb-1"><strong>Customer:</strong> ${booking.userId?.fullName || 'N/A'}</p>
+                            <p class="mb-1"><strong>Email:</strong> ${booking.userId?.email || 'N/A'}</p>
+                            <p class="mb-1"><strong>Travel Date:</strong> ${new Date(booking.travelDate).toLocaleDateString()}</p>
+                            <p class="mb-1"><strong>Amount:</strong> ${formatPriceText(booking.amount || 0)}</p>
+                            <p class="mb-1"><strong>Travelers:</strong> ${booking.travelers || 1}</p>
+                        </div>
+                        <div class="text-end">
+                            ${statusBadge}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('') : '<p class="text-muted text-center py-4">No bookings yet.</p>';
+
+        document.getElementById('my-offers-list').innerHTML = offersCache.length ? offersCache.map(offer => `
+            <div class="dashboard-card mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 style="color:#d4af37">${offer.title}</h5>
+                        <p class="mb-1">${offer.destination}</p>
+                        <p class="mb-1">${formatPriceText(offer.price || 0)} • ${offer.availableSeats || 0} seats</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn-action btn-edit" onclick="editOffer('${offer._id}')"><i class="fas fa-pen"></i></button>
+                        <button class="btn-action btn-delete" onclick="deleteOffer('${offer._id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        `).join('') : '<p class="text-muted text-center py-4">No offers yet.</p>';
+
+        document.getElementById('company-posts').innerHTML = postsCache.length ? renderPostCards(postsCache) : '<div style="text-align:center;padding:60px 20px;color:rgba(255,255,255,0.3)"><i class="fas fa-inbox" style="font-size:3rem;display:block;margin-bottom:12px"></i><p>No travel requests available.</p></div>';
+        const countEl = document.getElementById('posts-feed-count');
+        if (countEl) countEl.textContent = postsCache.length + ' requests';
+    }
+
+
+    async function deleteOffer(id) {
+        try {
+            await fetchJson(`../api/offers/${id}`, { method: 'DELETE' });
+            showToast('Offer deleted');
+            loadDashboard();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    function editOffer(id) {
+        showToast('Edit flow can open here', 'warning');
+    }
+
+    document.getElementById('offer-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        try {
+            await fetchJson('../api/offers', {
+                method: 'POST',
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+            showToast('Offer created');
+            bootstrap.Modal.getInstance(document.getElementById('offerModal')).hide();
+            event.target.reset();
+            loadDashboard();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    });
+
+    loadDashboard();
+
+    // ── Posts rendering ──
+    function renderPostCards(posts) {
+        if (!posts.length) return '<div style="text-align:center;padding:60px 20px;color:rgba(255,255,255,0.3)"><i class="fas fa-inbox" style="font-size:3rem;display:block;margin-bottom:12px"></i><p>No travel requests available.</p></div>';
+        return posts.map((post, idx) => {
+            const pid         = String(post._id || '');
+            const myProposals = post.proposals || [];
+            const hasPending  = myProposals.some(p => p.status === 'pending');
+            const hasApproved = myProposals.some(p => p.status === 'approved');
+            const mktStatus   = post.marketplaceStatus || 'open';
+            const isClosed    = mktStatus === 'closed';
+            const isLocked    = mktStatus === 'locked';
+
+            let statusHtml = '';
+            if (isClosed)        statusHtml = '<span style="background:rgba(108,117,125,0.2);color:#adb5bd;border:1px solid rgba(108,117,125,0.3);border-radius:20px;padding:3px 10px;font-size:0.72rem;font-weight:600"><i class="fas fa-check-circle me-1"></i>Closed</span>';
+            else if (isLocked)   statusHtml = '<span style="background:rgba(253,126,20,0.15);color:#fd7e14;border:1px solid rgba(253,126,20,0.3);border-radius:20px;padding:3px 10px;font-size:0.72rem;font-weight:600"><i class="fas fa-lock me-1"></i>Locked</span>';
+            else if (hasApproved)statusHtml = '<span style="background:rgba(40,167,69,0.15);color:#4ade80;border:1px solid rgba(40,167,69,0.3);border-radius:20px;padding:3px 10px;font-size:0.72rem;font-weight:600"><i class="fas fa-check me-1"></i>Accepted</span>';
+            else if (hasPending) statusHtml = '<span style="background:rgba(255,193,7,0.15);color:#ffc107;border:1px solid rgba(255,193,7,0.3);border-radius:20px;padding:3px 10px;font-size:0.72rem;font-weight:600"><i class="fas fa-clock me-1"></i>Proposal Sent</span>';
+            else                 statusHtml = '<span style="background:rgba(40,167,69,0.15);color:#4ade80;border:1px solid rgba(40,167,69,0.3);border-radius:20px;padding:3px 10px;font-size:0.72rem;font-weight:600"><i class="fas fa-circle me-1" style="font-size:0.5rem"></i>Open</span>';
+
+            return `
+            <div class="dashboard-card mb-3" id="post-card-${pid}" style="border:1px solid rgba(212,175,55,0.12);border-radius:16px;transition:border-color 0.2s;animation:fadeInUp 0.3s ease ${idx * 0.05}s both;">
+                <!-- Header row -->
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+                    <div>
+                        <h5 style="color:#d4af37;font-family:'Cinzel',serif;margin:0 0 5px;font-size:1.05rem">${post.destination}</h5>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                            ${statusHtml}
+                            <span style="color:rgba(255,255,255,0.3);font-size:0.72rem">${post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-GB') : ''}</span>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button onclick="viewPostDetails('${pid}')"
+                            style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:8px 14px;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                            <i class="fas fa-eye"></i>View
+                        </button>
+                        <button onclick="toggleCommentBox('${pid}')"
+                            style="background:rgba(212,175,55,0.1);color:#d4af37;border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:8px 14px;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                            <i class="fas fa-comment-dots"></i>Comment
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <p style="color:rgba(255,255,255,0.7);font-size:0.87rem;line-height:1.65;margin-bottom:14px;">${post.requiredText || ''}</p>
+
+                <!-- Stats -->
+                <div style="display:flex;flex-wrap:wrap;gap:16px;padding:12px 14px;background:rgba(212,175,55,0.04);border-radius:10px;border:1px solid rgba(212,175,55,0.1);margin-bottom:${post.attractions?.length ? '12px' : '0'};">
+                    <div style="display:flex;align-items:center;gap:7px;">
+                        <i class="fas fa-wallet" style="color:#d4af37;font-size:0.82rem"></i>
+                        <div><div style="font-size:0.62rem;color:rgba(255,255,255,0.32);text-transform:uppercase;letter-spacing:1px">Budget</div><div style="color:#d4af37;font-weight:600;font-size:0.87rem">${formatPriceText(post.budget||0)}</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:7px;">
+                        <i class="fas fa-users" style="color:#d4af37;font-size:0.82rem"></i>
+                        <div><div style="font-size:0.62rem;color:rgba(255,255,255,0.32);text-transform:uppercase;letter-spacing:1px">Travelers</div><div style="color:#fff;font-weight:600;font-size:0.87rem">${post.travelers||1}</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:7px;">
+                        <i class="fas fa-calendar" style="color:#d4af37;font-size:0.82rem"></i>
+                        <div><div style="font-size:0.62rem;color:rgba(255,255,255,0.32);text-transform:uppercase;letter-spacing:1px">Date</div><div style="color:#fff;font-weight:600;font-size:0.87rem">${post.travelDate ? new Date(post.travelDate).toLocaleDateString('en-GB') : '—'}</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:7px;">
+                        <i class="fas fa-file-alt" style="color:#d4af37;font-size:0.82rem"></i>
+                        <div><div style="font-size:0.62rem;color:rgba(255,255,255,0.32);text-transform:uppercase;letter-spacing:1px">Proposals</div><div style="color:#fff;font-weight:600;font-size:0.87rem">${myProposals.length}</div></div>
+                    </div>
+                </div>
+
+                <!-- Attractions -->
+                ${post.attractions?.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">${post.attractions.map(a => `<span style="background:rgba(212,175,55,0.1);color:#d4af37;border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:3px 10px;font-size:0.72rem"><i class="fas fa-map-pin me-1" style="font-size:0.62rem"></i>${a.name||''}</span>`).join('')}</div>` : ''}
+
+                <!-- Proposal Comment box (replaces old comment box) -->
+                <div id="comment-box-${pid}" style="display:none;margin-top:16px;border-top:1px solid rgba(212,175,55,0.1);padding-top:14px;">
+                    <div style="color:#d4af37;font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:700;">
+                        <i class="fas fa-paper-plane me-1"></i>Submit Your Offer
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                        <div>
+                            <label style="color:rgba(255,255,255,0.5);font-size:0.72rem;display:block;margin-bottom:4px;">Trip Price (EGP) *</label>
+                            <input type="number" id="cprop-price-${pid}" 
+                                placeholder="${post.travelers > 1 ? `${(post.budget||0).toLocaleString()} EGP (${post.travelers} travelers)` : `${(post.budget||0).toLocaleString()} EGP`}" min="1"
+                                style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:9px 12px;color:#fff;outline:none;font-size:0.85rem;">
+                        </div>
+                        <div>
+                            <label style="color:rgba(255,255,255,0.5);font-size:0.72rem;display:block;margin-bottom:4px;">Travel Date</label>
+                            <input type="date" id="cprop-date-${pid}"
+                                style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:9px 12px;color:#fff;outline:none;font-size:0.85rem;color-scheme:dark;">
+                        </div>
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <label style="color:rgba(255,255,255,0.5);font-size:0.72rem;display:block;margin-bottom:4px;">Description *</label>
+                        <textarea id="cprop-desc-${pid}" rows="3" placeholder="Describe your offer: hotel, transport, inclusions..."
+                            style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.25);border-radius:10px;padding:9px 12px;color:#fff;outline:none;font-size:0.85rem;resize:vertical;font-family:inherit;"></textarea>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;gap:8px;">
+                        <button onclick="toggleCommentBox('${pid}')"
+                            style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);border-radius:10px;padding:8px 16px;font-size:0.82rem;cursor:pointer;">
+                            Cancel
+                        </button>
+                        <button onclick="submitProposalComment('${pid}')"
+                            style="background:linear-gradient(135deg,#d4af37,#c9a227);border:none;border-radius:10px;padding:8px 20px;color:#0a1d2e;font-size:0.82rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(212,175,55,0.3);">
+                            <i class="fas fa-paper-plane me-1"></i>Send Offer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- My proposals -->
+                ${myProposals.length ? `
+                <div style="margin-top:14px;border-top:1px solid rgba(212,175,55,0.08);padding-top:12px;">
+                    <div style="font-size:0.68rem;color:rgba(255,255,255,0.32);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">My Proposals</div>
+                    ${myProposals.map(p => `
+                    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.1);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                        <div>
+                            <div style="font-size:0.87rem;color:#fff;font-weight:600">${formatPriceText(p.price||0)}</div>
+                            <div style="font-size:0.78rem;color:rgba(255,255,255,0.45)">${(p.description||'').slice(0,70)}${(p.description||'').length>70?'…':''}</div>
+                        </div>
+                        <span style="padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;${p.status==='approved'?'background:rgba(40,167,69,0.15);color:#4ade80;border:1px solid rgba(40,167,69,0.3)':p.status==='rejected'?'background:rgba(220,53,69,0.15);color:#ff6b7a;border:1px solid rgba(220,53,69,0.3)':'background:rgba(255,193,7,0.15);color:#ffc107;border:1px solid rgba(255,193,7,0.3)'}">${p.status||'pending'}</span>
+                    </div>`).join('')}
+                </div>` : ''}
+            </div>`;
+        }).join('');
+    }
+
+    function filterPostsUI() {
+        const q = (document.getElementById('posts-search-input')?.value || '').toLowerCase();
+        const filtered = postsCache.filter(p => !q || (p.destination||'').toLowerCase().includes(q) || (p.requiredText||'').toLowerCase().includes(q));
+        document.getElementById('company-posts').innerHTML = renderPostCards(filtered);
+        const el = document.getElementById('posts-feed-count');
+        if (el) el.textContent = filtered.length + ' requests';
+    }
+
+    function toggleCommentBox(pid) {
+        const box = document.getElementById('comment-box-' + pid);
+        if (!box) return;
+        const isOpen = box.style.display !== 'none';
+        box.style.display = isOpen ? 'none' : 'block';
+        if (!isOpen) document.getElementById('cprop-price-' + pid)?.focus();
+    }
+
+    async function submitProposalComment(pid) {
+        const price = Number(document.getElementById('cprop-price-' + pid)?.value);
+        const desc  = document.getElementById('cprop-desc-' + pid)?.value?.trim();
+        const date  = document.getElementById('cprop-date-' + pid)?.value;
+
+        if (!price || price <= 0) return showToast('Please enter a valid price', 'warning');
+        if (!desc)               return showToast('Please write a description', 'warning');
+
+        try {
+            await fetchJson('../api/posts/' + pid + '/proposals', {
+                method: 'POST',
+                body: JSON.stringify({
+                    price,
+                    description: desc,
+                    offerExpiry: date || null,
+                    // Mark as a "comment proposal" — simpler form
+                    estimatedResponse: 'Quick response'
+                })
+            });
+            showToast('Offer sent to traveler ✅', 'success');
+            document.getElementById('comment-box-' + pid).style.display = 'none';
+            // Clear fields
+            ['cprop-price-','cprop-desc-','cprop-date-'].forEach(k => {
+                const el = document.getElementById(k + pid);
+                if (el) el.value = '';
+            });
+            loadDashboard();
+        } catch(e) { showToast(e.message, 'error'); }
+    }
+    function navigateToHash() {
+        const hash = window.location.hash.replace('#', '');
+        if (!hash) return;
+        const link = document.querySelector(`.sidebar-menu a[data-section="${hash}"]`);
+        if (link) {
+            link.click();
+            setTimeout(() => {
+                const section = document.getElementById(`section-${hash}`);
+                if (section) section.scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+    }
+    navigateToHash();
+    window.addEventListener('hashchange', navigateToHash);
+
+    // Auto-refresh dashboard every 30 seconds
+    setInterval(() => {
+        loadDashboard().catch(err => console.log('Dashboard refresh error:', err.message));
+    }, 30000);
+
+    // ── View Post Details ──
+    async function viewPostDetails(pid) {
+        const post = postsCache.find(p => String(p._id) === String(pid));
+        if (!post) return showToast('Post not found', 'error');
+
+        const myProposals = post.proposals || [];
+        const isYalaPlan  = post.sourceType === 'trip_plan';
+
+        // Use itinerary stored in the post directly (most reliable)
+        let tripPlan = null;
+        if (post.tripItinerary?.length) {
+            tripPlan = {
+                itinerary: post.tripItinerary,
+                style:     post.tripStyle || post.description?.match(/Style: (\w+)/)?.[1],
+                days:      post.duration || post.tripItinerary.length,
+                perPerson: Math.floor((post.budget||0) / (post.travelers||1))
+            };
+        } else if (isYalaPlan && post.sourceId) {
+            // Fallback: fetch from trip planner API
+            try {
+                const d = await fetchJson('../api/trip-planner/' + post.sourceId);
+                const t = d.trip || d.tripPlan;
+                if (t) tripPlan = { itinerary: t.itinerary, style: t.style, days: t.days, perPerson: Math.floor((post.budget||0)/(post.travelers||1)) };
+            } catch(e) { console.warn('Trip plan fetch:', e.message); }
+        }
+
+        document.getElementById('post-details-body').innerHTML = `
+            <!-- Header -->
+            <div style="background:linear-gradient(135deg,#0a1d2e 0%,#1a3a5c 100%);padding:20px 22px;position:relative;border-bottom:2px solid rgba(212,175,55,0.35);">
+                <button onclick="bootstrap.Modal.getInstance(document.getElementById('postDetailsModal')).hide()"
+                    style="position:absolute;top:12px;right:14px;background:rgba(255,255,255,0.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;">✕</button>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:48px;height:48px;border-radius:50%;background:rgba(212,175,55,0.15);border:2px solid rgba(212,175,55,0.35);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0">🗺️</div>
+                    <div style="flex:1;min-width:0">
+                        <div style="font-family:'Cinzel',serif;font-size:1.15rem;font-weight:700;color:#d4af37;line-height:1.2">${post.destination}</div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap;">
+                            ${isYalaPlan ? '<span style="background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.3);padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;color:#d4af37">🤖 Yala Plan AI</span>' : '<span style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;color:rgba(255,255,255,0.65)">✍️ Manual Post</span>'}
+                            <span style="font-size:0.72rem;color:rgba(255,255,255,0.4)">${post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : ''}</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Posted by -->
+                ${post.userId?.fullName ? `
+                <div style="margin-top:12px;padding:8px 12px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:10px;display:flex;align-items:center;gap:8px;">
+                    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#d4af37,#c9a227);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;color:#0a1d2e;flex-shrink:0">${post.userId.fullName.charAt(0).toUpperCase()}</div>
+                    <div>
+                        <div style="font-size:0.62rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.8px">Posted by</div>
+                        <div style="font-size:0.85rem;font-weight:600;color:#fff">${post.userId.fullName}</div>
+                    </div>
+                </div>` : ''}
+            </div>
+
+            <div style="padding:18px 20px;display:flex;flex-direction:column;gap:12px;">
+
+                <!-- Stats grid — 4 in a row -->
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+                    <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+                        <div style="width:36px;height:36px;border-radius:10px;background:rgba(212,175,55,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem">💰</div>
+                        <div><div style="font-size:0.62rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Budget</div><div style="font-weight:700;color:#d4af37;font-size:0.92rem">${formatPriceText(post.budget||0)}</div></div>
+                    </div>
+                    <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+                        <div style="width:36px;height:36px;border-radius:10px;background:rgba(212,175,55,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem">👥</div>
+                        <div><div style="font-size:0.62rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Travelers</div><div style="font-weight:700;color:#fff;font-size:0.92rem">${post.travelers||1} person(s)</div></div>
+                    </div>
+                    <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+                        <div style="width:36px;height:36px;border-radius:10px;background:rgba(212,175,55,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem">📅</div>
+                        <div><div style="font-size:0.62rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Travel Date</div><div style="font-weight:700;color:#fff;font-size:0.92rem">${post.travelDate ? new Date(post.travelDate).toLocaleDateString('en-GB') : '—'}</div></div>
+                    </div>
+                    <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+                        <div style="width:36px;height:36px;border-radius:10px;background:rgba(212,175,55,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem">⏱️</div>
+                        <div><div style="font-size:0.62rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Duration</div><div style="font-weight:700;color:#fff;font-size:0.92rem">${post.duration ? post.duration+' days' : (tripPlan?.days ? tripPlan.days+' days' : '—')}</div></div>
+                    </div>
+                </div>
+
+                <!-- Travel style (if Yala Plan) -->
+                ${tripPlan?.style ? `
+                <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:1.2rem">🎯</span>
+                    <div>
+                        <div style="font-size:0.62rem;color:rgba(255,255,255,0.32);text-transform:uppercase;letter-spacing:1px">Travel Style</div>
+                        <div style="color:#d4af37;font-weight:600;text-transform:capitalize">${tripPlan.style}</div>
+                    </div>
+                </div>` : ''}
+
+                <!-- Requirements -->
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.12);border-radius:12px;padding:14px 16px;">
+                    <div style="font-size:0.65rem;color:#d4af37;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📋 Requirements</div>
+                    <p style="color:rgba(255,255,255,0.82);font-size:0.87rem;line-height:1.75;margin:0">${post.requiredText || '—'}</p>
+                </div>
+
+                <!-- Description -->
+                ${post.description ? `
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.12);border-radius:12px;padding:14px 16px;">
+                    <div style="font-size:0.65rem;color:#d4af37;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📝 Description</div>
+                    <p style="color:rgba(255,255,255,0.75);font-size:0.87rem;line-height:1.75;margin:0">${post.description}</p>
+                </div>` : ''}
+
+                <!-- Requested Attractions -->
+                ${post.attractions?.length ? `
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.12);border-radius:12px;padding:14px 16px;">
+                    <div style="font-size:0.65rem;color:#d4af37;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📍 Requested Places (${post.attractions.length})</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:7px;">
+                        ${post.attractions.map(a=>`<span style="background:rgba(212,175,55,0.1);color:#d4af37;border:1px solid rgba(212,175,55,0.25);border-radius:20px;padding:4px 12px;font-size:0.78rem"><i class="fas fa-landmark me-1" style="font-size:0.7rem"></i>${a.name||''}</span>`).join('')}
+                    </div>
+                </div>` : ''}
+
+                <!-- Yala Plan full itinerary -->
+                ${tripPlan?.itinerary?.length ? `
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.12);border-radius:12px;padding:14px 16px;">
+                    <div style="font-size:0.65rem;color:#d4af37;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🤖 AI-Generated Itinerary (${tripPlan.itinerary.length} Days)</div>
+                    <div style="display:flex;flex-direction:column;gap:10px;max-height:280px;overflow-y:auto;padding-right:4px;">
+                        ${tripPlan.itinerary.map(day=>`
+                        <div style="background:rgba(212,175,55,0.04);border:1px solid rgba(212,175,55,0.1);border-radius:10px;padding:12px;">
+                            <div style="font-weight:700;color:#d4af37;font-size:0.85rem;margin-bottom:8px">
+                                Day ${day.day}${day.destination ? ` — <span style="color:rgba(255,255,255,0.7)">${day.destination}</span>` : ''}
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:5px;">
+                                <div style="font-size:0.8rem;color:rgba(255,255,255,0.75)"><span style="color:#fbbf24;font-size:0.7rem">🌅</span> <strong>Morning:</strong> ${day.morning}</div>
+                                <div style="font-size:0.8rem;color:rgba(255,255,255,0.75)"><span style="color:#f59e0b;font-size:0.7rem">☀️</span> <strong>Afternoon:</strong> ${day.afternoon}</div>
+                                <div style="font-size:0.8rem;color:rgba(255,255,255,0.75)"><span style="color:#8b5cf6;font-size:0.7rem">🌙</span> <strong>Evening:</strong> ${day.evening}</div>
+                                <div style="font-size:0.78rem;color:rgba(212,175,55,0.6);margin-top:3px"><i class="fas fa-bed" style="font-size:0.68rem;margin-right:4px"></i>${day.accommodation}</div>
+                            </div>
+                        </div>`).join('')}
+                    </div>
+                    <div style="margin-top:10px;padding:8px 12px;background:rgba(212,175,55,0.06);border-radius:8px;font-size:0.78rem;color:rgba(255,255,255,0.45)">
+                        💡 Est. cost per person: <strong style="color:#d4af37">${tripPlan.perPerson ? formatPriceText(tripPlan.perPerson) : '—'}</strong>
+                    </div>
+                </div>` : ''}
+
+                <!-- Action buttons -->
+                <div style="display:flex;gap:10px;flex-wrap:wrap;padding-top:4px;">
+                    <button onclick="bootstrap.Modal.getInstance(document.getElementById('postDetailsModal')).hide();toggleCommentBox('${pid}')"
+                        style="flex:1;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:12px;padding:12px;color:#d4af37;font-weight:600;font-size:0.88rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+                        <i class="fas fa-comment-dots"></i>Comment
+                    </button>
+                </div>
+
+            </div>
+        `;
+
+        new bootstrap.Modal(document.getElementById('postDetailsModal')).show();
+    }
+
+    // Listen for theme changes and refresh
+    window.addEventListener('travelnow-theme-changed', () => {
+        loadDashboard().catch(err => console.log('Dashboard refresh error:', err.message));
+    });
+
+    // ── Real-time: refresh when notified ──
+    window.addEventListener('travelnow:post_updated', () => {
+        loadDashboard().catch(() => {});
+    });
+
+    // ── Proposal functions ──
+
+    function openProposalModal(postId) {
+        const post = postsCache.find(p => String(p._id) === String(postId));
+        if (!post) { showToast('Post not found in cache. Try refreshing.', 'error'); return; }
+
+        document.getElementById('proposal-post-id').value   = postId;
+        document.getElementById('proposal-post-dest').textContent = '📍 ' + post.destination;
+        document.getElementById('proposal-post-required').textContent = post.requiredText || '';
+        document.getElementById('proposal-post-budget').innerHTML = formatPrice(post.budget||0);
+        document.getElementById('proposal-post-travelers').textContent = post.travelers || 1;
+        document.getElementById('proposal-post-date').textContent = post.travelDate
+            ? new Date(post.travelDate).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '-';
+
+        // Reset all fields
+        ['proposal-price','proposal-days','proposal-nights','proposal-hotel-name',
+         'proposal-transport','proposal-meals','proposal-included','proposal-not-included',
+         'proposal-description','proposal-special-notes','proposal-expiry',
+         'proposal-response-time','proposal-contact-person'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        const ratingEl = document.getElementById('proposal-hotel-rating');
+        if (ratingEl) ratingEl.value = '';
+        const currEl = document.getElementById('proposal-currency');
+        if (currEl) currEl.value = 'EGP';
+
+        // Auto-fill WhatsApp from company data (loaded in dashboard)
+        if (window._companyProfile?.whatsapp) {
+            const waEl = document.getElementById('proposal-whatsapp');
+            if (waEl) waEl.value = window._companyProfile.whatsapp;
+        }
+
+        // Pre-fill attractions
+        const container = document.getElementById('proposal-attractions-container');
+        container.innerHTML = '';
+        if (post.attractions?.length) {
+            post.attractions.forEach(a => addProposalAttractionField(a.name || ''));
+        } else {
+            addProposalAttractionField();
+        }
+
+        new bootstrap.Modal(document.getElementById('proposalModal')).show();
+    }
+
+    function addProposalAttractionField(val = '') {
+        const container = document.getElementById('proposal-attractions-container');
+        const div = document.createElement('div');
+        div.className = 'd-flex gap-2 mb-2 align-items-center';
+        div.innerHTML = `
+            <input class="form-control" placeholder="e.g. Pyramids of Giza" value="${val}"
+                style="background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.2);color:#fff;border-radius:10px;font-size:0.85rem;">
+            <button type="button" onclick="this.parentElement.remove()"
+                style="background:rgba(220,53,69,0.12);color:#ff6b7a;border:1px solid rgba(220,53,69,0.3);border-radius:8px;padding:7px 12px;cursor:pointer;flex-shrink:0;">
+                <i class="fas fa-times"></i>
+            </button>`;
+        container.appendChild(div);
+    }
+    // alias for old name
+    window.addProposalPlace = addProposalAttractionField;
+
+    document.getElementById('proposal-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const postId      = document.getElementById('proposal-post-id').value;
+        const description = document.getElementById('proposal-description').value.trim();
+        const price       = Number(document.getElementById('proposal-price').value);
+
+        if (!postId)      return showToast('Post ID missing.', 'error');
+        if (!description) return showToast('Please write a trip description', 'error');
+        if (!price || price <= 0) return showToast('Please enter a valid price', 'error');
+
+        const attractions = Array.from(document.querySelectorAll('#proposal-attractions-container input'))
+            .map(i => ({ name: i.value.trim() })).filter(a => a.name);
+
+        const payload = {
+            description,
+            price,
+            currency:          document.getElementById('proposal-currency')?.value || 'EGP',
+            days:              Number(document.getElementById('proposal-days')?.value) || null,
+            nights:            Number(document.getElementById('proposal-nights')?.value) || null,
+            hotelName:         document.getElementById('proposal-hotel-name')?.value.trim() || null,
+            hotelRating:       Number(document.getElementById('proposal-hotel-rating')?.value) || null,
+            transportation:    document.getElementById('proposal-transport')?.value.trim() || null,
+            mealsIncluded:     document.getElementById('proposal-meals')?.value.trim() || null,
+            included:          document.getElementById('proposal-included')?.value.trim() || null,
+            notIncluded:       document.getElementById('proposal-not-included')?.value.trim() || null,
+            specialNotes:      document.getElementById('proposal-special-notes')?.value.trim() || null,
+            offerExpiry:       document.getElementById('proposal-expiry')?.value || null,
+            estimatedResponse: document.getElementById('proposal-response-time')?.value.trim() || null,
+            contactPerson:     document.getElementById('proposal-contact-person')?.value.trim() || null,
+            attractions
+        };
+
+        const btn = document.getElementById('proposal-submit-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Sending...';
+
+        try {
+            await fetchJson(`../api/posts/${postId}/proposals`, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            showToast('Proposal sent to the traveler! ✅', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('proposalModal')).hide();
+            loadDashboard();
+        } catch (error) {
+            showToast(error.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Send Proposal';
+        }
+    });
+    </script>
+</body>
+</html>

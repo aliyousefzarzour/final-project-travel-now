@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorites - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        /* ===== CARD ===== */
+        .fav-card {
+            background: #0a1d2e; /* لون دارك فخم */
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        .fav-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 45px rgba(212,175,55,0.25);
+            border-color: #d4af37;
+        }
+        .fav-img {
+            width: 100%; height: 180px; /* أبعاد متناسقة */
+            object-fit: cover; display: block;
+            border-bottom: 1px solid rgba(212,175,55,0.1);
+        }
+        .fav-img-ph {
+            width: 100%; height: 180px;
+            background: linear-gradient(135deg, #050f17, #0a1d2e);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem;
+            color: rgba(212,175,55,0.15);
+        }
+        .fav-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+        .fav-cat {
+            display: inline-block;
+            background: rgba(212,175,55,0.15);
+            color: #d4af37;
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 50px;
+            font-size: 0.65rem; font-weight: 800;
+            padding: 3px 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            width: fit-content;
+        }
+        .fav-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff; /* نص أبيض واضح */
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        .fav-loc { color: #d4af37; font-size: 0.8rem; margin-bottom: 8px; font-weight: 500; }
+        .fav-stars { color: #ffc107; font-size: 0.8rem; margin-bottom: 12px; }
+        .fav-desc {
+            color: rgba(255,255,255,0.7); /* نص وصفي مريح */
+            font-size: 0.85rem; line-height: 1.6; flex: 1;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .fav-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; }
+        .btn-view {
+            background: linear-gradient(135deg, #d4af37, #c9a227);
+            color: #0a1d2e; border: none; border-radius: 10px;
+            padding: 9px 10px; font-size: 0.77rem; font-weight: 700;
+            cursor: pointer; text-decoration: none;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            transition: all 0.2s; font-family: 'Poppins', sans-serif;
+        }
+        .btn-view:hover { color: #0a1d2e; transform: translateY(-1px); }
+        .btn-remove {
+            background: transparent;
+            color: #e74c3c;
+            border: 1px solid rgba(231,76,60,0.28);
+            border-radius: 10px;
+            padding: 9px 10px; font-size: 0.77rem; font-weight: 500;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            transition: all 0.2s; font-family: 'Poppins', sans-serif;
+        }
+        .btn-remove:hover { background: rgba(231,76,60,0.1); border-color: #e74c3c; }
+        .btn-map {
+            grid-column: 1 / -1;
+            background: rgba(212,175,55,0.07);
+            color: #d4af37;
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 10px;
+            padding: 7px 10px; font-size: 0.74rem; font-weight: 500;
+            cursor: pointer; text-decoration: none;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            transition: all 0.2s; font-family: 'Poppins', sans-serif;
+        }
+        .btn-map:hover { background: rgba(212,175,55,0.14); color: #d4af37; }
+
+        /* ===== STATS BAR ===== */
+        .fav-stats {
+            background: linear-gradient(135deg, #0a1d2e, #0f2840);
+            border-radius: 14px;
+            padding: 18px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid rgba(212,175,55,0.1);
+        }
+        .stat-num { font-size: 2.2rem; font-weight: 700; color: #d4af37; font-family: 'Cinzel', serif; line-height: 1; }
+        .stat-lbl { font-size: 0.72rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+        /* ===== SKELETON ===== */
+        .sk { background: linear-gradient(90deg, rgba(0,0,0,0.04) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.04) 75%); background-size: 200%; animation: shimmer 1.3s infinite; border-radius: 18px; height: 360px; }
+        body.dark-mode .sk { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%); background-size:200%; }
+        @keyframes shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
+
+        /* ===== REMOVE ANIMATION ===== */
+        .removing { animation: removeOut 0.35s ease forwards; }
+        @keyframes removeOut { from{opacity:1;transform:scale(1)} to{opacity:0;transform:scale(0.88)} }
+    </style>
+</head>
+<body>
+    <div id="tn-navbar" data-page="attractions"></div>
+    <div class="dashboard-wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <button class="close-sidebar" onclick="document.querySelector('.sidebar').classList.remove('open')">
+                <i class="fas fa-times"></i>
+            </button>
+            <i class="fas fa-user-circle fa-2x" style="color:#d4af37"></i>
+            <h3>PROFILE</h3>
+            <p id="user-side">Welcome</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="bookings.html"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+            <li><a href="favorites.html" class="active"><i class="fas fa-heart"></i> Favorites</a></li>
+            <li><a href="saved-trips.html"><i class="fas fa-route"></i> Saved Trips</a></li>
+            <li><a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="javascript:void(0)" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <div>
+                <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <a href="attractions.html" class="btn btn-gold"><i class="fas fa-plus"></i> Add More</a>
+        </div>
+
+        <!-- Stats -->
+        <div id="fav-stats" class="fav-stats" style="display:none;">
+            <div>
+                <div class="stat-num" id="stat-count">0</div>
+                <div class="stat-lbl">Saved Places</div>
+            </div>
+            <div style="width:1px;background:rgba(255,255,255,0.1);height:44px;margin:0 4px;"></div>
+            <div style="flex:1">
+                <p style="color:rgba(255,255,255,0.65); font-size:0.83rem; margin:0; line-height:1.5;">
+                    Your personal collection of Egypt's iconic destinations.
+                </p>
+                <div style="margin-top:6px; display:flex; gap:10px; flex-wrap:wrap;">
+                    <a href="map.html" style="color:#d4af37; font-size:0.78rem; text-decoration:none;">
+                        <i class="fas fa-map-marked-alt"></i> View on Map
+                    </a>
+                    <a href="attractions.html" style="color:rgba(255,255,255,0.5); font-size:0.78rem; text-decoration:none;">
+                        <i class="fas fa-search"></i> Discover More
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div id="fav-container" class="row g-4"></div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/navbar.js"></script>
+<script>
+const user = requireAuth();
+const token = Storage.getToken();
+const authHdr = token ? { Authorization: `Bearer ${token}` } : {};
+if (user) document.getElementById('user-side').textContent = 'Hello, ' + (user.fullName || user.name || 'Traveler');
+
+const CAT_EMOJI = { historical:'🏛️', religious:'🕌', museums:'🏛', beach:'🏖️', adventure:'🧗', natural:'🌿', cultural:'🎭' };
+
+async function api(url, opts = {}) {
+    const r = await fetch(url, {
+        headers: { 'Content-Type': 'application/json', ...authHdr, ...(opts.headers||{}) },
+        ...opts
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.message || `HTTP ${r.status}`);
+    return d;
+}
+
+async function loadFavorites() {
+    const container = document.getElementById('fav-container');
+    container.innerHTML = [1,2,3,4].map(() =>
+        `<div class="col-lg-3 col-md-4 col-sm-6"><div class="sk"></div></div>`
+    ).join('');
+
+    try {
+        const data = await api('../api/favorites');
+        const favs = data.favorites || [];
+
+        if (!favs.length) {
+            document.getElementById('fav-stats').style.display = 'none';
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="dashboard-card text-center py-5">
+                        <i class="fas fa-heart fa-4x mb-4" style="color:#d4af37;opacity:0.25"></i>
+                        <h3 style="color:var(--text);font-family:'Cinzel'">No favorites yet</h3>
+                        <p class="text-white mt-2 mb-4 opacity-75">Explore Egypt's attractions and tap ❤️ to save your favorites here.</p>
+                        <a href="attractions.html" class="btn btn-gold me-2"><i class="fas fa-search"></i> Browse Attractions</a>
+                        <a href="map.html" class="btn btn-outline-gold"><i class="fas fa-map"></i> Interactive Map</a>
+                    </div>
+                </div>`;
+            return;
+        }
+
+        document.getElementById('fav-stats').style.display = 'flex';
+        document.getElementById('stat-count').textContent = favs.length;
+
+        container.innerHTML = favs.map(fav => {
+            const a = fav.attractionId || {};
+            const img   = a.images?.[0] || '';
+            const emoji = CAT_EMOJI[a.category] || '📍';
+            const stars = '★'.repeat(Math.floor(a.rating||0)) + '☆'.repeat(5-Math.floor(a.rating||0));
+            return `
+            <div class="col-lg-3 col-md-4 col-sm-6" id="fc-${fav._id}">
+                <div class="fav-card">
+                    ${img
+                        ? `<img class="fav-img" src="${img}" alt="${a.name||''}"
+                               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                        : ''}
+                    <div class="fav-img-ph" ${img ? 'style="display:none"' : ''}>${emoji}</div>
+                    <div class="fav-body">
+                        <span class="fav-cat">${emoji} ${String(a.category||'place').toUpperCase()}</span>
+                        <div class="fav-title">${a.name||'Unknown Attraction'}</div>
+                        <div class="fav-loc"><i class="fas fa-map-marker-alt"></i> ${a.governorate||'-'}</div>
+                        <div class="fav-stars">${stars}
+                            <span style="color:#999;font-size:0.7rem;margin-left:4px;">
+                                (${Number(a.reviews||0).toLocaleString()})
+                            </span>
+                        </div>
+                        <p class="fav-desc">${a.description||''}</p>
+                        <div class="fav-actions">
+                            <a href="attraction-details.html?id=${a._id}" class="btn-view">
+                                <i class="fas fa-eye"></i> Details
+                            </a>
+                            <button class="btn-remove" onclick="removeFav('${fav._id}')">
+                                <i class="fas fa-heart-broken"></i> Remove
+                            </button>
+                            <a href="map.html" class="btn-map">
+                                <i class="fas fa-map-marked-alt"></i> View on Map
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+
+    } catch (err) {
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="dashboard-card text-center py-5">
+                    <i class="fas fa-exclamation-circle fa-3x mb-3" style="color:#dc3545"></i>
+                    <p class="text-danger">${err.message}</p>
+                    <button class="btn btn-gold mt-3" onclick="loadFavorites()"><i class="fas fa-redo"></i> Retry</button>
+                </div>
+            </div>`;
+        showToast('Failed to load favorites', 'error');
+    }
+}
+
+async function removeFav(favId) {
+    const col = document.getElementById(`fc-${favId}`);
+    if (col) col.classList.add('removing');
+    try {
+        await api(`../api/favorites/${favId}`, { method: 'DELETE' });
+        showToast('Removed from favorites');
+        setTimeout(loadFavorites, 360);
+    } catch (err) {
+        if (col) col.classList.remove('removing');
+        showToast(err.message, 'error');
+    }
+}
+
+loadFavorites();
+</script>
+</body>
+</html>

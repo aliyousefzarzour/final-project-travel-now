@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Profile - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        .profile-hero {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.12);
+            margin-bottom: 2rem;
+        }
+        .profile-banner {
+            min-height: 320px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .profile-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(10,29,46,0.18), rgba(10,29,46,0.92));
+        }
+        .profile-card {
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(0,0,0,0.18);
+        }
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(212,175,55,0.12);
+            color: #d4af37;
+            padding: 0.65rem 1rem;
+            border-radius: 999px;
+            font-size: 0.95rem;
+            margin-right: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .mini-badge {
+            font-size: 0.8rem;
+            letter-spacing: 0.03em;
+        }
+        .offer-card-mini {
+            border-radius: 18px;
+            transition: transform .2s ease;
+        }
+        .offer-card-mini:hover {
+            transform: translateY(-4px);
+        }
+        body.dark-mode .profile-card,
+        body.dark-mode .offer-card-mini {
+            background: #0b1f37;
+        }
+        /* Ensure hero and banner contrast in dark mode */
+        body.dark-mode .profile-hero { background: linear-gradient(180deg, rgba(10,29,46,0.2), rgba(10,29,46,0.8)); }
+        body.dark-mode .profile-banner::after { background: linear-gradient(180deg, rgba(10,29,46,0.36), rgba(10,29,46,0.96)); }
+        .edit-actions { display:flex; gap:0.75rem; }
+        .form-small { font-size:0.95rem; }
+    </style>
+</head>
+<body>
+    <div id="tn-navbar" data-page="companies"></div>
+    <div class="container py-5">
+        <div id="company-profile-shell">
+            <div class="text-center mb-5">
+                <h1 class="display-6"><i class="fas fa-building"></i> Company Profile</h1>
+                <p class="text-muted">Explore the company details, services and offers.</p>
+            </div>
+            <div id="profile-content">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-gold" role="status"><span class="visually-hidden">Loading...</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editCompanyModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Company Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="edit-company-form" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Company Name</label>
+                                <input name="companyName" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Owner Name</label>
+                                <input name="ownerName" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Phone</label>
+                                <input name="phone" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">WhatsApp</label>
+                                <input name="whatsapp" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Website</label>
+                                <input name="website" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Governorate</label>
+                                <input name="governorate" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Address</label>
+                                <input name="address" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Country</label>
+                                <input name="country" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Experience (years)</label>
+                                <input name="experience" type="number" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Employees</label>
+                                <input name="employees" type="number" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">IATA</label>
+                                <input name="iata" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label form-small">Services</label>
+                                <textarea name="services" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label form-small">Packages</label>
+                                <textarea name="packages" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label form-small">Description</label>
+                                <textarea name="description" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Logo (leave empty to keep)</label>
+                                <input name="logo" type="file" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-small">Commercial Reg (file)</label>
+                                <input name="docCommercial" type="file" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-gold">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const companyId = params.get('id');
+        const highlightOffers = params.get('offer') === 'true';
+        const profileShell = document.getElementById('profile-content');
+
+        function renderBadge(label, type = 'secondary') {
+            return `<span class="badge bg-${type} mini-badge me-1">${label}</span>`;
+        }
+
+        function showError(message) {
+            profileShell.innerHTML = `
+                <div class="text-center py-5">
+                    <p class="text-danger"><i class="fas fa-exclamation-circle"></i> ${message}</p>
+                    <a href="companies.html" class="btn btn-outline-gold mt-3"><i class="fas fa-arrow-left"></i> Back to Companies</a>
+                </div>
+            `;
+        }
+
+        async function fetchJson(url) {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Request failed');
+            return data;
+        }
+
+        function bookOffer(offerId) {
+            if (!Storage.get('travelnow-user')) {
+                showToast('Please login to book', 'warning');
+                setTimeout(() => window.location.href = 'login.html', 1000);
+                return;
+            }
+            window.location.href = `payment.html?offer=${offerId}`;
+        }
+
+        async function loadCompanyProfile() {
+            if (!companyId) {
+                showError('Missing company identifier in the URL.');
+                return;
+            }
+
+            try {
+                const [companyData, offersData] = await Promise.all([
+                    fetchJson(`../api/companies/${companyId}`),
+                    fetchJson('../api/offers')
+                ]);
+
+                const company = companyData.company;
+                const currentUser = Storage.get('travelnow-user');
+                const offers = (offersData.offers || []).filter(offer => String(offer.companyId?._id || offer.companyId) === String(companyId));
+                const logoUrl = company.logo || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200';
+
+                profileShell.innerHTML = `
+                    <div class="profile-hero overflow-hidden position-relative mb-5">
+                        <div class="profile-banner" style="background-image:url('${logoUrl.replace(/'/g, "%27")}');"></div>
+                        <div class="position-absolute bottom-0 start-0 end-0 p-4" style="background: linear-gradient(180deg, transparent, rgba(10,29,46,0.95));">
+                            <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
+                                <div>
+                                    <h2 class="text-white mb-2">${company.companyName}</h2>
+                                    <div class="text-white-50 mb-2">${company.governorate}, ${company.country || 'Egypt'}</div>
+                                    <!-- Badges inside hero, below company name -->
+                                    <div class="d-flex flex-wrap gap-2">
+                                        ${company.verified ? renderBadge('✓ Verified', 'success') : ''}
+                                        ${company.ministry ? renderBadge('🏛 Ministry Approved', 'warning') : ''}
+                                        ${company.trusted ? renderBadge('⭐ Trusted Partner', 'info') : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons BELOW the hero, clearly separated -->
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        ${currentUser && currentUser.role === 'tourist' ? `
+                            <button id="follow-btn" class="btn btn-outline-gold" onclick="toggleFollow()">
+                                <i class="fas fa-bell me-1"></i> <span id="follow-label">Follow</span>
+                                <span id="followers-badge" class="badge" style="background:rgba(212,175,55,0.25);color:#d4af37;margin-left:5px;"></span>
+                            </button>
+                        ` : ''}
+                        ${currentUser && String(currentUser.id) === String(company.userId) ? `<button id="edit-profile-btn" class="btn btn-outline-dark"><i class="fas fa-pen"></i> Edit Profile</button>` : ''}
+                        <a href="companies.html" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i> Back to Companies</a>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-7">
+                            <div class="profile-card p-4 mb-4 bg-white">
+                                <h3 class="mb-3">About the Company</h3>
+                                <p class="text-secondary">${company.description || 'No description provided yet.'}</p>
+                                <div class="mb-4">
+                                    <div class="stat-pill"><i class="fas fa-star"></i> Rating ${company.rating?.toFixed(1) || '0.0'}</div>
+                                    <div class="stat-pill"><i class="fas fa-hotel"></i> ${company.experience || 0} years experience</div>
+                                    <div class="stat-pill"><i class="fas fa-users"></i> ${company.employees || 0} employees</div>
+                                </div>
+                                <div class="row gy-3">
+                                    <div class="col-sm-6">
+                                        <p class="mb-1 text-uppercase text-muted small">Owner</p>
+                                        <p class="mb-0">${company.ownerName}</p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="mb-1 text-uppercase text-muted small">Email</p>
+                                        <p class="mb-0">${company.email}</p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="mb-1 text-uppercase text-muted small">Phone</p>
+                                        <p class="mb-0">${company.phone}</p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="mb-1 text-uppercase text-muted small">WhatsApp</p>
+                                        <p class="mb-0">${company.whatsapp}</p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="mb-1 text-uppercase text-muted small">Address</p>
+                                        <p class="mb-0">${company.address}</p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="mb-1 text-uppercase text-muted small">Website</p>
+                                        <p class="mb-0">${company.website ? `<a href="${company.website}" target="_blank" rel="noreferrer">${company.website}</a>` : 'Not available'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="profile-card p-4 bg-white">
+                                <h3 class="mb-3">Company Documents</h3>
+                                <div class="row gx-3 gy-3">
+                                    <div class="col-sm-6"><strong>Commercial Reg.</strong><p class="mb-0">${company.commercialReg || '-'}</p></div>
+                                    <div class="col-sm-6"><strong>Tax Card</strong><p class="mb-0">${company.taxCard || '-'}</p></div>
+                                    <div class="col-sm-6"><strong>Tourism License</strong><p class="mb-0">${company.tourismLicense || '-'}</p></div>
+                                    <div class="col-sm-6"><strong>Ministry License</strong><p class="mb-0">${company.ministryLicense || '-'}</p></div>
+                                    <div class="col-sm-6"><strong>IATA</strong><p class="mb-0">${company.iata || 'Not provided'}</p></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="profile-card p-4 bg-white mb-4">
+                                <h4 class="mb-3">Company Summary</h4>
+                                <ul class="list-unstyled text-muted">
+                                    <li class="mb-2"><i class="fas fa-map-marker-alt text-gold me-2"></i>${company.governorate}, ${company.country || 'Egypt'}</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Status: ${company.status || 'pending'}</li>
+                                    <li class="mb-2"><i class="fas fa-thumbs-up text-info me-2"></i>Verified: ${company.verified ? 'Yes' : 'No'}</li>
+                                    <li class="mb-2"><i class="fas fa-users text-warning me-2"></i>Total Bookings: ${company.totalBookings || 0}</li>
+                                    <li class="mb-2"><i class="fas fa-tags text-gold me-2"></i>Total Offers: ${company.totalOffers || 0}</li>
+                                    <li class="mb-2"><i class="fas fa-wallet text-success me-2"></i>Revenue: ${Number(company.revenue || 0).toLocaleString()} EGP</li>
+                                </ul>
+                            </div>
+                            <div class="profile-card p-4 bg-white">
+                                <h4 class="mb-3">Services & Packages</h4>
+                                <p class="text-secondary mb-3">${company.services || 'No services listed yet.'}</p>
+                                <h5 class="mb-2">Package Highlights</h5>
+                                <p class="text-secondary">${company.packages || 'No packages described yet.'}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-5">
+                        <div class="d-flex align-items-center justify-content-between mb-4 flex-column flex-md-row gap-3">
+                            <div>
+                                <h3>Offers by ${company.companyName}</h3>
+                                <p class="text-muted mb-0">Browse available trips and book directly.</p>
+                            </div>
+                            <a href="companies.html" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i> Back to Companies</a>
+                        </div>
+                        <div class="row g-3" id="company-offers-list">
+                            ${offers.length ? offers.map(offer => `
+                                <div class="col-12 col-md-6">
+                                    <div class="card offer-card-mini h-100 shadow-sm border-0">
+                                        <div class="card-body d-flex flex-column">
+                                            <h5 class="card-title mb-2">${offer.title}</h5>
+                                            <p class="card-text text-secondary mb-3">${offer.destination} • ${offer.duration || 'Flexible'}</p>
+                                            <div class="mt-auto">
+                                                <p class="mb-2 text-gold fw-bold">${Number(offer.price || 0).toLocaleString()} EGP</p>
+                                                <button class="btn btn-gold w-100" onclick="bookOffer('${offer._id}')"><i class="fas fa-bookmark"></i> Book Now</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('') : '<div class="col-12"><p class="text-center text-muted py-4">No active offers currently.</p></div>'}
+                        </div>
+                    </div>
+                `;
+
+                        // wire edit button (currentUser already defined above)
+                        if (currentUser && String(currentUser.id) === String(company.userId)) {
+                            const editBtn = document.getElementById('edit-profile-btn');
+                            if (editBtn) editBtn.addEventListener('click', () => {
+                                // prefill form
+                                const form = document.getElementById('edit-company-form');
+                                form.companyName.value = company.companyName || '';
+                                form.ownerName.value = company.ownerName || '';
+                                form.phone.value = company.phone || '';
+                                form.whatsapp.value = company.whatsapp || '';
+                                form.website.value = company.website || '';
+                                form.governorate.value = company.governorate || '';
+                                form.address.value = company.address || '';
+                                form.country.value = company.country || 'Egypt';
+                                form.experience.value = company.experience || 0;
+                                form.employees.value = company.employees || 0;
+                                form.iata.value = company.iata || '';
+                                form.services.value = company.services || '';
+                                form.packages.value = company.packages || '';
+                                form.description.value = company.description || '';
+
+                                const editModal = new bootstrap.Modal(document.getElementById('editCompanyModal'));
+                                editModal.show();
+                            });
+
+                            // submit handler
+                            document.getElementById('edit-company-form').addEventListener('submit', async e => {
+                                e.preventDefault();
+                                const form = e.target;
+                                const fd = new FormData(form);
+                                try {
+                                    const res = await fetch(`${API_BASE}/companies/${companyId}`, {
+                                        method: 'PUT',
+                                        body: fd
+                                    });
+                                    const data = await res.json();
+                                    if (!res.ok) throw new Error(data.message || 'Update failed');
+                                    showToast('Profile updated', 'success');
+                                    // refresh
+                                    loadCompanyProfile();
+                                    const editModalEl = document.getElementById('editCompanyModal');
+                                    const modal = bootstrap.Modal.getInstance(editModalEl);
+                                    if (modal) modal.hide();
+                                } catch (err) {
+                                    console.error(err);
+                                    showToast(err.message || 'Update failed', 'error');
+                                }
+                            });
+                        }
+            } catch (error) {
+                console.error('Failed to load company profile:', error);
+                showError('Unable to load this company profile right now.');
+            }
+        }
+
+        loadCompanyProfile();
+
+        // ── Follow / Unfollow ──
+        let isFollowing = false;
+        const currentUserForFollow = Storage.get('travelnow-user');
+        const followToken = Storage.getToken();
+        const followHeaders = followToken ? { Authorization: `Bearer ${followToken}` } : {};
+
+        async function loadFollowStatus() {
+            if (!currentUserForFollow || currentUserForFollow.role !== 'tourist' || !companyId) return;
+            try {
+                const res  = await fetch(`../api/companies/${companyId}/follow/status`, { headers: followHeaders });
+                const data = await res.json();
+                isFollowing = data.following || false;
+                updateFollowBtn(isFollowing, data.followersCount || 0);
+            } catch (_) {}
+        }
+
+        function updateFollowBtn(following, count) {
+            const btn    = document.getElementById('follow-btn');
+            const label  = document.getElementById('follow-label');
+            const badge  = document.getElementById('followers-badge');
+            if (!btn) return;
+            isFollowing = following;
+            if (following) {
+                btn.classList.add('btn-gold');
+                btn.classList.remove('btn-outline-gold');
+                label.textContent = 'Following';
+                btn.querySelector('i').className = 'fas fa-bell-slash me-1';
+            } else {
+                btn.classList.remove('btn-gold');
+                btn.classList.add('btn-outline-gold');
+                label.textContent = 'Follow';
+                btn.querySelector('i').className = 'fas fa-bell me-1';
+            }
+            if (badge) badge.textContent = count > 0 ? count : '';
+        }
+
+        async function toggleFollow() {
+            if (!currentUserForFollow) {
+                showToast('Please login to follow companies', 'warning');
+                setTimeout(() => window.location.href = 'login.html', 1000);
+                return;
+            }
+            const btn = document.getElementById('follow-btn');
+            if (btn) btn.disabled = true;
+            try {
+                const method = isFollowing ? 'DELETE' : 'POST';
+                const res    = await fetch(`../api/companies/${companyId}/follow`, { method, headers: followHeaders });
+                const data   = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Request failed');
+                showToast(isFollowing ? 'Unfollowed company' : 'Following company! You\'ll get notified of new offers.', isFollowing ? 'info' : 'success');
+                // Reload count
+                await loadFollowStatus();
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        loadCompanyProfile().then(() => {
+            loadFollowStatus();
+            // Auto-scroll to offers section if linked from WhatsApp notification
+            if (highlightOffers) {
+                setTimeout(() => {
+                    const offersSection = document.getElementById('company-offers-list');
+                    if (offersSection) {
+                        offersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        // Flash highlight
+                        offersSection.style.transition = 'background 0.5s ease';
+                        offersSection.style.background = 'rgba(212,175,55,0.08)';
+                        setTimeout(() => { offersSection.style.background = ''; }, 2000);
+                    }
+                }, 600);
+            }
+        }).catch(() => loadFollowStatus());
+    </script>
+</body>
+</html>

@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Profile - TravelNow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <style>
+        /* ═══════════════════════════════════════════════
+           PREMIUM COMPANY PROFILE — TravelNow Navy+Gold
+        ═══════════════════════════════════════════════ */
+        :root {
+            --cp-bg:        #060f18;
+            --cp-surface:   #0b1a2b;
+            --cp-glass:     rgba(255,255,255,0.04);
+            --cp-gold:      #d4af37;
+            --cp-gold2:     #f0d060;
+            --cp-border:    rgba(212,175,55,0.2);
+            --cp-radius:    18px;
+            --cp-shadow:    0 24px 64px rgba(0,0,0,0.55);
+        }
+
+        /* Page shell */
+        body { background: var(--cp-bg) !important; color: #e8e4d8 !important; font-family: 'Poppins', sans-serif; }
+        #company-profile-shell { max-width: 1280px; margin: 0 auto; padding: 0 1rem 6rem; }
+
+        /* ── Hero ── */
+        .cp-hero {
+            position: relative;
+            width: 100%;
+            min-height: 380px;
+            border-radius: 0 0 32px 32px;
+            overflow: hidden;
+            background: #0b1a2b;
+            margin-bottom: 0;
+        }
+        .cp-hero-img {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.04);
+            transition: transform 8s ease;
+        }
+        .cp-hero:hover .cp-hero-img { transform: scale(1.0); }
+        .cp-hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                170deg,
+                rgba(6,15,24,0.35) 0%,
+                rgba(6,15,24,0.72) 55%,
+                rgba(6,15,24,0.97) 100%
+            );
+        }
+        .cp-hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 3.5rem 2.5rem 5.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-height: 380px;
+        }
+        .cp-hero-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.22em;
+            color: var(--cp-gold);
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+            opacity: 0.85;
+        }
+        .cp-hero-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.15;
+            text-shadow: 0 4px 24px rgba(0,0,0,0.6);
+            margin-bottom: 0.75rem;
+        }
+        .cp-hero-location {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 1rem;
+        }
+        .cp-hero-location i { color: var(--cp-gold); margin-right: 5px; }
+        .cp-hero-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+        .cp-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            backdrop-filter: blur(8px);
+        }
+        .cp-badge-gold   { background: rgba(212,175,55,0.18); color: var(--cp-gold);   border: 1px solid rgba(212,175,55,0.35); }
+        .cp-badge-green  { background: rgba(34,197,94,0.15);  color: #4ade80;          border: 1px solid rgba(34,197,94,0.35);  }
+        .cp-badge-blue   { background: rgba(56,189,248,0.15); color: #7dd3fc;          border: 1px solid rgba(56,189,248,0.35); }
+
+        /* Stats row inside hero bottom */
+        .cp-stats-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+        .cp-stat-pill {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.25);
+            color: var(--cp-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            box-shadow: 0 0 14px rgba(212,175,55,0.12);
+            backdrop-filter: blur(6px);
+        }
+        .cp-stat-pill i { font-size: 0.85rem; }
+
+        /* ── Avatar circle overlapping hero bottom ── */
+        .cp-avatar-wrap {
+            position: relative;
+            z-index: 10;
+            margin-top: -52px;
+            padding: 0 2rem;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .cp-avatar {
+            width: 104px; height: 104px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #b8962e 0%, var(--cp-gold2) 60%, #a07820 100%);
+            border: 4px solid var(--cp-bg);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #060f18;
+            box-shadow: 0 8px 32px rgba(212,175,55,0.35), 0 0 0 2px rgba(212,175,55,0.2);
+            flex-shrink: 0;
+        }
+        .cp-avatar-actions { display: flex; gap: 0.65rem; flex-wrap: wrap; padding-bottom: 0.25rem; }
+
+        /* ── Sticky tab bar ── */
+        .cp-tabbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6,15,24,0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--cp-border);
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+            margin: 1.5rem -1rem 0;
+            padding: 0 1rem;
+        }
+        .cp-tabbar::-webkit-scrollbar { display: none; }
+        .cp-tab {
+            flex-shrink: 0;
+            padding: 0.95rem 1.5rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(232,228,216,0.5);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .cp-tab:hover, .cp-tab.active { color: var(--cp-gold); border-bottom-color: var(--cp-gold); }
+
+        /* ── Glass cards ── */
+        .cp-card {
+            background: var(--cp-glass);
+            border: 1px solid var(--cp-border);
+            border-radius: var(--cp-radius);
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--cp-shadow);
+        }
+        .cp-card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--cp-gold);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .cp-card-title i { font-size: 0.9rem; opacity: 0.8; }
+
+        /* Info grid inside cards */
+        .cp-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 500px) { .cp-info-grid { grid-template-columns: 1fr; } }
+        .cp-info-item label {
+            display: block;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(232,228,216,0.38);
+            margin-bottom: 0.2rem;
+        }
+        .cp-info-item p { margin: 0; font-size: 0.93rem; color: #e8e4d8; word-break: break-word; }
+        .cp-info-item a { color: var(--cp-gold); text-decoration: none; }
+        .cp-info-item a:hover { text-decoration: underline; }
+
+        /* Documents grid */
+        .cp-doc-row {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .cp-doc-row:last-child { border-bottom: none; }
+        .cp-doc-icon {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            background: rgba(212,175,55,0.1);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--cp-gold);
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        .cp-doc-label { font-size: 0.78rem; color: rgba(232,228,216,0.45); margin-bottom: 1px; }
+        .cp-doc-value { font-size: 0.9rem; color: #e8e4d8; }
+
+        /* ── Sidebar summary card ── */
+        .cp-summary-row {
+            display: flex; align-items: center; gap: 0.9rem;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .cp-summary-row:last-child { border-bottom: none; }
+        .cp-summary-icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; flex-shrink: 0;
+        }
+        .cp-summary-row .cp-label { font-size: 0.75rem; color: rgba(232,228,216,0.42); }
+        .cp-summary-row .cp-val   { font-size: 0.92rem; color: #e8e4d8; font-weight: 500; }
+
+        /* ── Offers grid ── */
+        .cp-offer-card {
+            background: rgba(11,26,43,0.9);
+            border: 1px solid rgba(212,175,55,0.15);
+            border-radius: var(--cp-radius);
+            overflow: hidden;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+            display: flex; flex-direction: column;
+            height: 100%;
+        }
+        .cp-offer-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(212,175,55,0.12);
+            border-color: rgba(212,175,55,0.45);
+        }
+        .cp-offer-img {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cp-offer-img-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 40%, rgba(6,15,24,0.85) 100%);
+        }
+        .cp-offer-type-badge {
+            position: absolute; top: 10px; left: 10px;
+            background: rgba(212,175,55,0.85); color: #060f18;
+            padding: 3px 10px; border-radius: 999px;
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .cp-offer-body { padding: 1.35rem; display: flex; flex-direction: column; flex: 1; }
+        .cp-offer-title { font-size: 1rem; font-weight: 600; color: #f0ece0; margin-bottom: 0.4rem; }
+        .cp-offer-meta  { font-size: 0.82rem; color: rgba(232,228,216,0.48); margin-bottom: auto; padding-bottom: 1rem; line-height: 1.8; }
+        .cp-offer-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding-top: 0.9rem; border-top: 1px solid rgba(255,255,255,0.06); }
+        .cp-price-tag {
+            font-family: 'Cinzel', serif;
+            font-size: 1.08rem; font-weight: 700;
+            color: var(--cp-gold);
+            text-shadow: 0 0 12px rgba(212,175,55,0.4);
+        }
+        .cp-price-tag small { font-size: 0.7rem; font-family: 'Poppins', sans-serif; font-weight: 400; color: rgba(212,175,55,0.6); }
+        .cp-book-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: linear-gradient(135deg, #b8962e, var(--cp-gold2) 60%, #c8a830);
+            color: #060f18;
+            border: none;
+            border-radius: 10px;
+            padding: 0.5rem 1.1rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.15s;
+            white-space: nowrap;
+        }
+        .cp-book-btn:hover { filter: brightness(1.12); transform: scale(1.03); }
+
+        /* ── Reviews ── */
+        .cp-review-card {
+            background: rgba(11,26,43,0.7);
+            border: 1px solid rgba(212,175,55,0.1);
+            border-radius: 14px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s;
+        }
+        .cp-review-card:hover { border-color: rgba(212,175,55,0.28); }
+        .cp-review-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
+        .cp-reviewer { display: flex; align-items: center; gap: 0.65rem; }
+        .cp-reviewer-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.1));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.88rem; color: var(--cp-gold);
+            border: 1px solid rgba(212,175,55,0.25);
+            flex-shrink: 0;
+        }
+        .cp-reviewer-name { font-size: 0.92rem; font-weight: 600; color: #e8e4d8; }
+        .cp-reviewer-date { font-size: 0.75rem; color: rgba(232,228,216,0.4); }
+        .cp-review-stars { color: #fbbf24; font-size: 0.82rem; }
+        .cp-review-text { font-size: 0.9rem; color: rgba(232,228,216,0.72); line-height: 1.65; margin: 0; }
+
+        /* ── Action buttons ── */
+        .btn-cp-follow {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.55rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.85rem; font-weight: 600;
+            border: 1.5px solid var(--cp-gold);
+            color: var(--cp-gold);
+            background: transparent;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn-cp-follow:hover, .btn-cp-follow.active { background: var(--cp-gold); color: #060f18; }
+        .btn-cp-edit {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.55rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.85rem; font-weight: 600;
+            border: 1.5px solid rgba(232,228,216,0.25);
+            color: rgba(232,228,216,0.75);
+            background: transparent;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .btn-cp-edit:hover { border-color: var(--cp-gold); color: var(--cp-gold); }
+        .btn-cp-back {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.55rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.85rem; font-weight: 600;
+            border: 1.5px solid rgba(232,228,216,0.18);
+            color: rgba(232,228,216,0.6);
+            background: transparent;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+            text-decoration: none;
+        }
+        .btn-cp-back:hover { border-color: rgba(232,228,216,0.5); color: #e8e4d8; }
+
+        /* Floating back button */
+        .cp-back-float {
+            position: fixed;
+            bottom: 2rem; right: 2rem;
+            z-index: 999;
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: var(--cp-gold);
+            color: #060f18;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            box-shadow: 0 8px 28px rgba(212,175,55,0.45);
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cp-back-float:hover { transform: scale(1.1) translateY(-2px); box-shadow: 0 12px 36px rgba(212,175,55,0.6); color: #060f18; }
+
+        /* Section anchors spacing */
+        .cp-section { scroll-margin-top: 64px; padding-top: 2.5rem; }
+        .cp-section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--cp-gold);
+            letter-spacing: 0.06em;
+            margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.65rem;
+        }
+        .cp-section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(212,175,55,0.4), transparent);
+        }
+
+        /* Offers section header */
+        .cp-offers-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+        .cp-offers-sub { font-size: 0.85rem; color: rgba(232,228,216,0.45); margin: 0; }
+
+        /* Empty state */
+        .cp-empty { text-align: center; padding: 3rem 1rem; color: rgba(232,228,216,0.35); }
+        .cp-empty i { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
+
+        /* Loading spinner */
+        .cp-spinner-wrap { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
+        .cp-spinner {
+            width: 48px; height: 48px;
+            border: 3px solid rgba(212,175,55,0.2);
+            border-top-color: var(--cp-gold);
+            border-radius: 50%;
+            animation: cp-spin 0.8s linear infinite;
+        }
+        @keyframes cp-spin { to { transform: rotate(360deg); } }
+
+        /* Services tags */
+        .cp-service-tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.18);
+            color: rgba(232,228,216,0.75);
+            padding: 0.3rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            margin: 0.2rem;
+        }
+
+        /* Edit modal dark */
+        #editCompanyModal .modal-content {
+            background: #0b1a2b; border: 1px solid var(--cp-border); color: #e8e4d8;
+        }
+        #editCompanyModal .modal-header { border-bottom: 1px solid var(--cp-border); }
+        #editCompanyModal .modal-footer { border-top: 1px solid var(--cp-border); }
+        #editCompanyModal .form-control, #editCompanyModal .form-label {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.12);
+            color: #e8e4d8;
+        }
+        #editCompanyModal .form-control::placeholder { color: rgba(232,228,216,0.3); }
+        #editCompanyModal .form-control:focus {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--cp-gold);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+            color: #e8e4d8;
+        }
+        #editCompanyModal .modal-title { color: var(--cp-gold); font-family: 'Cinzel', serif; }
+        #editCompanyModal .btn-close { filter: invert(1) brightness(0.7); }
+
+        /* Status badge */
+        .cp-status-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 0.3rem 0.75rem; border-radius: 999px;
+            font-size: 0.78rem; font-weight: 600;
+        }
+        .cp-status-approved { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+        .cp-status-pending  { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+        .cp-status-rejected { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cp-hero-content { padding: 2rem 1.25rem 4.5rem; }
+            .cp-avatar-wrap { padding: 0 1rem; }
+            .cp-avatar { width: 80px; height: 80px; font-size: 2rem; margin-top: -40px; }
+            .cp-tabbar { margin: 1rem -1rem 0; }
+            .cp-back-float { bottom: 1.25rem; right: 1.25rem; }
+        }
+
+        /* ── UX Improvements ── */
+
+        /* Smooth entrance animations */
+        @keyframes cp-fade-up {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .cp-card, .cp-offer-card, .cp-review-card {
+            animation: cp-fade-up 0.4s ease both;
+        }
+        .cp-offer-card:nth-child(2) { animation-delay: 0.08s; }
+        .cp-offer-card:nth-child(3) { animation-delay: 0.16s; }
+        .cp-offer-card:nth-child(4) { animation-delay: 0.24s; }
+
+        /* Private field lock style */
+        .cp-private-field {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(212,175,55,0.05);
+            border: 1px dashed rgba(212,175,55,0.2);
+            border-radius: 8px; padding: 6px 12px;
+            color: rgba(212,175,55,0.5);
+            font-size: 0.8rem; font-style: italic;
+        }
+
+        /* Offer image lazy load blur */
+        .cp-offer-img {
+            filter: blur(0);
+            transition: filter 0.4s ease;
+        }
+        .cp-offer-img.loading { filter: blur(4px); }
+
+        /* Tab active indicator pulse */
+        .cp-tab.active::after {
+            content: '';
+            display: block;
+            height: 2px;
+            background: var(--cp-gold);
+            border-radius: 2px;
+            animation: cp-fade-up 0.2s ease;
+        }
+
+        /* Contact button for tourists */
+        .cp-contact-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.6rem 1.2rem; border-radius: 10px;
+            background: rgba(37,211,102,0.12);
+            border: 1px solid rgba(37,211,102,0.3);
+            color: #25d366; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: background 0.2s, transform 0.15s;
+            text-decoration: none;
+        }
+        .cp-contact-btn:hover { background: rgba(37,211,102,0.2); transform: translateY(-1px); color: #25d366; }
+
+        /* Skeleton loader */
+        .cp-skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%;
+            animation: cp-shimmer 1.4s infinite;
+            border-radius: 6px;
+            height: 16px;
+        }
+        @keyframes cp-shimmer { to { background-position: -200% 0; } }
+
+        /* Tab content transition */
+        .cp-section { transition: opacity 0.25s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.25); border-radius: 6px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.45); }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ NAVBAR ═══ -->
+    <div id="tn-navbar" data-page="companies"></div>
+
+    <!-- ═══ LOADING SPINNER (shown while fetching) ═══ -->
+    <div id="cp-loading" class="cp-spinner-wrap">
+        <div class="cp-spinner"></div>
+    </div>
+
+    <!-- ═══ MAIN PROFILE SHELL (hidden until data loads) ═══ -->
+    <div id="company-profile-shell" style="display:none;">
+
+        <!-- ── HERO ── -->
+        <div class="cp-hero" id="cp-hero">
+            <div class="cp-hero-img" id="cp-hero-img"></div>
+            <div class="cp-hero-overlay"></div>
+            <div class="cp-hero-content">
+                <p class="cp-hero-label"><i class="fas fa-compass"></i> &nbsp;Tourism Company</p>
+                <h1 class="cp-hero-title" id="cp-hero-title">—</h1>
+                <p class="cp-hero-location" id="cp-hero-location">
+                    <i class="fas fa-map-marker-alt"></i> <span>—</span>
+                </p>
+                <div class="cp-hero-badges" id="cp-hero-badges"></div>
+                <div class="cp-stats-row" id="cp-stats-row"></div>
+            </div>
+        </div>
+
+        <!-- ── AVATAR + ACTIONS ROW ── -->
+        <div class="cp-avatar-wrap" id="cp-avatar-wrap">
+            <div class="cp-avatar" id="cp-avatar">?</div>
+            <div class="cp-avatar-actions" id="cp-avatar-actions">
+                <button class="btn-cp-follow" id="btn-follow" onclick="toggleFollow()">
+                    <i class="fas fa-plus"></i> Follow
+                </button>
+                <a href="companies.html" class="btn-cp-back">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <button class="btn-cp-edit" id="btn-edit" style="display:none;" data-bs-toggle="modal" data-bs-target="#editCompanyModal">
+                    <i class="fas fa-pen"></i> Edit Profile
+                </button>
+            </div>
+        </div>
+
+        <!-- ── STICKY TAB BAR ── -->
+        <div class="cp-tabbar">
+            <a class="cp-tab active" href="#cp-about"     onclick="switchTab('about',    this)">About</a>
+            <a class="cp-tab"       href="#cp-offers"     onclick="switchTab('offers',   this)">Offers</a>
+            <a class="cp-tab"       href="#cp-documents"  onclick="switchTab('documents',this)">Documents</a>
+            <a class="cp-tab"       href="#cp-reviews"    onclick="switchTab('reviews',  this)">Reviews</a>
+        </div>
+
+        <!-- ── MAIN 2-COLUMN LAYOUT ── -->
+        <div class="row g-4 mt-2">
+
+            <!-- ══ LEFT: MAIN CONTENT ══ -->
+            <div class="col-lg-8">
+
+                <!-- ABOUT SECTION -->
+                <div class="cp-section" id="cp-about">
+                    <h2 class="cp-section-title"><i class="fas fa-info-circle"></i> About</h2>
+
+                    <div class="cp-card" id="cp-about-card">
+                        <div class="cp-card-title"><i class="fas fa-building"></i> Company Overview</div>
+                        <p id="cp-description" style="color:rgba(232,228,216,0.72); line-height:1.8; margin-bottom:1.5rem;">—</p>
+
+                        <div class="cp-info-grid">
+                            <div class="cp-info-item">
+                                <label><i class="fas fa-user"></i> &nbsp;Owner</label>
+                                <p id="cp-owner">—</p>
+                            </div>
+                            <div class="cp-info-item" id="cp-email-row">
+                                <label><i class="fas fa-envelope"></i> &nbsp;Email</label>
+                                <p><a id="cp-email" href="#">—</a></p>
+                            </div>
+                            <div class="cp-info-item" id="cp-phone-row">
+                                <label><i class="fas fa-phone"></i> &nbsp;Phone</label>
+                                <p id="cp-phone">—</p>
+                            </div>
+                            <div class="cp-info-item" id="cp-wa-row">
+                                <label><i class="fab fa-whatsapp"></i> &nbsp;WhatsApp</label>
+                                <p><a id="cp-whatsapp" href="#" target="_blank">—</a></p>
+                            </div>
+                            <div class="cp-info-item">
+                                <label><i class="fas fa-map-marker-alt"></i> &nbsp;Address</label>
+                                <p id="cp-address">—</p>
+                            </div>
+                            <div class="cp-info-item">
+                                <label><i class="fas fa-globe"></i> &nbsp;Website</label>
+                                <p><a id="cp-website" href="#" target="_blank">—</a></p>
+                            </div>
+                            <div class="cp-info-item">
+                                <label><i class="fas fa-briefcase"></i> &nbsp;Experience</label>
+                                <p id="cp-experience">—</p>
+                            </div>
+                            <div class="cp-info-item">
+                                <label><i class="fas fa-users"></i> &nbsp;Employees</label>
+                                <p id="cp-employees">—</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OFFERS SECTION -->
+                <div class="cp-section" id="cp-offers">
+                    <div class="cp-offers-header">
+                        <h2 class="cp-section-title" style="margin:0; flex:1;">
+                            <i class="fas fa-tags"></i> Offers
+                        </h2>
+                        <p class="cp-offers-sub" id="cp-offers-count">Loading…</p>
+                    </div>
+                    <div class="row g-3" id="cp-offers-grid">
+                        <div class="col-12 cp-empty">
+                            <i class="fas fa-tags"></i>
+                            <p>Loading offers…</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOCUMENTS SECTION -->
+                <div class="cp-section" id="cp-documents">
+                    <h2 class="cp-section-title"><i class="fas fa-file-alt"></i> Documents</h2>
+                    <div class="cp-card">
+                        <div class="cp-card-title"><i class="fas fa-shield-alt"></i> Licenses &amp; Certifications</div>
+                        <div id="cp-docs-list">
+                            <div class="cp-empty"><i class="fas fa-spinner fa-spin"></i><p>Loading…</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REVIEWS SECTION -->
+                <div class="cp-section" id="cp-reviews">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px;">
+                        <h2 class="cp-section-title" style="margin:0"><i class="fas fa-star"></i> Reviews</h2>
+                        <button id="btn-write-review" onclick="openReviewModal()"
+                            style="background:linear-gradient(135deg,#d4af37,#c9a227);color:#060f18;border:none;border-radius:12px;padding:10px 20px;font-size:0.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 4px 14px rgba(212,175,55,0.35);"
+                            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(212,175,55,0.5)'"
+                            onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 14px rgba(212,175,55,0.35)'">
+                            <i class="fas fa-star"></i> Write a Review
+                        </button>
+                    </div>
+                    <div id="cp-reviews-list">
+                        <div class="cp-empty"><i class="fas fa-spinner fa-spin"></i><p>Loading reviews…</p></div>
+                    </div>
+                </div>
+
+            </div><!-- /col-lg-8 -->
+
+            <!-- ══ RIGHT: SIDEBAR ══ -->
+            <div class="col-lg-4">
+
+                <!-- Company Summary Card -->
+                <div class="cp-card">
+                    <div class="cp-card-title"><i class="fas fa-chart-bar"></i> Summary</div>
+
+                    <div class="cp-summary-row">
+                        <div class="cp-summary-icon" style="background:rgba(212,175,55,0.1); color:var(--cp-gold);">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <div class="cp-label">Location</div>
+                            <div class="cp-val" id="sb-location">—</div>
+                        </div>
+                    </div>
+
+                    <div class="cp-summary-row">
+                        <div class="cp-summary-icon" style="background:rgba(34,197,94,0.1); color:#4ade80;">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <div>
+                            <div class="cp-label">Status</div>
+                            <div class="cp-val" id="sb-status">—</div>
+                        </div>
+                    </div>
+
+                    <div class="cp-summary-row">
+                        <div class="cp-summary-icon" style="background:rgba(212,175,55,0.1); color:var(--cp-gold);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <div class="cp-label">Verified</div>
+                            <div class="cp-val" id="sb-verified">—</div>
+                        </div>
+                    </div>
+
+                    <div class="cp-summary-row">
+                        <div class="cp-summary-icon" style="background:rgba(56,189,248,0.1); color:#7dd3fc;">
+                            <i class="fas fa-bookmark"></i>
+                        </div>
+                        <div>
+                            <div class="cp-label">Total Bookings</div>
+                            <div class="cp-val" id="sb-bookings">—</div>
+                        </div>
+                    </div>
+
+                    <div class="cp-summary-row">
+                        <div class="cp-summary-icon" style="background:rgba(167,139,250,0.1); color:#a78bfa;">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div>
+                            <div class="cp-label">Active Offers</div>
+                            <div class="cp-val" id="sb-offers">—</div>
+                        </div>
+                    </div>
+
+                    <div class="cp-summary-row">
+                        <div class="cp-summary-icon" style="background:rgba(212,175,55,0.1); color:var(--cp-gold);">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div>
+                            <div class="cp-label">Rating</div>
+                            <div class="cp-val" id="sb-rating">—</div>
+                        </div>
+                    </div>
+
+                    <div class="cp-summary-row">
+                        <div class="cp-summary-icon" style="background:rgba(34,197,94,0.1); color:#4ade80;">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div>
+                            <div class="cp-label">Revenue (EGP)</div>
+                            <div class="cp-val" id="sb-revenue">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Card -->
+                <div class="cp-card mt-4">
+                    <div class="cp-card-title"><i class="fas fa-concierge-bell"></i> Services</div>
+                    <div id="cp-services-wrap">
+                        <div class="cp-empty" style="padding:1.5rem 0.5rem;">
+                            <i class="fas fa-spinner fa-spin" style="font-size:1.2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /col-lg-4 -->
+
+        </div><!-- /row -->
+    </div><!-- /#company-profile-shell -->
+
+    <!-- Floating back button removed -->
+
+    <!-- ═══ WRITE REVIEW MODAL ═══ -->
+    <div class="modal fade" id="reviewModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:480px;">
+            <div class="modal-content" style="background:#0b1a2b;border:1px solid rgba(212,175,55,0.35);border-radius:20px;overflow:hidden;">
+                <div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(10,29,46,0.5));padding:20px 24px;border-bottom:1px solid rgba(212,175,55,0.2);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <h5 id="review-modal-title" style="color:#d4af37;font-family:'Cinzel',serif;margin:0;font-size:1rem"><i class="fas fa-star me-2"></i>Write a Review</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <p style="color:rgba(232,228,216,0.5);font-size:0.78rem;margin:6px 0 0" id="review-company-name-display"></p>
+                </div>
+                <div style="padding:22px 24px;">
+                    <!-- Star rating -->
+                    <div style="margin-bottom:20px;">
+                        <div style="color:#d4af37;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your Rating</div>
+                        <div id="star-rating-wrap" style="display:flex;gap:8px;">
+                            <span data-star="1" onclick="setReviewRating(1)" style="font-size:2rem;cursor:pointer;color:rgba(212,175,55,0.25);transition:color 0.15s,transform 0.15s;" onmouseover="hoverStar(1)" onmouseout="unhoverStar()">★</span>
+                            <span data-star="2" onclick="setReviewRating(2)" style="font-size:2rem;cursor:pointer;color:rgba(212,175,55,0.25);transition:color 0.15s,transform 0.15s;" onmouseover="hoverStar(2)" onmouseout="unhoverStar()">★</span>
+                            <span data-star="3" onclick="setReviewRating(3)" style="font-size:2rem;cursor:pointer;color:rgba(212,175,55,0.25);transition:color 0.15s,transform 0.15s;" onmouseover="hoverStar(3)" onmouseout="unhoverStar()">★</span>
+                            <span data-star="4" onclick="setReviewRating(4)" style="font-size:2rem;cursor:pointer;color:rgba(212,175,55,0.25);transition:color 0.15s,transform 0.15s;" onmouseover="hoverStar(4)" onmouseout="unhoverStar()">★</span>
+                            <span data-star="5" onclick="setReviewRating(5)" style="font-size:2rem;cursor:pointer;color:rgba(212,175,55,0.25);transition:color 0.15s,transform 0.15s;" onmouseover="hoverStar(5)" onmouseout="unhoverStar()">★</span>
+                        </div>
+                        <input type="hidden" id="review-rating" value="0">
+                    </div>
+                    <!-- Comment -->
+                    <div>
+                        <div style="color:#d4af37;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Your Review</div>
+                        <textarea id="review-comment" rows="4" placeholder="Share your experience with this company..."
+                            style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(212,175,55,0.25);border-radius:12px;padding:12px 14px;color:#e8e4d8;font-size:0.88rem;resize:vertical;outline:none;font-family:'Poppins',sans-serif;"></textarea>
+                    </div>
+                </div>
+                <div style="padding:14px 24px;border-top:1px solid rgba(212,175,55,0.15);display:flex;gap:10px;justify-content:flex-end;">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-gold btn-sm px-4" id="review-submit-btn" onclick="submitReview()">
+                        <i class="fas fa-paper-plane me-1"></i>Submit Review
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ EDIT COMPANY MODAL ═══ -->
+    <div class="modal fade" id="editCompanyModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel"><i class="fas fa-pen me-2"></i>Edit Company Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCompanyForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" style="color:rgba(232,228,216,0.6); font-size:0.82rem;">Company Name</label>
+                                <input type="text" class="form-control" id="edit-companyName" placeholder="Company name">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color:rgba(232,228,216,0.6); font-size:0.82rem;">Governorate</label>
+                                <input type="text" class="form-control" id="edit-governorate" placeholder="e.g. Cairo">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color:rgba(232,228,216,0.6); font-size:0.82rem;">Phone</label>
+                                <input type="text" class="form-control" id="edit-phone" placeholder="+20 100 000 0000">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color:rgba(232,228,216,0.6); font-size:0.82rem;">WhatsApp</label>
+                                <input type="text" class="form-control" id="edit-whatsapp" placeholder="+20 100 000 0000">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color:rgba(232,228,216,0.6); font-size:0.82rem;">Website</label>
+                                <input type="url" class="form-control" id="edit-website" placeholder="https://example.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color:rgba(232,228,216,0.6); font-size:0.82rem;">Address</label>
+                                <input type="text" class="form-control" id="edit-address" placeholder="Street, City">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color:rgba(232,228,216,0.6); font-size:0.82rem;">Years of Experience</label>
+                                <input type="number" class="form-control" id="edit-experience" min="0" placeholder="8">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color:rgba(232,228,216,0.6); font-size:0.82rem;">Employees</label>
+                                <input type="number" class="form-control" id="edit-employees" min="1" placeholder="25">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" style="color:rgba(232,228,216,0.6); font-size:0.82rem;">Services (comma-separated)</label>
+                                <input type="text" class="form-control" id="edit-services" placeholder="Guided Tours, Hotel Bookings, …">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" style="color:rgba(232,228,216,0.6); font-size:0.82rem;">Description</label>
+                                <textarea class="form-control" id="edit-description" rows="4" placeholder="Tell travelers about your company…"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-gold" onclick="saveCompanyEdit()">
+                        <i class="fas fa-save me-1"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ SCRIPTS ═══ -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+
+    <script>
+    /* ═══════════════════════════════════════════════════════════
+       COMPANY PROFILE PAGE — TravelNow
+       Reads: ?id=<companyId>
+       Falls back to demoCompany / demoOffers / demoReviews when API fails
+    ═══════════════════════════════════════════════════════════ */
+
+    const id = new URLSearchParams(window.location.search).get('id');
+
+    /* ── Demo fallback data ── */
+    const demoCompany = {
+        _id: id || 'demo',
+        companyName: 'Explore Egypt Tours',
+        governorate: 'Cairo',
+        ownerName: 'Ahmed Hassan',
+        email: 'info@exploreegypt.com',
+        phone: '+20 100 123 4567',
+        whatsapp: '+20 100 123 4567',
+        address: 'Tahrir Square, Cairo',
+        website: 'https://exploreegypt.com',
+        experience: 8,
+        employees: 25,
+        description: 'Premium Egyptian tourism company offering unforgettable experiences across the Nile, deserts, and ancient monuments. Our expert guides bring history to life at every landmark.',
+        services: 'Guided Tours, Hotel Bookings, Airport Transfers, Custom Itineraries, Nile Cruises',
+        commercialReg: 'CR-2024-001',
+        taxCard: 'TX-2024-001',
+        tourismLicense: 'TL-2024-001',
+        ministryLicense: 'ML-2024-001',
+        iata: 'IATA-2024-EG',
+        verified: true,
+        ministry: true,
+        status: 'approved',
+        rating: 4.8,
+        reviews: 127,
+        bookings: 342,
+        revenue: 1250000
+    };
+
+    const demoOffers = [
+        {
+            _id: 'offer1',
+            title: 'Pyramids of Giza Full Day Tour',
+            description: 'Explore the iconic Pyramids, Sphinx, and Valley Temple with a private certified guide. Camel ride included.',
+            price: 1800,
+            duration: '8 hours',
+            type: 'guided',
+            availableSeats: 12,
+            destination: 'Giza',
+            images: ['https://images.unsplash.com/photo-1539768942893-daf53e448371?w=600']
+        },
+        {
+            _id: 'offer2',
+            title: 'Luxor Temple & Karnak Night Tour',
+            description: 'Witness the grandeur of ancient Thebes under the stars. Sound & light show included.',
+            price: 2400,
+            duration: '6 hours',
+            type: 'night tour',
+            availableSeats: 8,
+            destination: 'Luxor',
+            images: ['https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=600']
+        },
+        {
+            _id: 'offer3',
+            title: 'Red Sea Snorkeling Adventure',
+            description: 'Dive into crystal-clear waters of the Red Sea. Equipment, boat, and lunch included.',
+            price: 1200,
+            duration: '5 hours',
+            type: 'adventure',
+            availableSeats: 20,
+            destination: 'Hurghada',
+            images: ['https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600']
+        },
+        {
+            _id: 'offer4',
+            title: 'Nile Cruise — Aswan to Luxor',
+            description: 'A 4-day luxury cruise down the majestic Nile visiting temples and villages along the way.',
+            price: 8500,
+            duration: '4 days',
+            type: 'cruise',
+            availableSeats: 6,
+            destination: 'Aswan',
+            images: ['https://images.unsplash.com/photo-1581726707445-75cbe4efc586?w=600']
+        }
+    ];
+
+    const demoReviews = [
+        { _id: 'r1', userName: 'Sarah M.',    rating: 5, comment: 'Absolutely incredible experience! Ahmed and his team were professional, knowledgeable, and so friendly. The Pyramids tour was life-changing.', createdAt: '2024-10-15' },
+        { _id: 'r2', userName: 'James T.',    rating: 5, comment: 'Best tourism company in Egypt, no question. Seamless booking, perfect logistics, and an unforgettable guide. Highly recommend!',       createdAt: '2024-09-28' },
+        { _id: 'r3', userName: 'Fatima A.',   rating: 4, comment: 'Great service and excellent guides. The Luxor night tour was magical. Will book again for our Sinai trip.',                             createdAt: '2024-09-10' },
+        { _id: 'r4', userName: 'Robert K.',   rating: 5, comment: 'The Nile Cruise was worth every penny. Everything was taken care of — hotels, meals, transport. Just enjoyed Egypt.',                   createdAt: '2024-08-22' }
+    ];
+
+    /* ── State ── */
+    let currentCompany = null;
+    let currentOffers  = [];
+    let isFollowing    = false;
+
+    /* ── Escape HTML helper ── */
+    function esc(str) {
+        return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* ══════════════ DATA LOADING ══════════════ */
+
+    async function loadCompany() {
+        try {
+            const res = await fetch('../api/companies/' + (id || 'demo'));
+            if (!res.ok) throw new Error('API error ' + res.status);
+            const data = await res.json();
+            return data.company || data;
+        } catch (_) {
+            return demoCompany;
+        }
+    }
+
+    async function loadOffers(companyId) {
+        try {
+            const res = await fetch('../api/offers?company=' + companyId);
+            if (!res.ok) throw new Error('API error');
+            const data = await res.json();
+            return data.offers || data || [];
+        } catch (_) {
+            return demoOffers;
+        }
+    }
+
+    async function loadReviews(companyId) {
+        try {
+            const res = await fetch('../api/reviews/company/' + companyId);
+            if (!res.ok) throw new Error('API error');
+            const data = await res.json();
+            return data.reviews || data || [];
+        } catch (_) {
+            return demoReviews;
+        }
+    }
+
+    /* ══════════════ RENDER HERO ══════════════ */
+
+    function renderHero(c) {
+        const heroImg = 'https://images.unsplash.com/photo-1539768942893-daf53e448371?w=1400';
+        document.getElementById('cp-hero-img').style.backgroundImage = `url('${heroImg}')`;
+        document.getElementById('cp-hero-title').textContent = c.companyName || 'Company';
+        document.getElementById('cp-hero-location').querySelector('span').textContent = c.governorate || '—';
+        document.title = (c.companyName || 'Company') + ' — TravelNow';
+
+        /* Badges */
+        let badges = '';
+        if (c.verified)  badges += `<span class="cp-badge cp-badge-green"><i class="fas fa-check-circle"></i> Verified</span>`;
+        if (c.ministry)  badges += `<span class="cp-badge cp-badge-gold"><i class="fas fa-star"></i> Ministry Approved</span>`;
+        if (c.status === 'approved') badges += `<span class="cp-badge cp-badge-blue"><i class="fas fa-handshake"></i> Trusted Partner</span>`;
+        document.getElementById('cp-hero-badges').innerHTML = badges;
+
+        /* Stat pills */
+        const stars = '★'.repeat(Math.round(c.rating || 0));
+        document.getElementById('cp-stats-row').innerHTML = `
+            <span class="cp-stat-pill"><i class="fas fa-star"></i> ${(c.rating || 0).toFixed(1)} &nbsp;(${c.reviews || 0} reviews)</span>
+            <span class="cp-stat-pill"><i class="fas fa-briefcase"></i> ${c.experience || 0} Years</span>
+            <span class="cp-stat-pill"><i class="fas fa-users"></i> ${c.employees || 0} Employees</span>
+        `;
+
+        /* Avatar */
+        document.getElementById('cp-avatar').textContent = (c.companyName || '?')[0].toUpperCase();
+    }
+
+    /* ══════════════ RENDER ABOUT ══════════════ */
+
+    function renderAbout(c) {
+        const user        = Storage.get('travelnow-user');
+        const isOwner     = user && (user.role === 'admin' || user.email === c.email);
+        const isCompany   = user && (user.role === 'company' || user.role === 'admin');
+        const canSeePrivate = isOwner || isCompany;
+
+        document.getElementById('cp-description').textContent = c.description || 'No description provided.';
+        document.getElementById('cp-owner').textContent       = c.ownerName   || '—';
+        document.getElementById('cp-address').textContent     = c.address     || '—';
+        document.getElementById('cp-experience').textContent  = c.experience  ? c.experience + ' years' : '—';
+        document.getElementById('cp-employees').textContent   = c.employees   ? c.employees + ' people' : '—';
+
+        // ── Email — hidden from tourists ──
+        const emailRow = document.getElementById('cp-email-row');
+        if (!canSeePrivate) {
+            if (emailRow) emailRow.innerHTML = `
+                <label><i class="fas fa-envelope"></i> &nbsp;Email</label>
+                <p style="color:rgba(212,175,55,0.5);font-size:0.82rem;font-style:italic;">
+                    <i class="fas fa-lock" style="font-size:0.75rem;margin-right:4px;"></i>Visible to company only
+                </p>`;
+        } else {
+            const emailEl = document.getElementById('cp-email');
+            if (emailEl) { emailEl.textContent = c.email || '—'; emailEl.href = c.email ? 'mailto:' + c.email : '#'; }
+        }
+
+        // ── Phone — hidden from tourists ──
+        const phoneRow = document.getElementById('cp-phone-row');
+        if (!canSeePrivate) {
+            if (phoneRow) phoneRow.innerHTML = `
+                <label><i class="fas fa-phone"></i> &nbsp;Phone</label>
+                <p style="color:rgba(212,175,55,0.5);font-size:0.82rem;font-style:italic;">
+                    <i class="fas fa-lock" style="font-size:0.75rem;margin-right:4px;"></i>Visible to company only
+                </p>`;
+        } else {
+            const phoneEl = document.getElementById('cp-phone');
+            if (phoneEl) phoneEl.textContent = c.phone || '—';
+        }
+
+        // ── WhatsApp — hidden from tourists, but show Chat button ──
+        const waRow = document.getElementById('cp-wa-row');
+        const waNum = (c.whatsapp || c.phone || '').replace(/[\s+]/g,'');
+        if (!canSeePrivate) {
+            if (waRow) waRow.innerHTML = `
+                <label><i class="fab fa-whatsapp"></i> &nbsp;WhatsApp</label>
+                <p>
+                    <span style="color:rgba(212,175,55,0.4);font-size:0.82rem;font-style:italic;">
+                        <i class="fas fa-lock" style="font-size:0.75rem;margin-right:4px;"></i>Visible to company only
+                    </span>
+                </p>`;
+        } else {
+            const waEl = document.getElementById('cp-whatsapp');
+            if (waEl) { waEl.textContent = c.whatsapp || c.phone || '—'; waEl.href = waNum ? 'https://wa.me/' + waNum : '#'; }
+        }
+
+        // ── Website (public) ──
+        const webEl = document.getElementById('cp-website');
+        if (webEl) { webEl.textContent = c.website || '—'; webEl.href = c.website || '#'; }
+    }
+
+    /* ══════════════ RENDER SIDEBAR ══════════════ */
+
+    function renderSidebar(c, offersCount) {
+        document.getElementById('sb-location').textContent = c.governorate || '—';
+
+        const statusMap = { approved: 'cp-status-approved', pending: 'cp-status-pending', rejected: 'cp-status-rejected' };
+        const statusClass = statusMap[c.status] || 'cp-status-pending';
+        document.getElementById('sb-status').innerHTML = `<span class="cp-status-badge ${statusClass}">${esc(c.status || 'pending')}</span>`;
+
+        document.getElementById('sb-verified').innerHTML = c.verified
+            ? '<span style="color:#4ade80"><i class="fas fa-check-circle"></i> Yes</span>'
+            : '<span style="color:#f87171"><i class="fas fa-times-circle"></i> No</span>';
+
+        document.getElementById('sb-bookings').textContent = (c.bookings  || 0).toLocaleString();
+        document.getElementById('sb-offers').textContent   = offersCount  || 0;
+        document.getElementById('sb-rating').innerHTML     = `<span style="color:#fbbf24">★</span> ${(c.rating || 0).toFixed(1)}`;
+        document.getElementById('sb-revenue').textContent  = formatPriceText(c.revenue || 0);
+    }
+
+    /* ══════════════ RENDER SERVICES ══════════════ */
+
+    function renderServices(c) {
+        const wrap = document.getElementById('cp-services-wrap');
+        if (!c.services) {
+            wrap.innerHTML = '<p style="color:rgba(232,228,216,0.35); font-size:0.88rem; text-align:center; padding:1rem 0;">No services listed.</p>';
+            return;
+        }
+        const tags = c.services.split(',').map(s => s.trim()).filter(Boolean);
+        wrap.innerHTML = tags.map(t => `<span class="cp-service-tag"><i class="fas fa-check" style="color:var(--cp-gold); font-size:0.7rem;"></i> ${esc(t)}</span>`).join('');
+    }
+
+    /* ══════════════ RENDER DOCUMENTS ══════════════ */
+
+    function renderDocuments(c) {
+        const docs = [
+            { label: 'Commercial Registration', key: 'commercialReg',   icon: 'fa-building' },
+            { label: 'Tax Card',                key: 'taxCard',         icon: 'fa-file-invoice-dollar' },
+            { label: 'Tourism License',         key: 'tourismLicense',  icon: 'fa-certificate' },
+            { label: 'Ministry License',        key: 'ministryLicense', icon: 'fa-landmark' },
+            { label: 'IATA Certificate',        key: 'iata',            icon: 'fa-plane-departure' }
+        ];
+
+        const html = docs.map(d => `
+            <div class="cp-doc-row">
+                <div class="cp-doc-icon"><i class="fas ${d.icon}"></i></div>
+                <div>
+                    <div class="cp-doc-label">${esc(d.label)}</div>
+                    <div class="cp-doc-value">${c[d.key] ? esc(c[d.key]) : '<span style="color:rgba(232,228,216,0.28); font-style:italic;">Not provided</span>'}</div>
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('cp-docs-list').innerHTML = html;
+    }
+
+    /* ══════════════ RENDER OFFERS ══════════════ */
+
+    function renderOffers(offers) {
+        const grid = document.getElementById('cp-offers-grid');
+        const countEl = document.getElementById('cp-offers-count');
+
+        if (!offers.length) {
+            countEl.textContent = '0 offers';
+            grid.innerHTML = `<div class="col-12"><div class="cp-empty"><i class="fas fa-tags"></i><p>No offers available yet.</p></div></div>`;
+            return;
+        }
+
+        countEl.textContent = offers.length + ' offer' + (offers.length !== 1 ? 's' : '');
+
+        const currentUser = Storage.get('travelnow-user');
+        const isOwner = currentUser && currentCompany &&
+            (currentUser.role === 'admin' || currentUser.email === currentCompany.email);
+
+        grid.innerHTML = offers.map((o, idx) => {
+            const img = (o.images && o.images[0]) || 'https://images.unsplash.com/photo-1539768942893-daf53e448371?w=600';
+            return `
+            <div class="col-md-6" style="animation-delay:${idx * 0.08}s" id="offer-card-${esc(o._id)}">
+                <div class="cp-offer-card">
+                    <div class="cp-offer-img" style="background-image:url('${esc(img)}')" loading="lazy">
+                        <div class="cp-offer-img-overlay"></div>
+                        <span class="cp-offer-type-badge">${esc(o.type || 'Tour')}</span>
+                        ${isOwner ? `<button onclick="deleteOffer('${esc(o._id)}')" style="position:absolute;top:10px;right:10px;background:rgba(220,53,69,0.85);border:none;color:#fff;border-radius:8px;padding:5px 10px;font-size:0.75rem;cursor:pointer;z-index:2;"><i class="fas fa-trash me-1"></i>Delete</button>` : ''}
+                    </div>
+                    <div class="cp-offer-body">
+                        <div class="cp-offer-title">${esc(o.title)}</div>
+                        <div class="cp-offer-meta">
+                            <i class="fas fa-map-marker-alt" style="color:var(--cp-gold)"></i> ${esc(o.destination || '—')} &nbsp;&bull;&nbsp;
+                            <i class="fas fa-clock" style="color:var(--cp-gold)"></i> ${esc(o.duration || 'Flexible')}<br>
+                            ${o.availableSeats > 0
+                                ? `<i class="fas fa-users" style="color:var(--cp-gold)"></i> <span style="color:#4ade80">${o.availableSeats} seats available</span>`
+                                : `<span style="color:#f87171"><i class="fas fa-times-circle"></i> Fully booked</span>`
+                            }<br>
+                            <span style="color:rgba(232,228,216,0.55);">${esc((o.description || '').slice(0, 90))}${(o.description || '').length > 90 ? '…' : ''}</span>
+                        </div>
+                        <div class="cp-offer-footer">
+                            <div class="cp-price-tag">${formatPrice(o.price || 0)} <small>/ person</small></div>
+                            ${!isOwner ? `<button class="cp-book-btn" ${o.availableSeats === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''}
+                                onclick="bookOffer('${esc(o._id)}', ${JSON.stringify(esc(o.title))}, ${o.price || 0})">
+                                <i class="fas fa-bookmark"></i> ${o.availableSeats === 0 ? 'Full' : 'Book Now'}
+                            </button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    /* ══════════════ REVIEW FUNCTIONS ══════════════ */
+
+    let selectedRating = 0;
+    let editingReviewId = null;
+    let reviewsCache   = [];  // store loaded reviews for edit access
+
+    function openEditReview(reviewId) {
+        const rev = reviewsCache.find(r => String(r._id) === String(reviewId));
+        if (!rev) { showToast('Review not found', 'error'); return; }
+
+        editingReviewId = reviewId;
+        selectedRating  = rev.rating || 0;
+        document.getElementById('review-rating').value  = selectedRating;
+        document.getElementById('review-comment').value = rev.comment || rev.text || '';
+        updateStars(selectedRating);
+
+        const titleEl  = document.getElementById('review-modal-title');
+        const submitEl = document.getElementById('review-submit-btn');
+        if (titleEl)  titleEl.innerHTML  = '<i class="fas fa-edit me-2"></i>Edit Review';
+        if (submitEl) submitEl.innerHTML = '<i class="fas fa-save me-1"></i>Save Changes';
+
+        const modal = document.getElementById('reviewModal');
+        if (modal) new bootstrap.Modal(modal).show();
+    }
+
+    function openReviewModal() {
+        const user = Storage.get('travelnow-user');
+        if (!user) {
+            showToast('Please login to write a review', 'warning');
+            setTimeout(() => window.location.href = 'login.html', 1000);
+            return;
+        }
+        editingReviewId = null;
+        if (currentCompany) {
+            document.getElementById('review-company-name-display').textContent = currentCompany.companyName || '';
+        }
+        selectedRating = 0;
+        document.getElementById('review-rating').value = 0;
+        document.getElementById('review-comment').value = '';
+        updateStars(0);
+        const titleEl = document.getElementById('review-modal-title');
+        const submitEl = document.getElementById('review-submit-btn');
+        if (titleEl) titleEl.innerHTML = '<i class="fas fa-star me-2"></i>Write a Review';
+        if (submitEl) submitEl.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Review';
+        const modal = document.getElementById('reviewModal');
+        if (modal) new bootstrap.Modal(modal).show();
+    }
+
+    async function deleteReview(reviewId) {
+        if (!confirm('Delete this review permanently?')) return;
+        try {
+            const r = await fetch('../api/reviews/' + reviewId, {
+                method: 'DELETE',
+                headers: { Authorization: 'Bearer ' + Storage.getToken() }
+            });
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.message);
+            showToast('Review deleted', 'success');
+            const reviews = await loadReviews(currentCompany._id);
+            renderReviews(reviews);
+        } catch(err) { showToast(err.message, 'error'); }
+    }
+
+    function setReviewRating(n) {
+        selectedRating = n;
+        document.getElementById('review-rating').value = n;
+        updateStars(n);
+    }
+
+    function hoverStar(n)   { updateStars(n, true); }
+    function unhoverStar()  { updateStars(selectedRating); }
+
+    function updateStars(n, isHover = false) {
+        document.querySelectorAll('#star-rating-wrap span').forEach((s, i) => {
+            const filled = i < n;
+            s.style.color       = filled ? '#d4af37' : 'rgba(212,175,55,0.2)';
+            s.style.transform   = filled && isHover ? 'scale(1.2)' : 'scale(1)';
+            s.style.textShadow  = filled ? '0 0 8px rgba(212,175,55,0.5)' : 'none';
+        });
+    }
+
+    async function submitReview() {
+        const rating  = parseInt(document.getElementById('review-rating').value);
+        const comment = document.getElementById('review-comment').value.trim();
+
+        if (!rating || rating < 1) { showToast('Please select a star rating', 'warning'); return; }
+        if (!comment)              { showToast('Please write a comment', 'warning'); return; }
+
+        try {
+            if (editingReviewId) {
+                // ── UPDATE existing review ──
+                const r = await fetch('../api/reviews/' + editingReviewId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type':'application/json', Authorization:'Bearer '+Storage.getToken() },
+                    body: JSON.stringify({ rating, comment })
+                });
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.message);
+                showToast('Review updated ✅', 'success');
+            } else {
+                // ── CREATE new review ──
+                await fetch('../api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type':'application/json', Authorization:'Bearer '+Storage.getToken() },
+                    body: JSON.stringify({
+                        targetType:  'company',
+                        targetId:    currentCompany._id,
+                        targetModel: 'Company',
+                        rating,
+                        comment
+                    })
+                }).then(async r => {
+                    const d = await r.json();
+                    if (!r.ok) throw new Error(d.message);
+                });
+
+                // Notify company owner
+                if (currentCompany.userId) {
+                    const user = Storage.get('travelnow-user');
+                    await fetch('../api/notifications', {
+                        method: 'POST',
+                        headers: { 'Content-Type':'application/json', Authorization:'Bearer '+Storage.getToken() },
+                        body: JSON.stringify({
+                            userId:  currentCompany.userId,
+                            type:    'company',
+                            title:   `⭐ New ${rating}-star review on ${currentCompany.companyName}`,
+                            message: `${user?.fullName || 'A traveler'} left you a ${rating}/5 star review. Tap to view it.`,
+                            link:    `/pages/company-profile.html?id=${currentCompany._id}#cp-reviews`
+                        })
+                    }).catch(() => {});
+                }
+                showToast('Review submitted! Thank you ⭐', 'success');
+            }
+
+            bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide();
+            const reviews = await loadReviews(currentCompany._id);
+            renderReviews(reviews);
+
+        } catch(err) {
+            showToast(err.message, 'error');
+        }
+    }
+
+    /* ══════════════ RENDER REVIEWS ══════════════ */
+
+    function renderReviews(reviews) {
+        const wrap = document.getElementById('cp-reviews-list');
+        const currentUser = Storage.get('travelnow-user');
+        reviewsCache = reviews; // save for edit access
+
+        if (!reviews.length) {
+            wrap.innerHTML = `<div class="cp-empty"><i class="fas fa-star"></i><p>No reviews yet. Be the first!</p></div>`;
+            return;
+        }
+
+        wrap.innerHTML = reviews.map(r => {
+            const stars = Array.from({length: 5}, (_, i) =>
+                `<i class="fas fa-star" style="color:${i < (r.rating || 5) ? '#fbbf24' : 'rgba(255,255,255,0.12)'}"></i>`
+            ).join('');
+            const initial  = (r.userId?.fullName || r.userName || 'U')[0].toUpperCase();
+            const date     = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '';
+            const isOwner  = currentUser && (String(r.userId?._id || r.userId) === String(currentUser.id || currentUser._id));
+            const userName = r.userId?.fullName || r.userName || 'Traveler';
+
+            return `
+            <div class="cp-review-card" id="review-${r._id}">
+                <div class="cp-review-header">
+                    <div class="cp-reviewer">
+                        <div class="cp-reviewer-avatar">${esc(initial)}</div>
+                        <div>
+                        <div class="cp-reviewer-name">${esc(userName)}</div>
+                            <div class="cp-reviewer-date">${esc(date)}</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div class="cp-review-stars">${stars}</div>
+                        ${isOwner ? `
+                        <div style="display:flex;gap:6px;">
+                            <button onclick="openEditReview('${r._id}')"
+                                style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);color:#d4af37;border-radius:8px;padding:4px 10px;font-size:0.75rem;cursor:pointer;transition:background 0.15s;"
+                                onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='rgba(212,175,55,0.1)'">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </button>
+                            <button onclick="deleteReview('${r._id}')"
+                                style="background:rgba(220,53,69,0.1);border:1px solid rgba(220,53,69,0.3);color:#ff6b7a;border-radius:8px;padding:4px 10px;font-size:0.75rem;cursor:pointer;transition:background 0.15s;"
+                                onmouseover="this.style.background='rgba(220,53,69,0.2)'" onmouseout="this.style.background='rgba(220,53,69,0.1)'">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>` : ''}
+                    </div>
+                </div>
+                <p class="cp-review-text">${esc(r.comment || r.text || '')}</p>
+            </div>`;
+        }).join('');
+    }
+
+    /* ══════════════ EDIT MODAL HELPERS ══════════════ */
+
+    function populateEditModal(c) {
+        document.getElementById('edit-companyName').value  = c.companyName  || '';
+        document.getElementById('edit-governorate').value  = c.governorate  || '';
+        document.getElementById('edit-phone').value        = c.phone        || '';
+        document.getElementById('edit-whatsapp').value     = c.whatsapp     || '';
+        document.getElementById('edit-website').value      = c.website      || '';
+        document.getElementById('edit-address').value      = c.address      || '';
+        document.getElementById('edit-experience').value   = c.experience   || '';
+        document.getElementById('edit-employees').value    = c.employees    || '';
+        document.getElementById('edit-services').value     = c.services     || '';
+        document.getElementById('edit-description').value  = c.description  || '';
+    }
+
+    async function saveCompanyEdit() {
+        const updated = {
+            companyName:  document.getElementById('edit-companyName').value.trim(),
+            governorate:  document.getElementById('edit-governorate').value.trim(),
+            phone:        document.getElementById('edit-phone').value.trim(),
+            whatsapp:     document.getElementById('edit-whatsapp').value.trim(),
+            website:      document.getElementById('edit-website').value.trim(),
+            address:      document.getElementById('edit-address').value.trim(),
+            experience:   Number(document.getElementById('edit-experience').value),
+            employees:    Number(document.getElementById('edit-employees').value),
+            services:     document.getElementById('edit-services').value.trim(),
+            description:  document.getElementById('edit-description').value.trim()
+        };
+
+        try {
+            const res = await fetch('../api/companies/' + currentCompany._id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updated)
+            });
+            if (res.ok) {
+                Object.assign(currentCompany, updated);
+                renderHero(currentCompany);
+                renderAbout(currentCompany);
+                renderServices(currentCompany);
+                bootstrap.Modal.getInstance(document.getElementById('editCompanyModal')).hide();
+                showToast('Profile updated successfully!', 'success');
+            } else {
+                throw new Error('API error');
+            }
+        } catch (_) {
+            /* Demo mode: apply locally */
+            Object.assign(currentCompany, updated);
+            renderHero(currentCompany);
+            renderAbout(currentCompany);
+            renderServices(currentCompany);
+            bootstrap.Modal.getInstance(document.getElementById('editCompanyModal')).hide();
+            showToast('Profile updated (demo mode)', 'info');
+        }
+    }
+
+    /* ══════════════ DELETE OFFER ══════════════ */
+
+    async function deleteOffer(offerId) {
+        if (!confirm('Delete this offer permanently?')) return;
+        const token = Storage.getToken();
+        if (!token) return showToast('Not authenticated', 'error');
+        try {
+            const res = await fetch('../api/offers/' + offerId, {
+                method: 'DELETE',
+                headers: { Authorization: 'Bearer ' + token }
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.message || 'Delete failed');
+            // Remove card from DOM
+            const card = document.getElementById('offer-card-' + offerId);
+            if (card) card.remove();
+            // Update counter
+            currentOffers = currentOffers.filter(o => String(o._id) !== String(offerId));
+            const countEl = document.getElementById('cp-offers-count');
+            if (countEl) countEl.textContent = currentOffers.length + ' offer' + (currentOffers.length !== 1 ? 's' : '');
+            if (!currentOffers.length) {
+                document.getElementById('cp-offers-grid').innerHTML =
+                    `<div class="col-12"><div class="cp-empty"><i class="fas fa-tags"></i><p>No offers available yet.</p></div></div>`;
+            }
+            showToast('Offer deleted successfully', 'success');
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
+    }
+
+    /* ══════════════ FOLLOW / UNFOLLOW ══════════════ */
+
+    async function toggleFollow() {
+        const user  = Storage.get('travelnow-user');
+        const token = Storage.getToken();
+        if (!user || !token) {
+            showToast('Please login to follow companies', 'warning');
+            setTimeout(() => window.location.href = 'login.html', 1000);
+            return;
+        }
+        const btn = document.getElementById('btn-follow');
+        if (btn) btn.disabled = true;
+
+        try {
+            const method = isFollowing ? 'DELETE' : 'POST';
+            const res = await fetch(`../api/companies/${currentCompany._id}/follow`, {
+                method,
+                headers: { 'Content-Type':'application/json', Authorization:'Bearer '+token }
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Request failed');
+
+            isFollowing = !isFollowing;
+            updateFollowBtn(isFollowing);
+            showToast(isFollowing ? `Following ${currentCompany?.companyName || 'company'} ✅` : 'Unfollowed', isFollowing ? 'success' : 'info');
+        } catch(e) {
+            showToast(e.message, 'error');
+        } finally {
+            if (btn) btn.disabled = false;
+        }
+    }
+
+    function updateFollowBtn(following) {
+        const btn = document.getElementById('btn-follow');
+        if (!btn) return;
+        isFollowing = following;
+        if (following) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Following';
+            btn.classList.add('active');
+        } else {
+            btn.innerHTML = '<i class="fas fa-plus"></i> Follow';
+            btn.classList.remove('active');
+        }
+    }
+
+    async function loadFollowStatus() {
+        const user  = Storage.get('travelnow-user');
+        const token = Storage.getToken();
+        if (!user || !token || !currentCompany?._id) return;
+        try {
+            const res  = await fetch(`../api/companies/${currentCompany._id}/follow/status`, {
+                headers: { Authorization: 'Bearer ' + token }
+            });
+            const data = await res.json();
+            updateFollowBtn(data.following || false);
+        } catch(_) {}
+    }
+
+    /* ══════════════ BOOK OFFER ══════════════ */
+
+    function bookOffer(offerId, title, price) {
+        const user = Storage.get('travelnow-user');
+        if (!user) {
+            showToast('Please login to book an offer', 'warning');
+            setTimeout(() => window.location.href = 'login.html', 1000);
+            return;
+        }
+        // Go directly to payment with the offer ID — payment page will load full offer details
+        window.location.href = `payment.html?offer=${encodeURIComponent(offerId)}`;
+    }
+
+    /* ══════════════ TAB SWITCHING ══════════════ */
+
+    function switchTab(name, el) {
+        /* Update active tab */
+        document.querySelectorAll('.cp-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        /* Smooth scroll */
+        const target = document.getElementById('cp-' + name);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ══════════════ CHECK OWNERSHIP ══════════════ */
+
+    function checkOwnership(company) {
+        const user = Storage.get('travelnow-user');
+        if (!user) return;
+        const isOwner = user.role === 'admin'
+            || user._id === (company.userId || company.owner || company.ownerId)
+            || user.email === company.email;
+        if (isOwner) {
+            const editBtn = document.getElementById('btn-edit');
+            editBtn.style.display = 'inline-flex';
+            populateEditModal(company);
+            // Hide Follow and Write a Review — can't do these on your own company
+            const followBtn = document.getElementById('btn-follow');
+            if (followBtn) followBtn.style.display = 'none';
+            const reviewBtn = document.getElementById('btn-write-review');
+            if (reviewBtn) reviewBtn.style.display = 'none';
+        }
+    }
+
+    /* ══════════════ INIT ══════════════ */
+
+    async function init() {
+        try {
+            const [company, reviews] = await Promise.all([
+                loadCompany(),
+                loadReviews(id || 'demo')
+            ]);
+            currentCompany = company;
+
+            const offers = await loadOffers(company._id || id || 'demo');
+            currentOffers = offers;
+
+            renderHero(company);
+            renderAbout(company);
+            renderDocuments(company);
+            renderServices(company);
+            renderSidebar(company, offers.length);
+            renderOffers(offers);
+            renderReviews(reviews);
+            checkOwnership(company);
+            loadFollowStatus(); // check if user already follows this company
+
+            /* Show page */
+            document.getElementById('cp-loading').style.display = 'none';
+            document.getElementById('company-profile-shell').style.display = 'block';
+
+        } catch (err) {
+            console.error('Company profile init error:', err);
+            document.getElementById('cp-loading').innerHTML = `
+                <div class="text-center" style="color:rgba(232,228,216,0.5);">
+                    <i class="fas fa-exclamation-circle" style="font-size:2.5rem; color:#f87171; margin-bottom:1rem; display:block;"></i>
+                    <p>Failed to load company profile.</p>
+                    <a href="companies.html" class="btn-cp-back mt-2" style="display:inline-flex;">Back to Companies</a>
+                </div>`;
+        }
+    }
+
+    /* Run on DOM ready */
+    document.addEventListener('DOMContentLoaded', init);
+
+    /* Expose for inline onclick */
+    window.toggleFollow   = toggleFollow;
+    window.bookOffer      = bookOffer;
+    window.switchTab      = switchTab;
+    window.saveCompanyEdit = saveCompanyEdit;
+    </script>
+</body>
+</html>
