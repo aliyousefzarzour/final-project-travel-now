@@ -154,6 +154,9 @@
         /* ===== MAP PANEL ===== */
         .map-panel { position: relative; min-width: 0; min-height: 0; }
         #leaflet-map { height: 100%; min-height: 320px; width: 100%; }
+        .map-drawer-toggle,
+        .map-drawer-close,
+        .map-drawer-backdrop { display: none; }
         /* ===== FLOATING CARD ===== */
         .map-card {
             position: absolute;
@@ -306,7 +309,7 @@
             .map-layout,
             body.has-tn-navbar.map-page .map-layout {
                 grid-template-columns: 1fr;
-                grid-template-rows: auto clamp(360px, 64dvh, 620px);
+                grid-template-rows: 1fr;
                 height: auto;
                 min-height: calc(100dvh - var(--navbar-height));
             }
@@ -314,14 +317,64 @@
                 height: auto;
                 min-height: calc(100dvh - var(--navbar-height));
             }
-            .sidebar { height: auto; min-height: 0; overflow: visible; }
+            .map-panel { order: 1; min-height: calc(100dvh - var(--navbar-height)); }
+            .sidebar {
+                order: 2;
+                position: fixed;
+                top: var(--navbar-height);
+                bottom: 0;
+                left: 0;
+                z-index: 1150;
+                width: min(86vw, 350px);
+                height: auto;
+                min-height: 0;
+                overflow: hidden;
+                transform: translateX(-105%);
+                transition: transform 0.28s ease;
+                box-shadow: 18px 0 45px rgba(0,0,0,0.42);
+            }
+            body.map-drawer-open .sidebar { transform: translateX(0); }
             .sidebar-head { padding: 14px 12px 8px; }
             .sidebar-logo { gap: 8px; margin-bottom: 10px; }
             .sidebar-logo h5 { font-size: 0.88rem; min-width: 0; }
             .back-btn { padding: 5px 8px; white-space: nowrap; }
             .sidebar-list { max-height: 190px; padding: 6px 10px; }
-            .map-panel { min-height: 360px; }
-            #leaflet-map { height: 100%; min-height: 360px; }
+            #leaflet-map { height: 100%; min-height: calc(100dvh - var(--navbar-height)); }
+            .map-drawer-toggle {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                position: absolute;
+                top: 14px;
+                left: 14px;
+                z-index: 1000;
+                border: 1px solid rgba(212,175,55,0.55);
+                border-radius: 10px;
+                padding: 9px 12px;
+                background: rgba(8,20,35,0.92);
+                color: var(--gold);
+                font: 600 0.76rem 'Poppins', sans-serif;
+                box-shadow: 0 5px 18px rgba(0,0,0,0.35);
+            }
+            .map-drawer-close {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                flex-shrink: 0;
+                border: 1px solid rgba(212,175,55,0.45);
+                border-radius: 8px;
+                background: rgba(255,255,255,0.06);
+                color: var(--gold);
+            }
+            .map-drawer-backdrop {
+                position: fixed;
+                inset: var(--navbar-height) 0 0;
+                z-index: 1100;
+                background: rgba(0,0,0,0.48);
+            }
+            body.map-drawer-open .map-drawer-backdrop { display: block; }
             .map-card {
                 width: min(360px, calc(100% - 24px));
                 max-height: calc(100% - 24px);
@@ -343,9 +396,9 @@
             .search-box input, .cat-select { font-size: 0.78rem; }
             .map-layout,
             body.has-tn-navbar.map-page .map-layout {
-                grid-template-rows: auto clamp(340px, 60dvh, 520px);
+                grid-template-rows: 1fr;
             }
-            .map-panel, #leaflet-map { min-height: 340px; }
+            .map-panel, #leaflet-map { min-height: calc(100dvh - var(--navbar-height)); }
             .map-card { width: calc(100% - 16px); right: 8px; bottom: 8px; max-height: calc(100% - 16px); }
             .card-actions { gap: 6px; }
             .card-btn { padding: 8px 6px; font-size: 0.68rem; }
@@ -361,7 +414,12 @@
         <div class="sidebar-head">
             <div class="sidebar-logo">
                 <h5><i class="fas fa-map-marked-alt"></i> Attractions Map</h5>
-                <a href="attractions.html" class="back-btn"><i class="fas fa-arrow-left"></i> Attractions</a>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <a href="attractions.html" class="back-btn"><i class="fas fa-arrow-left"></i> Attractions</a>
+                    <button type="button" class="map-drawer-close" id="map-drawer-close" aria-label="Close attractions list" title="Back to map">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
             <div class="search-box">
                 <i class="fas fa-search si"></i>
@@ -395,6 +453,10 @@
     <!-- ===== MAP ===== -->
     <section class="map-panel">
         <div id="leaflet-map"></div>
+        <button type="button" class="map-drawer-toggle" id="map-drawer-toggle" aria-expanded="false">
+            <i class="fas fa-list"></i><span>Places</span>
+        </button>
+        <div class="map-drawer-backdrop" id="map-drawer-backdrop"></div>
 
         <!-- Floating attraction card -->
         <div class="map-card" id="map-card">
@@ -788,6 +850,19 @@ function applyFilters() {
     renderMarkers();
 }
 
+// Mobile list drawer
+function setMapDrawer(open) {
+    const toggle = document.getElementById('map-drawer-toggle');
+    document.body.classList.toggle('map-drawer-open', open);
+    if (toggle) {
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.innerHTML = open
+            ? '<i class="fas fa-arrow-left"></i><span>Back to map</span>'
+            : '<i class="fas fa-list"></i><span>Places</span>';
+    }
+    if (open) document.getElementById('sb-search')?.focus();
+}
+
 // ===================================================
 // LOAD ATTRACTIONS
 // ===================================================
@@ -814,6 +889,14 @@ async function loadAttractions() {
 // ===================================================
 document.getElementById('sb-search').addEventListener('input',  applyFilters);
 document.getElementById('sb-cat').addEventListener('change', applyFilters);
+document.getElementById('map-drawer-toggle').addEventListener('click', () => {
+    setMapDrawer(!document.body.classList.contains('map-drawer-open'));
+});
+document.getElementById('map-drawer-close').addEventListener('click', () => setMapDrawer(false));
+document.getElementById('map-drawer-backdrop').addEventListener('click', () => setMapDrawer(false));
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setMapDrawer(false);
+});
 
 // ===================================================
 // INIT
