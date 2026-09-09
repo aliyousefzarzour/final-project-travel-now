@@ -326,3 +326,27 @@
     margin-right: 8px;
 }
 
+@media (max-width: 767px) {
+    .auth-page,
+    .user-type-page {
+        align-items: flex-start;
+        padding: 16px 12px;
+    }
+
+    .auth-card {
+        padding: 30px 18px;
+        border-radius: 18px;
+    }
+
+    .auth-logo { margin-bottom: 22px; }
+    .auth-logo i { font-size: 2.4rem; }
+    .auth-logo h2 { font-size: 1.45rem; letter-spacing: 3px; }
+    .auth-submit { font-size: 0.95rem; }
+
+    .user-type-container h1 { font-size: 1.8rem; }
+    .user-type-container > p { margin-bottom: 28px; font-size: 0.9rem; }
+    .user-type-cards { grid-template-columns: 1fr; gap: 16px; }
+    .user-type-card { padding: 30px 18px; border-radius: 18px; }
+    .user-type-card i { font-size: 3.5rem; }
+}
+

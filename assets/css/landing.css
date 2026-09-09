@@ -332,6 +332,21 @@ body.dark-mode .landing-footer h5 {
     line-height: 1.6;
 }
 
+@media (max-width: 767px) {
+    .hero-cta {
+        height: auto;
+        min-height: 520px;
+        padding: 54px 14px;
+    }
+
+    .cta-title { padding-top: 26px; font-size: 2rem; }
+    .cta-subtitle { font-size: 0.95rem; margin-bottom: 26px; }
+    .cta-btn { padding: 12px 24px; font-size: 0.9rem; }
+    .quick-categories { padding: 48px 0; }
+    .category-card { padding: 26px 14px; }
+    .category-card i { font-size: 2.4rem; }
+}
+
 /* Close button */
 .close {
     position: absolute;
