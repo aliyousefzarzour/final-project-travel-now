@@ -14,7 +14,9 @@ module.exports = {
         'http://localhost:8000',        // ✅ Python static server / preview
         'http://127.0.0.1:8000',        // ✅ Python static server / preview
         'http://localhost:8080',
-        'http://127.0.0.1:8080'
+        'http://127.0.0.1:8080',
+        'https://aliyousefzarzour.github.io',
+        'https://final-project-travel-1nxz3erz0.vercel.app'
     ].join(','),
     
     // لو عايز تسمح لأي origin (development only!)
