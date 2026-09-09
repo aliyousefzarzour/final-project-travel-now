@@ -152,8 +152,8 @@
         .place-sub { color: var(--text-dim); font-size: 0.73rem; margin-top: 1px; }
         .place-stars { color: #ffc107; font-size: 0.68rem; }
         /* ===== MAP PANEL ===== */
-        .map-panel { position: relative; }
-        #leaflet-map { height: 100vh; width: 100%; }
+        .map-panel { position: relative; min-width: 0; min-height: 0; }
+        #leaflet-map { height: 100%; min-height: 320px; width: 100%; }
         /* ===== FLOATING CARD ===== */
         .map-card {
             position: absolute;
@@ -301,12 +301,49 @@
         }
         /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
-            html, body { overflow: auto; }
-            .map-layout { grid-template-columns: 1fr; grid-template-rows: auto 65vh; height: auto; }
-            .sidebar { height: auto; overflow: visible; }
-            .sidebar-list { max-height: 180px; }
-            #leaflet-map { height: 65vh; }
-            .map-card { width: calc(100vw - 32px); right: 16px; top: auto; bottom: 16px; }
+            html, body { overflow-x: hidden; overflow-y: auto; }
+            .map-layout,
+            body.has-tn-navbar.map-page .map-layout {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto clamp(360px, 64dvh, 620px);
+                height: auto;
+                min-height: calc(100dvh - var(--navbar-height));
+            }
+            .sidebar { height: auto; min-height: 0; overflow: visible; }
+            .sidebar-head { padding: 14px 12px 8px; }
+            .sidebar-logo { gap: 8px; margin-bottom: 10px; }
+            .sidebar-logo h5 { font-size: 0.88rem; min-width: 0; }
+            .back-btn { padding: 5px 8px; white-space: nowrap; }
+            .sidebar-list { max-height: 190px; padding: 6px 10px; }
+            .map-panel { min-height: 360px; }
+            #leaflet-map { height: 100%; min-height: 360px; }
+            .map-card {
+                width: min(360px, calc(100% - 24px));
+                max-height: calc(100% - 24px);
+                right: 12px;
+                top: auto;
+                bottom: 12px;
+                overflow-y: auto;
+            }
+            .card-img, .card-img-placeholder { height: 130px; }
+            .card-body { padding: 12px; }
+            .card-desc { margin-bottom: 10px; }
+            .leaflet-control-zoom { margin-top: 10px !important; margin-left: 10px !important; }
+            .leaflet-control-attribution { font-size: 9px; }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar-logo h5 { font-size: 0.78rem; }
+            .back-btn { font-size: 0.68rem; }
+            .search-box input, .cat-select { font-size: 0.78rem; }
+            .map-layout,
+            body.has-tn-navbar.map-page .map-layout {
+                grid-template-rows: auto clamp(340px, 60dvh, 520px);
+            }
+            .map-panel, #leaflet-map { min-height: 340px; }
+            .map-card { width: calc(100% - 16px); right: 8px; bottom: 8px; max-height: calc(100% - 16px); }
+            .card-actions { gap: 6px; }
+            .card-btn { padding: 8px 6px; font-size: 0.68rem; }
         }
     </style>
 </head>
