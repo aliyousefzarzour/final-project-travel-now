@@ -1,7 +1,10 @@
 // =================== AUTHENTICATION - TRAVELNOW ===================
+const defaultApiBase = window.location.hostname.endsWith('github.io')
+    ? 'https://travelnow-api.onrender.com/api'
+    : `http://${window.location.hostname}:5000/api`;
 const API_BASE = window.TRAVELNOW_API_BASE
     || localStorage.getItem('travelnow-api-base')
-    || `http://${window.location.hostname}:5000/api`;
+    || defaultApiBase;
 
 const nativeFetch = window.fetch.bind(window);
 window._nativeFetch = nativeFetch; // expose for multipart uploads
