@@ -200,6 +200,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/demo-data.js"></script>
 <script src="../assets/js/auth.js"></script>
 <script src="../assets/js/custom-select.js"></script>
 <script src="../assets/js/theme.js"></script>
@@ -409,6 +410,11 @@ async function loadAttractions() {
         [1,2,3,4,5,6,7,8].map(() => `<div class="col-lg-3 col-md-4 col-sm-6"><div class="sk"></div></div>`).join('');
 
     try {
+        if (window.location.hostname.endsWith('github.io')) {
+            attractions = window.DEMO_ATTRACTIONS || [];
+            applyUrlFilters();
+            return;
+        }
         const data  = await api('../api/attractions?limit=300');
         attractions = data.attractions || [];
         await loadFavState();
