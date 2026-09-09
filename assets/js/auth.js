@@ -1,6 +1,6 @@
 // =================== AUTHENTICATION - TRAVELNOW ===================
 const defaultApiBase = window.location.hostname.endsWith('github.io')
-    ? 'https://final-project-travel-1nxz3erz0.vercel.app/api'
+    ? 'https://final-project-travel-now.vercel.app/api'
     : `http://${window.location.hostname}:5000/api`;
 const API_BASE = window.TRAVELNOW_API_BASE
     || localStorage.getItem('travelnow-api-base')
