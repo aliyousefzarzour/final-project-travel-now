@@ -10,6 +10,10 @@ function getTransporter() {
     const pass = String(process.env.EMAIL_PASS || '').replace(/\s+/g, '');
 
     if (!user || !pass) {
+        if (process.env.NODE_ENV === 'production') {
+            throw new Error('Email delivery is not configured. Set EMAIL_USER and EMAIL_PASS.');
+        }
+
         console.warn('[EmailService] EMAIL_USER / EMAIL_PASS not set — running in demo mode');
         return null;
     }

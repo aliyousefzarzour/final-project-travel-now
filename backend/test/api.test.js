@@ -52,3 +52,12 @@ test('password reset does not allow userId-only reset bypass', async () => {
 
     assert.equal(response.body.message, 'Phone/OTP or Email/OTP required');
 });
+
+test('email reset OTP verification requires both email and code', async () => {
+    const response = await request(app)
+        .post('/api/auth/forgot-password/verify')
+        .send({ email: 'traveler@example.com' })
+        .expect(400);
+
+    assert.equal(response.body.message, 'Email and code are required');
+});

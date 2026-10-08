@@ -21,6 +21,7 @@ router.post('/register', registerValidation, validate, ctrl.register);
 router.post('/login', loginValidation, validate, ctrl.login);
 router.post('/forgot-password',      ctrl.forgotPassword);
 router.post('/forgot-password/send', ctrl.sendResetOtp);
+router.post('/forgot-password/verify', ctrl.verifyResetOtp);
 router.post('/reset-password',       ctrl.resetPassword);
 router.get('/me', authMiddleware, ctrl.getMe);
 

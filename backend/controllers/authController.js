@@ -396,6 +396,39 @@ TravelNow (+20 127 096 9187)`;
     }
 };
 
+// =================== VERIFY PASSWORD RESET CODE ===================
+exports.verifyResetOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        if (!email || !otp) {
+            return res.status(400).json({ message: 'Email and code are required' });
+        }
+
+        const normalizedEmail = String(email).trim().toLowerCase();
+        const otpRecord = await PasswordResetOtp.findOne({ email: normalizedEmail })
+            .select('+otpHash');
+
+        if (!otpRecord || otpRecord.expiresAt < Date.now()) {
+            return res.status(400).json({ message: 'OTP not found or expired' });
+        }
+        if (otpRecord.attempts >= 5) {
+            return res.status(400).json({ message: 'Too many attempts. Please request a new code.' });
+        }
+
+        const isValid = await bcrypt.compare(String(otp).trim(), otpRecord.otpHash);
+        if (!isValid) {
+            otpRecord.attempts += 1;
+            await otpRecord.save();
+            return res.status(400).json({ message: 'Invalid OTP' });
+        }
+
+        res.json({ message: 'Code verified successfully.', verified: true });
+    } catch (err) {
+        console.error('Verify reset OTP error:', err);
+        res.status(500).json({ message: 'Unable to verify code' });
+    }
+};
+
 // =================== RESET PASSWORD (WhatsApp or Email) ===================
 exports.resetPassword = async (req, res) => {
     try {
@@ -454,6 +487,9 @@ exports.resetPassword = async (req, res) => {
             const otpRecord = await PasswordResetOtp.findOne({ email: normalizedEmail }).select('+otpHash').catch(() => null);
             if (!otpRecord || otpRecord.expiresAt < Date.now()) {
                 return res.status(400).json({ message: 'OTP not found or expired' });
+            }
+            if (otpRecord.attempts >= 5) {
+                return res.status(400).json({ message: 'Too many attempts. Please request a new code.' });
             }
             const isValid = await bcrypt.compare(String(otp).trim(), otpRecord.otpHash);
             if (!isValid) {
@@ -661,7 +697,10 @@ exports.sendVerificationEmail = async (req, res) => {
             await sendEmail(normalizedEmail, 'Verify your TravelNow email', verificationEmailHtml(recipientName, code));
         } catch (emailErr) {
             console.error('[VerifyEmail] Send failed:', emailErr.message);
-            // Demo mode — code is logged by emailService
+            await EmailVerificationToken.deleteMany({ email: normalizedEmail }).catch(() => {});
+            return res.status(503).json({
+                message: 'Unable to send the verification code. Please try again later.'
+            });
         }
 
         res.json({ message: 'Verification code sent to your email.' });
