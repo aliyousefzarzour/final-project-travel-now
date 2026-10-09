@@ -23,7 +23,12 @@
         }
         html, body { height: 100%; font-family: 'Poppins', sans-serif; background: var(--navy); overflow: hidden; }
         /* ===== LAYOUT ===== */
-        .map-layout { display: grid; grid-template-columns: 340px 1fr; height: 100vh; }
+        .map-layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            grid-template-rows: minmax(0, 1fr);
+            height: 100vh;
+        }
         /* ===== SIDEBAR ===== */
         .sidebar {
             background: var(--navy);
@@ -160,20 +165,23 @@
         /* ===== FLOATING CARD ===== */
         .map-card {
             position: absolute;
-            right: 16px;
-            top: 16px;
+            left: 50%;
+            bottom: 20px;
             z-index: 900;
-            width: 360px;
+            width: min(460px, calc(100% - 32px));
+            max-height: min(58dvh, 560px);
             background: rgba(8,20,35,0.97);
             border: 1px solid rgba(212,175,55,0.3);
             border-radius: 20px;
             box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,175,55,0.08);
             display: none;
             backdrop-filter: blur(8px);
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+            transform: translateX(-50%);
             animation: cardIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
         }
-        @keyframes cardIn { from { opacity:0; transform:translateY(-16px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @keyframes cardIn { from { opacity:0; transform:translate(-50%,16px) scale(0.97); } to { opacity:1; transform:translate(-50%,0) scale(1); } }
         .card-img-wrap { position: relative; }
         .card-img {
             width: 100%;
@@ -376,11 +384,11 @@
             }
             body.map-drawer-open .map-drawer-backdrop { display: block; }
             .map-card {
-                width: min(360px, calc(100% - 24px));
-                max-height: calc(100% - 24px);
-                right: 12px;
-                top: auto;
+                width: min(460px, calc(100% - 24px));
+                max-height: min(52dvh, 480px);
+                left: 50%;
                 bottom: 12px;
+                transform: translateX(-50%);
                 overflow-y: auto;
             }
             .card-img, .card-img-placeholder { height: 130px; }
@@ -399,7 +407,13 @@
                 grid-template-rows: 1fr;
             }
             .map-panel, #leaflet-map { min-height: calc(100dvh - var(--navbar-height)); }
-            .map-card { width: calc(100% - 16px); right: 8px; bottom: 8px; max-height: calc(100% - 16px); }
+            .map-card {
+                width: calc(100% - 16px);
+                left: 50%;
+                bottom: 8px;
+                max-height: min(58dvh, 440px);
+                transform: translateX(-50%);
+            }
             .card-actions { gap: 6px; }
             .card-btn { padding: 8px 6px; font-size: 0.68rem; }
         }
