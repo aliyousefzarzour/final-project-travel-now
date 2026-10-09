@@ -1116,7 +1116,7 @@
                               <i class="fas fa-check me-1"></i>Accept Offer
                             </button>` : ''}
                           ${isAccepted ? `
-                            <button onclick="goToPayment('${encodeURIComponent(p.companyName)}','${p.price}','${encodeURIComponent(p.description)}','${encodeURIComponent((p.attractions||[]).map(a=>a.name).join(', '))}','${post._id}')"
+                            <button onclick="goToPayment('${post._id}','${p._id}')"
                               style="background:linear-gradient(135deg,#d4af37,#c9a227);color:#0a1d2e;border:none;border-radius:10px;padding:8px 20px;font-size:0.82rem;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(212,175,55,0.35);">
                               <i class="fas fa-credit-card me-1"></i>Complete Payment
                             </button>` : ''}
@@ -1244,34 +1244,8 @@
         if (btn) btn.innerHTML = isOpen ? '<i class="fas fa-chevron-down me-1"></i>View Full Offer' : '<i class="fas fa-chevron-up me-1"></i>Hide Details';
     }
 
-    function goToPayment(companyName, price, description, attractions, postId, days, nights, hotelName, hotelRating, transportation, mealsIncluded, included, notIncluded) {
-        // Persist extended proposal data in sessionStorage for payment page
-        try {
-            sessionStorage.setItem('travelnow-proposal-extra', JSON.stringify({
-                days: days ? decodeURIComponent(days) : '',
-                nights: nights ? decodeURIComponent(nights) : '',
-                hotelName: hotelName ? decodeURIComponent(hotelName) : '',
-                hotelRating: hotelRating ? decodeURIComponent(hotelRating) : '',
-                transportation: transportation ? decodeURIComponent(transportation) : '',
-                mealsIncluded: mealsIncluded ? decodeURIComponent(mealsIncluded) : '',
-                included: included ? decodeURIComponent(included) : '',
-                notIncluded: notIncluded ? decodeURIComponent(notIncluded) : ''
-            }));
-        } catch(e) {}
-
-        const params = new URLSearchParams({
-            price,
-            title: `Trip Proposal`,
-            company: companyName,
-            attractions,
-            postId,
-            days: days || '',
-            nights: nights || '',
-            hotelName: hotelName || '',
-            hotelRating: hotelRating || '',
-            transportation: transportation || '',
-            mealsIncluded: mealsIncluded || ''
-        });
+    function goToPayment(postId, proposalId) {
+        const params = new URLSearchParams({ postId, proposalId });
         window.location.href = `payment.html?${params.toString()}`;
     }
 
@@ -1562,18 +1536,15 @@
     async function approveProposal(postId, proposalId, companyName, price, description, attractions) {
         if (!confirm(`Accept this proposal for ${formatPriceText(price)} and proceed to payment?\n\nAll other proposals will be declined.`)) return;
         try {
-            const data = await fetchJson(`../api/posts/${postId}/proposals/${proposalId}/approve`, { method: 'POST' });
+            await fetchJson(`../api/posts/${postId}/proposals/${proposalId}/approve`, { method: 'POST' });
             showToast('Proposal accepted! Redirecting to payment...', 'success');
             // Close modal if open
             const modal = bootstrap.Modal.getInstance(document.getElementById('interactionModal'));
             if (modal) modal.hide();
 
             const params = new URLSearchParams({
-                price: data.proposal.price,
-                title: encodeURIComponent(`Trip to ${data.proposal.postDestination}`),
-                company: encodeURIComponent(data.proposal.companyName),
-                attractions: encodeURIComponent(data.proposal.attractions?.map(a => a.name).join(', ') || ''),
-                postId: postId
+                postId,
+                proposalId
             });
             setTimeout(() => {
                 window.location.href = `payment.html?${params.toString()}`;

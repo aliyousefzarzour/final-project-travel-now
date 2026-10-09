@@ -12,8 +12,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: url('https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?w=1600') center/cover;
-    opacity: 0.2;
+    background: radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.16), transparent 60%);
 }
 
 .page-header h1 {

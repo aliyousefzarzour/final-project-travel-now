@@ -28,9 +28,14 @@ module.exports = {
     // MongoDB
     MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/travelnow',
 
-    // Stripe (Payment Gateway)
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
-    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
+    // Paymob Hosted Checkout — payments are intentionally sandbox-only.
+    PAYMOB_MODE: process.env.PAYMOB_MODE || '',
+    PAYMOB_SECRET_KEY: process.env.PAYMOB_SECRET_KEY || '',
+    PAYMOB_PUBLIC_KEY: process.env.PAYMOB_PUBLIC_KEY || '',
+    PAYMOB_CARD_INTEGRATION_ID: process.env.PAYMOB_CARD_INTEGRATION_ID || '',
+    PAYMOB_HMAC_SECRET: process.env.PAYMOB_HMAC_SECRET || '',
+    PAYMOB_CALLBACK_URL: process.env.PAYMOB_CALLBACK_URL || '',
+    PAYMOB_RETURN_URL: process.env.PAYMOB_RETURN_URL || '',
 
     // Admin contact and bootstrap credentials
     ADMIN_EMAIL: process.env.ADMIN_EMAIL || '',

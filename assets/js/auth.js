@@ -181,7 +181,7 @@ async function handleLogin(e) {
         });
 
         const data = await res.json();
-        console.log('📥 Login response:', { status: res.status, data });
+        console.log('Login response status:', res.status);
 
         if (res.ok) {
             if (!data.token) {
@@ -200,9 +200,6 @@ async function handleLogin(e) {
                 localStorage.setItem('travelnow-token', data.token);
             }
             
-            console.log('✅ Token saved:', Storage.getToken());
-            console.log('✅ User saved:', Storage.get('travelnow-user'));
-
             showToast('Login successful! Redirecting...');
             
             setTimeout(() => {

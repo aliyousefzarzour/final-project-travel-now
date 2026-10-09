@@ -7,15 +7,17 @@ const bookingSchema = new mongoose.Schema({
     attractionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Attraction' },
     companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
 
-    type: { type: String, enum: ['offer', 'attraction'], required: true },
+    type: { type: String, enum: ['offer', 'attraction', 'proposal'], required: true },
     title: { type: String, required: true },
     travelers: { type: Number, default: 1 },
     travelDate: Date,
+    proposalPostId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
+    proposalId: { type: mongoose.Schema.Types.ObjectId },
 
     amount: { type: Number, required: true },
     currency: { type: String, default: 'EGP' },
     status: { type: String, enum: ['pending', 'confirmed', 'cancelled', 'completed'], default: 'pending' },
-    paymentId: String,
+    paymentId: { type: String, default: null },
 
     contactInfo: {
         name: String,

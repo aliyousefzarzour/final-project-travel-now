@@ -890,7 +890,7 @@
                             ` : ''}
 
                             ${isAccepted ? `
-                                <button class="btn btn-gold proposal-approve-btn" onclick="goToPayment('${encodeURIComponent(p.companyName)}','${p.price}','${encodeURIComponent(p.description)}','${encodeURIComponent((p.attractions||[]).map(a=>a.name).join(', '))}','${post._id}')">
+                                <button class="btn btn-gold proposal-approve-btn" onclick="goToPayment('${post._id}','${p._id}')">
                                     <i class="fas fa-credit-card me-1"></i> Continue to Payment
                                 </button>
                             ` : ''}
@@ -981,14 +981,8 @@
         modalInstance.show();
     }
 
-    function goToPayment(companyName, price, description, attractions, postId) {
-        const params = new URLSearchParams({
-            price,
-            title: `Trip Proposal`,
-            company: companyName,
-            attractions,
-            postId
-        });
+    function goToPayment(postId, proposalId) {
+        const params = new URLSearchParams({ postId, proposalId });
         window.location.href = `payment.html?${params.toString()}`;
     }
 
@@ -1269,11 +1263,8 @@
             if (modal) modal.hide();
 
             const params = new URLSearchParams({
-                price: data.proposal.price,
-                title: encodeURIComponent(`Trip to ${data.proposal.postDestination}`),
-                company: encodeURIComponent(data.proposal.companyName),
-                attractions: encodeURIComponent(data.proposal.attractions?.map(a => a.name).join(', ') || ''),
-                postId: postId
+                postId,
+                proposalId
             });
             setTimeout(() => {
                 window.location.href = `payment.html?${params.toString()}`;

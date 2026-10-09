@@ -37,12 +37,12 @@
             </div>
 
             <div class="otp-inputs" id="otp-inputs">
-                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
-                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
-                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
-                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
-                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
-                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" aria-label="Digit 1 of 6">
+                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="Digit 2 of 6">
+                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="Digit 3 of 6">
+                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="Digit 4 of 6">
+                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="Digit 5 of 6">
+                <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="Digit 6 of 6">
             </div>
 
             <div id="otp-error" style="color:#ff6b7a;text-align:center;font-size:0.85rem;margin-bottom:12px;display:none;"></div>
@@ -79,15 +79,33 @@
 
     // ── Wire OTP digit inputs ──
     const otpWrap = document.getElementById('otp-inputs');
+    const otpInputs = [...otpWrap.querySelectorAll('.otp-digit')];
     otpWrap.addEventListener('input', e => {
         const d = e.target;
+        d.value = d.value.replace(/\D/g, '').slice(-1);
         if (d.value.length === 1) {
             d.classList.add('filled');
             if (d.nextElementSibling) d.nextElementSibling.focus();
-            if ([...otpWrap.querySelectorAll('.otp-digit')].every(x => x.value.length === 1)) {
+            if (otpInputs.every(x => x.value.length === 1)) {
                 verifyCode();
             }
         } else { d.classList.remove('filled'); }
+    });
+    otpWrap.addEventListener('paste', e => {
+        const start = otpInputs.indexOf(e.target);
+        if (start < 0) return;
+        const text = e.clipboardData?.getData('text') || '';
+        const digits = text.replace(/\D/g, '').slice(0, otpInputs.length - start);
+        e.preventDefault();
+        if (!digits) return;
+
+        [...digits].forEach((digit, index) => {
+            const input = otpInputs[start + index];
+            input.value = digit;
+            input.classList.add('filled');
+        });
+        otpInputs[Math.min(start + digits.length, otpInputs.length - 1)].focus();
+        if (otpInputs.every(x => x.value.length === 1)) verifyCode();
     });
     otpWrap.addEventListener('keydown', e => {
         if (e.key === 'Backspace' && !e.target.value && e.target.previousElementSibling) {

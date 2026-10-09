@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Post = require('../models/Post');
 const Company = require('../models/Company');
+const Booking = require('../models/Booking');
+const Payment = require('../models/Payment');
 const { send: sendNotification } = require('./notificationController');
 
 const MIN_DAYS = 7;
@@ -384,6 +386,21 @@ exports.closePost = async (req, res) => {
     try {
         const post = await Post.findOne({ _id: req.params.id, userId: req.user.id }).catch(() => null);
         if (!post) return res.status(404).json({ message: 'Post not found' });
+        const paidBooking = await Booking.findOne({
+            proposalPostId: post._id,
+            userId: req.user.id,
+            status: 'confirmed'
+        }).catch(() => null);
+        const verifiedPayment = paidBooking?.paymentId
+            ? await Payment.findOne({
+                _id: paidBooking.paymentId,
+                gateway: 'paymob',
+                status: 'succeeded'
+            }).catch(() => null)
+            : null;
+        if (!verifiedPayment) {
+            return res.status(409).json({ message: 'A proposal can only be closed after verified payment' });
+        }
         post.marketplaceStatus = 'closed';
         post.isActive = false;
         await post.save();
@@ -614,7 +631,7 @@ exports.approveProposal = async (req, res) => {
         await sendNotification(
             post.userId._id || post.userId,
             'offer',
-            '✅ Booking Confirmed — Proceed to Payment',
+            '✅ Proposal Accepted — Payment Required',
             `You accepted the proposal from ${proposal.companyName}. Complete payment to confirm your trip.`,
             `/pages/payment.html`
         ).catch(() => {});

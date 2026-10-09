@@ -32,16 +32,57 @@ test('admin payment listing rejects non-admin users', async () => {
     assert.equal(response.body.error, 'Insufficient permissions');
 });
 
-test('payment intent returns a demo intent when Stripe is not configured', async () => {
+test('payment intent refuses initiation when sandbox configuration is missing', async t => {
+    const previousMode = config.PAYMOB_MODE;
+    config.PAYMOB_MODE = '';
+    t.after(() => { config.PAYMOB_MODE = previousMode; });
+
     const response = await request(app)
         .post('/api/payments/create-intent')
         .set('Authorization', `Bearer ${tokenFor('tourist')}`)
-        .send({ amount: 2500, currency: 'egp' })
-        .expect(200);
+        .send({ bookingId: '507f1f77bcf86cd799439011' })
+        .expect(503);
 
-    assert.equal(response.body.demo, true);
-    assert.match(response.body.paymentIntentId, /^pi_demo_/);
-    assert.match(response.body.clientSecret, /_secret_demo$/);
+    assert.equal(response.body.code, 'PAYMOB_SANDBOX_NOT_CONFIGURED');
+});
+
+test('legacy client confirmation endpoint rejects forged payment evidence', async () => {
+    const response = await request(app)
+        .post('/api/payments/confirm')
+        .set('Authorization', `Bearer ${tokenFor('tourist')}`)
+        .send({
+            paymentIntentId: 'forged',
+            bookingId: '507f1f77bcf86cd799439011',
+            amount: 1,
+            success: true
+        })
+        .expect(410);
+
+    assert.equal(response.body.code, 'CLIENT_CONFIRMATION_DISABLED');
+});
+
+test('booking creation cannot accept client-supplied paid status or price', async () => {
+    const response = await request(app)
+        .post('/api/bookings')
+        .set('Authorization', `Bearer ${tokenFor('tourist')}`)
+        .send({
+            type: 'offer',
+            offerId: '507f1f77bcf86cd799439012',
+            title: 'Client title',
+            amount: 1,
+            status: 'confirmed'
+        })
+        .expect(400);
+
+    assert.match(response.body.message, /server-managed/);
+});
+
+test('non-tourists cannot initialize a Paymob checkout', async () => {
+    await request(app)
+        .post('/api/payments/create-intent')
+        .set('Authorization', `Bearer ${tokenFor('company')}`)
+        .send({ bookingId: '507f1f77bcf86cd799439011' })
+        .expect(403);
 });
 
 test('password reset does not allow userId-only reset bypass', async () => {

@@ -14,8 +14,6 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: url('https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?w=1600') center/cover;
-    opacity: 0.15;
     z-index: 0;
 }
 
@@ -349,4 +347,3 @@
     .user-type-card { padding: 30px 18px; border-radius: 18px; }
     .user-type-card i { font-size: 3.5rem; }
 }
-
