@@ -179,7 +179,7 @@
                         <div class="info-stat-card">
                             <i class="fas fa-ticket-alt"></i>
                             <label>Starting From</label>
-                            <span id="stat-price">-</span>
+                            <span id="stat-price"></span>
                         </div>
                     </div>
 
@@ -213,8 +213,8 @@
                     <div class="booking-sidebar">
                         <div class="dashboard-card p-4 text-center">
                             <label class="text-muted small text-uppercase fw-bold letter-spacing-1 mb-2 d-block">Entrance Fee</label>
-                            <div class="price-hero mb-1" id="price-display">0 <small style="font-size: 1rem;">EGP</small></div>
-                            <p class="text-muted small mb-4">per adult visitor</p>
+                            <div class="price-hero mb-1" id="price-display"></div>
+                            <p class="text-muted small mb-4" id="price-note"></p>
 
                             <div class="d-grid gap-2">
                                 <button class="btn btn-gold py-3" id="add-to-plan-btn">
@@ -387,9 +387,12 @@
 
             document.getElementById('stat-category').textContent = data.category;
             document.getElementById('stat-hours').textContent = data.openingHours || '8:00 AM - 5:00 PM';
-            document.getElementById('stat-price').textContent = data.prices?.egyptian ? `${data.prices.egyptian} EGP` : 'Free';
-
-            document.getElementById('price-display').innerHTML = `${data.prices?.egyptian || 0} <small style="font-size:1rem;">EGP</small>`;
+            const entranceFee = Number(data.prices?.egyptian);
+            const hasEntranceFee = Number.isFinite(entranceFee) && entranceFee > 0;
+            const formattedFee = '';
+            document.getElementById('stat-price').textContent = formattedFee;
+            document.getElementById('price-display').textContent = '';
+            document.getElementById('price-note').textContent = '';
 
             document.getElementById('header-rating').innerHTML = '★'.repeat(Math.floor(data.rating || 0)) + '☆'.repeat(5-Math.floor(data.rating || 0));
             document.getElementById('header-reviews').textContent = `(${data.reviews || 0} traveler reviews)`;

@@ -341,9 +341,7 @@ function renderAttractions(items) {
         const isFav  = favSet.has(String(att._id));
         const img    = getSafeImageUrl(att.images?.[0]);
         const emoji  = CAT_EMOJI[att.category] || '📍';
-        const price  = att.prices?.egyptian > 0
-            ? formatPrice(att.prices.egyptian)
-            : '<span style="color:#4ade80;font-weight:600">🎟️ Free Entry</span>';
+        const price  = '';
         const stars  = '★'.repeat(Math.floor(att.rating || 0)) + '☆'.repeat(5 - Math.floor(att.rating || 0));
         const reviews = Number(att.reviews || 0).toLocaleString();
 
