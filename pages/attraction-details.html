@@ -108,6 +108,62 @@
             border: 2px solid var(--card-border);
             box-shadow: var(--shadow-soft);
             z-index: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .travelnow-map-popup .leaflet-popup-content-wrapper {
+            background: rgba(255,255,255,0.96);
+            border: 1px solid rgba(15,34,59,0.08);
+            border-radius: 18px;
+            box-shadow: 0 18px 32px rgba(9,25,41,0.18);
+            backdrop-filter: blur(6px);
+        }
+
+        .travelnow-map-popup .leaflet-popup-content {
+            margin: 12px 14px 10px;
+            min-width: 200px;
+            max-width: 250px;
+            font-family: 'Poppins', sans-serif;
+            color: var(--navy);
+            line-height: 1.4;
+        }
+
+        .travelnow-map-popup .leaflet-popup-content b {
+            display: block;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 2px;
+        }
+
+        .travelnow-map-popup .leaflet-popup-tip {
+            background: rgba(255,255,255,0.96);
+            border: 1px solid rgba(15,34,59,0.08);
+        }
+
+        .travelnow-map-popup .leaflet-popup-close-button {
+            color: var(--navy);
+            font-size: 16px;
+            padding: 8px 10px 0 0;
+            opacity: 0.8;
+        }
+
+        .travelnow-map-popup .leaflet-popup-close-button:hover {
+            color: #000;
+            opacity: 1;
+        }
+
+        .leaflet-control-zoom {
+            border: 1px solid rgba(15,34,59,0.1) !important;
+            box-shadow: 0 10px 22px rgba(9,25,41,0.12) !important;
+            border-radius: 12px !important;
+            overflow: hidden;
+        }
+
+        .leaflet-control-zoom a {
+            color: var(--navy) !important;
+            line-height: 30px !important;
         }
 
         .booking-sidebar {
@@ -402,9 +458,29 @@
             const lat = data.coordinates?.lat || 26.5;
             const lng = data.coordinates?.lng || 30.5;
             if (mapInstance) mapInstance.remove();
-            mapInstance = L.map('map', { scrollWheelZoom: false }).setView([lat, lng], 14);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(mapInstance);
-            L.marker([lat, lng]).addTo(mapInstance).bindPopup(`<b>${data.name}</b>`).openPopup();
+            mapInstance = L.map('map', {
+                scrollWheelZoom: false,
+                zoomControl: true,
+                attributionControl: true
+            }).setView([lat, lng], 14);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                subdomains: 'abc',
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(mapInstance);
+
+            const marker = L.marker([lat, lng]).addTo(mapInstance);
+            marker.bindPopup(`<div><b>${data.name}</b><div>${data.governorate || 'Egypt'}</div></div>`, {
+                className: 'travelnow-map-popup',
+                maxWidth: 260,
+                minWidth: 220,
+                autoPan: true,
+                autoPanPadding: [20, 20],
+                closeButton: true
+            }).openPopup();
+
+            setTimeout(() => mapInstance.invalidateSize(), 120);
         }
 
         async function loadAttraction() {
