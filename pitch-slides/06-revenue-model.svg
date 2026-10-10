@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">TravelNow revenue model and illustrative booking economics</title>
+  <desc id="desc">Illustrative 100 bookings at $250 average package value equals $25,000 gross booking value and $1,250 gross platform fee at a proposed 5 percent.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#081625"/><stop offset="1" stop-color="#102a40"/></linearGradient><linearGradient id="mint" x2="1"><stop stop-color="#72dccb"/><stop offset="1" stop-color="#b6ebd2"/></linearGradient></defs>
+  <rect width="1600" height="900" fill="url(#bg)"/><circle cx="1450" cy="130" r="280" fill="#1b5269" opacity=".14"/>
+  <text x="96" y="90" fill="#79d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="16" letter-spacing="3">05 · REVENUE MODEL</text>
+  <text x="96" y="151" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="45">A simple proposed take rate. Economics to prove.</text>
+  <rect x="96" y="220" width="1408" height="170" rx="26" fill="#112b3f" stroke="#2b5264"/>
+  <text x="143" y="272" fill="#90a9b7" font-family="Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="2">ILLUSTRATIVE 12-MONTH TEST TARGET</text>
+  <text x="143" y="348" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="55">100</text>
+  <text x="290" y="344" fill="#c4d2da" font-family="Arial,sans-serif" font-size="20">completed bookings</text>
+  <text x="558" y="348" fill="#e8c779" font-family="Arial,sans-serif" font-weight="700" font-size="46">×</text>
+  <text x="636" y="348" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="48">$250</text>
+  <text x="790" y="344" fill="#c4d2da" font-family="Arial,sans-serif" font-size="20">average package</text>
+  <text x="1040" y="348" fill="#e8c779" font-family="Arial,sans-serif" font-weight="700" font-size="46">=</text>
+  <text x="1120" y="348" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="48">$25,000</text>
+  <text x="1125" y="373" fill="#8da5b3" font-family="Arial,sans-serif" font-size="15">package GMV</text>
+  <rect x="96" y="426" width="455" height="210" rx="24" fill="#153447" stroke="#326074"/>
+  <text x="136" y="475" fill="#8edfd0" font-family="Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="2">PROPOSED PLATFORM FEE</text>
+  <text x="132" y="563" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="70">5%</text>
+  <text x="283" y="547" fill="#cfdae0" font-family="Arial,sans-serif" font-size="19">currently displayed</text><text x="283" y="576" fill="#cfdae0" font-family="Arial,sans-serif" font-size="19">in the trip-planner UI</text>
+  <text x="589" y="548" fill="#e8c779" font-family="Arial,sans-serif" font-weight="700" font-size="48">→</text>
+  <rect x="690" y="426" width="454" height="210" rx="24" fill="#112b3f" stroke="#2b5264"/>
+  <text x="730" y="475" fill="#90a9b7" font-family="Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="2">GROSS PLATFORM FEE</text>
+  <text x="726" y="563" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="64">$1,250</text>
+  <text x="730" y="600" fill="#c5d3db" font-family="Arial,sans-serif" font-size="17">5% × $25,000 package GMV</text>
+  <rect x="1181" y="426" width="323" height="210" rx="24" fill="#102537" stroke="#2a4658"/>
+  <text x="1220" y="475" fill="#e8c779" font-family="Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="2">COMPANY SHARE*</text>
+  <text x="1217" y="563" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="57">95%</text>
+  <text x="1220" y="600" fill="#aebec8" font-family="Arial,sans-serif" font-size="16">of package value</text>
+  <rect x="96" y="674" width="1408" height="117" rx="20" fill="#0b1c2a" stroke="#344c5d"/>
+  <text x="128" y="715" fill="#e8c779" font-family="Arial,sans-serif" font-weight="700" font-size="16">IMPORTANT</text>
+  <text x="128" y="747" fill="#c1ced6" font-family="Arial,sans-serif" font-size="16">Planning scenario—not sales, profit or a forecast. The fee is not production-integrated; exclude payment costs, taxes, refunds and operating costs.</text>
+  <text x="128" y="773" fill="#9bb0bd" font-family="Arial,sans-serif" font-size="15">*Illustrative only; company agreements, fee collection, currency and settlement must be implemented and validated.</text>
+  <text x="96" y="846" fill="#71899b" font-family="Arial,sans-serif" font-size="14">TRAVELNOW · INVESTOR PRESENTATION</text><text x="1504" y="846" text-anchor="end" fill="#71899b" font-family="Arial,sans-serif" font-size="14">06 / 08</text>
+</svg>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">TravelNow 12-month pilot plan, assumptions and sources</title>
+  <desc id="desc">A four-phase launch roadmap and source list. The product, payment, fee, and market assumptions are clearly disclosed.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#081625"/><stop offset="1" stop-color="#102a40"/></linearGradient></defs>
+  <rect width="1600" height="900" fill="url(#bg)"/><circle cx="1460" cy="100" r="280" fill="#1b5269" opacity=".13"/>
+  <text x="96" y="81" fill="#79d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="3">07 · EXECUTION &amp; TRANSPARENCY</text>
+  <text x="96" y="137" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="41">Prove trust and fulfilment before scaling.</text>
+  <g font-family="Arial,sans-serif">
+    <rect x="96" y="171" width="330" height="154" rx="20" fill="#112b3f" stroke="#2b5264"/>
+    <text x="124" y="211" fill="#80d9cb" font-weight="700" font-size="15">MONTHS 1–3</text><text x="124" y="250" fill="#fffaf0" font-weight="700" font-size="20">Launch readiness</text>
+    <text x="124" y="283" fill="#bdcbd6" font-size="15">Quality, terms, verification</text><text x="124" y="306" fill="#bdcbd6" font-size="15">and payment design.</text>
+    <rect x="446" y="171" width="330" height="154" rx="20" fill="#112b3f" stroke="#2b5264"/>
+    <text x="474" y="211" fill="#80d9cb" font-weight="700" font-size="15">MONTHS 4–6</text><text x="474" y="250" fill="#fffaf0" font-weight="700" font-size="20">Private pilot</text>
+    <text x="474" y="283" fill="#bdcbd6" font-size="15">Onboard tourism companies;</text><text x="474" y="306" fill="#bdcbd6" font-size="15">test offers and support workflows.</text>
+    <rect x="796" y="171" width="330" height="154" rx="20" fill="#112b3f" stroke="#2b5264"/>
+    <text x="824" y="211" fill="#80d9cb" font-weight="700" font-size="15">MONTHS 7–9</text><text x="824" y="250" fill="#fffaf0" font-weight="700" font-size="20">Measured public launch</text>
+    <text x="824" y="283" fill="#bdcbd6" font-size="15">Track conversion, response,</text><text x="824" y="306" fill="#bdcbd6" font-size="15">completion and cancellations.</text>
+    <rect x="1146" y="171" width="358" height="154" rx="20" fill="#112b3f" stroke="#2b5264"/>
+    <text x="1174" y="211" fill="#80d9cb" font-weight="700" font-size="15">MONTHS 10–12</text><text x="1174" y="250" fill="#fffaf0" font-weight="700" font-size="20">Prove repeatability</text>
+    <text x="1174" y="283" fill="#bdcbd6" font-size="15">Review unit economics before</text><text x="1174" y="306" fill="#bdcbd6" font-size="15">expanding routes or spend.</text>
+  </g>
+  <rect x="96" y="365" width="1408" height="172" rx="22" fill="#102537" stroke="#304b5d"/>
+  <text x="128" y="405" fill="#e8c779" font-family="Arial,sans-serif" font-weight="700" font-size="16" letter-spacing="2">ASSUMPTIONS WE WILL TEST</text>
+  <text x="130" y="447" fill="#d4dfe4" font-family="Arial,sans-serif" font-size="16">• 19M = reported national arrivals, not unique online buyers or a dollar TAM.</text>
+  <text x="130" y="480" fill="#d4dfe4" font-family="Arial,sans-serif" font-size="16">• 100 bookings × $250 × 5% = $1,250 gross fee scenario—not achieved revenue or profit.</text>
+  <text x="130" y="513" fill="#d4dfe4" font-family="Arial,sans-serif" font-size="16">• 5% is displayed in-product; payment processing, settlement and fee collection are not production-ready.</text>
+  <text x="96" y="590" fill="#79d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="16" letter-spacing="2">SOURCES · CLICKABLE LINKS IN THE SVG</text>
+  <a href="https://english.ahram.org.eg/NewsContent/1/1238/559795/Egypt/Tourism/Egypt-tourism-records-historic-growth-in--receivin.aspx"><text x="102" y="637" fill="#c2d2dc" font-family="Arial,sans-serif" font-size="15">Egypt arrivals: Ahram Online, reporting official Ministry figures (2025)</text></a>
+  <a href="https://render.com/docs/free"><text x="102" y="671" fill="#c2d2dc" font-family="Arial,sans-serif" font-size="15">Render: free-tier limitations / production guidance</text></a>
+  <a href="https://resend.com/pricing"><text x="102" y="705" fill="#c2d2dc" font-family="Arial,sans-serif" font-size="15">Resend: email plan pricing and limits</text></a>
+  <a href="https://www.mongodb.com/docs/atlas/billing/"><text x="810" y="637" fill="#c2d2dc" font-family="Arial,sans-serif" font-size="15">MongoDB Atlas: usage-based billing</text></a>
+  <a href="https://developers.cloudflare.com/pages/platform/limits/"><text x="810" y="671" fill="#c2d2dc" font-family="Arial,sans-serif" font-size="15">Cloudflare Pages: platform limits</text></a>
+  <text x="810" y="705" fill="#8fa7b5" font-family="Arial,sans-serif" font-size="15">Prices / limits may change; $900 web-services line is an allowance.</text>
+  <path d="M96 753h1408" stroke="#31495a"/>
+  <text x="96" y="798" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="19">TravelNow · Discover Egypt. Book with confidence.</text>
+  <text x="1504" y="798" text-anchor="end" fill="#71899b" font-family="Arial,sans-serif" font-size="14">08 / 08</text>
+  <text x="96" y="841" fill="#71899b" font-family="Arial,sans-serif" font-size="13">Planning draft · Verify partner, payment, legal and provider costs before external commitments.</text>
+</svg>

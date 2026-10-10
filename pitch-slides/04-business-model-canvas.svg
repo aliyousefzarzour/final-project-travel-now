@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">TravelNow business model canvas</title>
+  <desc id="desc">Nine-part business model canvas for an Egypt travel platform supplied by licensed tourism companies.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#081625"/><stop offset="1" stop-color="#102a40"/></linearGradient></defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <text x="70" y="74" fill="#79d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="3">03 · BUSINESS MODEL CANVAS</text>
+  <text x="70" y="126" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="39">TravelNow connects Egypt travelers with complete company packages.</text>
+  <g font-family="Arial,sans-serif">
+    <rect x="70" y="158" width="282" height="477" rx="17" fill="#11283b" stroke="#315063"/>
+    <text x="94" y="197" fill="#e8c779" font-weight="700" font-size="19">KEY PARTNERS</text>
+    <text x="94" y="235" fill="#e4ebee" font-size="16"><tspan x="94" dy="0">• Licensed tourism companies</tspan><tspan x="94" dy="26">  selling and delivering packages</tspan><tspan x="94" dy="37">• Payment provider (to be selected)</tspan><tspan x="94" dy="37">• Hosting, database &amp; email vendors</tspan><tspan x="94" dy="37">• Verification / legal advisers</tspan></text>
+
+    <rect x="368" y="158" width="222" height="229" rx="17" fill="#11283b" stroke="#315063"/>
+    <text x="390" y="197" fill="#e8c779" font-weight="700" font-size="19">KEY ACTIVITIES</text>
+    <text x="390" y="235" fill="#e4ebee" font-size="15"><tspan x="390" dy="0">• Verify companies</tspan><tspan x="390" dy="28">• Curate packages</tspan><tspan x="390" dy="28">• Maintain the platform</tspan><tspan x="390" dy="28">• Support discovery &amp;</tspan><tspan x="390" dy="24">  booking handoff</tspan></text>
+    <rect x="368" y="400" width="222" height="235" rx="17" fill="#11283b" stroke="#315063"/>
+    <text x="390" y="439" fill="#e8c779" font-weight="700" font-size="19">KEY RESOURCES</text>
+    <text x="390" y="477" fill="#e4ebee" font-size="15"><tspan x="390" dy="0">• Website &amp; product</tspan><tspan x="390" dy="28">• Egypt content / data</tspan><tspan x="390" dy="28">• Verified company supply</tspan><tspan x="390" dy="28">• Founder-built technology</tspan><tspan x="390" dy="28">• Trust &amp; customer insight</tspan></text>
+
+    <rect x="606" y="158" width="360" height="477" rx="17" fill="#153648" stroke="#4d9c99" stroke-width="2"/>
+    <text x="630" y="197" fill="#84dfd0" font-weight="700" font-size="19">VALUE PROPOSITION</text>
+    <text x="630" y="241" fill="#fffaf0" font-weight="700" font-size="19">For travelers</text>
+    <text x="630" y="275" fill="#e4ebee" font-size="15"><tspan x="630" dy="0">Discover Egypt, explore packages and</tspan><tspan x="630" dy="25">plan in one place—then book with one</tspan><tspan x="630" dy="25">company responsible for the complete trip.</tspan></text>
+    <text x="630" y="387" fill="#fffaf0" font-weight="700" font-size="19">For tourism companies</text>
+    <text x="630" y="421" fill="#e4ebee" font-size="15"><tspan x="630" dy="0">Showcase complete offers to travelers</tspan><tspan x="630" dy="25">actively planning an Egypt visit; receive</tspan><tspan x="630" dy="25">qualified discovery / booking interest.</tspan></text>
+    <rect x="630" y="524" width="312" height="77" rx="12" fill="#0d2638"/>
+    <text x="649" y="555" fill="#80d9cb" font-weight="700" font-size="14">SUPPLY BOUNDARY</text><text x="649" y="579" fill="#d4e0e5" font-size="14">No standalone transport vendors.</text>
+
+    <rect x="982" y="158" width="222" height="229" rx="17" fill="#11283b" stroke="#315063"/>
+    <text x="1004" y="197" fill="#e8c779" font-weight="700" font-size="19">RELATIONSHIPS</text>
+    <text x="1004" y="235" fill="#e4ebee" font-size="15"><tspan x="1004" dy="0">• Self-serve discovery</tspan><tspan x="1004" dy="28">• Clear company terms</tspan><tspan x="1004" dy="28">• Support during booking</tspan><tspan x="1004" dy="28">• Reviews / feedback</tspan></text>
+    <rect x="982" y="400" width="222" height="235" rx="17" fill="#11283b" stroke="#315063"/>
+    <text x="1004" y="439" fill="#e8c779" font-weight="700" font-size="19">CHANNELS</text>
+    <text x="1004" y="477" fill="#e4ebee" font-size="15"><tspan x="1004" dy="0">• TravelNow website</tspan><tspan x="1004" dy="28">• Search / destination content</tspan><tspan x="1004" dy="28">• Social storytelling</tspan><tspan x="1004" dy="28">• Company referrals</tspan><tspan x="1004" dy="28">• Shareable itineraries</tspan></text>
+
+    <rect x="1220" y="158" width="310" height="477" rx="17" fill="#11283b" stroke="#315063"/>
+    <text x="1244" y="197" fill="#e8c779" font-weight="700" font-size="19">CUSTOMER SEGMENTS</text>
+    <text x="1244" y="241" fill="#fffaf0" font-weight="700" font-size="17">Primary · Travelers</text>
+    <text x="1244" y="274" fill="#e4ebee" font-size="15"><tspan x="1244" dy="0">People planning an Egypt trip who</tspan><tspan x="1244" dy="25">want to discover and compare complete</tspan><tspan x="1244" dy="25">offers from tourism companies.</tspan></text>
+    <text x="1244" y="395" fill="#fffaf0" font-weight="700" font-size="17">Supply · Tourism companies</text>
+    <text x="1244" y="428" fill="#e4ebee" font-size="15"><tspan x="1244" dy="0">Licensed companies able to publish,</tspan><tspan x="1244" dy="25">sell and fulfil end-to-end packages.</tspan></text>
+    <text x="1244" y="525" fill="#98abba" font-size="14"><tspan x="1244" dy="0">Pilot segments / routes are</tspan><tspan x="1244" dy="22">hypotheses to validate.</tspan></text>
+
+    <rect x="70" y="650" width="710" height="140" rx="17" fill="#101f2d" stroke="#315063"/>
+    <text x="96" y="691" fill="#e8c779" font-weight="700" font-size="19">COST STRUCTURE</text>
+    <text x="96" y="730" fill="#e4ebee" font-size="15"><tspan x="96" dy="0">Website quality &amp; services · payment / compliance readiness · marketing</tspan><tspan x="96" dy="25">Founder development time is contributed and excluded from the $5,000 cash ask.</tspan></text>
+    <rect x="798" y="650" width="732" height="140" rx="17" fill="#101f2d" stroke="#4d9c99"/>
+    <text x="824" y="691" fill="#84dfd0" font-weight="700" font-size="19">REVENUE STREAM</text>
+    <text x="824" y="730" fill="#e4ebee" font-size="15"><tspan x="824" dy="0">Proposed 5% platform fee shown in the product; not yet integrated for production payments.</tspan><tspan x="824" dy="25">No subscriptions / ads assumed until partner willingness to pay is tested.</tspan></text>
+  </g>
+  <text x="70" y="841" fill="#71899b" font-family="Arial,sans-serif" font-size="13">TRAVELNOW · MODEL TO VALIDATE IN PILOT</text><text x="1530" y="841" text-anchor="end" fill="#71899b" font-family="Arial,sans-serif" font-size="13">04 / 08</text>
+</svg>

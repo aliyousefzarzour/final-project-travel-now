@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">How TravelNow works</title>
+  <desc id="desc">Travelers discover and plan; licensed tourism companies offer, sell, and fulfil complete travel packages.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#081625"/><stop offset="1" stop-color="#102a40"/></linearGradient><linearGradient id="gold" x2="1"><stop stop-color="#f3d98c"/><stop offset="1" stop-color="#c39138"/></linearGradient></defs>
+  <rect width="1600" height="900" fill="url(#bg)"/><circle cx="1490" cy="120" r="280" fill="#17465e" opacity=".14"/>
+  <text x="96" y="90" fill="#79d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="16" letter-spacing="3">02 · THE PRODUCT</text>
+  <text x="96" y="151" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="45">One discovery platform. One accountable package provider.</text>
+  <text x="96" y="195" fill="#bdcbd6" font-family="Arial,sans-serif" font-size="21">TravelNow connects travelers to licensed tourism companies—not standalone transport vendors.</text>
+  <rect x="96" y="262" width="399" height="326" rx="26" fill="#112b3f" stroke="#2b5264"/>
+  <circle cx="148" cy="320" r="29" fill="#1a4658"/><text x="148" y="329" text-anchor="middle" fill="#75d4c5" font-family="Arial,sans-serif" font-weight="700" font-size="22">1</text>
+  <text x="194" y="330" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="24">Traveler explores</text>
+  <text x="138" y="396" fill="#d5e0e6" font-family="Arial,sans-serif" font-size="18">Browse Egypt destinations, discover</text><text x="138" y="426" fill="#d5e0e6" font-family="Arial,sans-serif" font-size="18">company offers and use trip-planning</text><text x="138" y="456" fill="#d5e0e6" font-family="Arial,sans-serif" font-size="18">tools to shape an itinerary.</text>
+  <rect x="532" y="262" width="399" height="326" rx="26" fill="#112b3f" stroke="#2b5264"/>
+  <circle cx="584" cy="320" r="29" fill="#1a4658"/><text x="584" y="329" text-anchor="middle" fill="#75d4c5" font-family="Arial,sans-serif" font-weight="700" font-size="22">2</text>
+  <text x="630" y="330" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="24">Company offers</text>
+  <text x="574" y="396" fill="#d5e0e6" font-family="Arial,sans-serif" font-size="18">A tourism company publishes the</text><text x="574" y="426" fill="#d5e0e6" font-family="Arial,sans-serif" font-size="18">complete package, price, inclusions</text><text x="574" y="456" fill="#d5e0e6" font-family="Arial,sans-serif" font-size="18">and booking terms.</text>
+  <rect x="968" y="262" width="536" height="326" rx="26" fill="#153346" stroke="#4d9c99" stroke-width="2"/>
+  <circle cx="1020" cy="320" r="29" fill="#1d5a62"/><text x="1020" y="329" text-anchor="middle" fill="#b3f0dc" font-family="Arial,sans-serif" font-weight="700" font-size="22">3</text>
+  <text x="1066" y="330" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="24">Company fulfils</text>
+  <text x="1010" y="396" fill="#d5e0e6" font-family="Arial,sans-serif" font-size="18">The selling company arranges and</text><text x="1010" y="426" fill="#d5e0e6" font-family="Arial,sans-serif" font-size="18">delivers the trip, including any transport,</text><text x="1010" y="456" fill="#d5e0e6" font-family="Arial,sans-serif" font-size="18">stay, meals or activities in its package.</text>
+  <path d="M496 423h29m-9-9 9 9-9 9M933 423h29m-9-9 9 9-9 9" fill="none" stroke="#e3c171" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="96" y="630" width="1408" height="140" rx="24" fill="#0c1e2d" stroke="#344c5d"/>
+  <rect x="96" y="630" width="10" height="140" rx="5" fill="url(#gold)"/>
+  <text x="136" y="679" fill="#e8c779" font-family="Arial,sans-serif" font-weight="700" font-size="16" letter-spacing="2">CLEAR RESPONSIBILITY</text>
+  <text x="136" y="719" fill="#eff4f5" font-family="Arial,sans-serif" font-weight="700" font-size="24">The tourism company is the package seller and fulfilment owner.</text>
+  <text x="136" y="749" fill="#afbfca" font-family="Arial,sans-serif" font-size="17">TravelNow provides discovery and planning; production checkout, payment settlement and the 5% fee still need implementation.</text>
+  <text x="96" y="850" fill="#71899b" font-family="Arial,sans-serif" font-size="14">TRAVELNOW · INVESTOR PRESENTATION</text><text x="1504" y="850" text-anchor="end" fill="#71899b" font-family="Arial,sans-serif" font-size="14">03 / 08</text>
+</svg>

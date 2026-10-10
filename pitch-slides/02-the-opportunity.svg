@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">The opportunity — Egypt trip planning is fragmented</title>
+  <desc id="desc">Customer problem hypothesis and the opportunity for a unified discovery and booking experience.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#081625"/><stop offset="1" stop-color="#102a40"/></linearGradient><linearGradient id="accent" x2="1"><stop stop-color="#68d6c5"/><stop offset="1" stop-color="#b5e8ce"/></linearGradient></defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1460" cy="85" r="280" fill="#19506a" opacity=".14"/>
+  <text x="96" y="90" fill="#79d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="16" letter-spacing="3">01 · THE OPPORTUNITY</text>
+  <text x="96" y="151" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="45">Planning an Egypt trip can feel fragmented.</text>
+  <text x="96" y="195" fill="#bdcbd6" font-family="Arial,sans-serif" font-size="21">A customer problem hypothesis to validate with travelers and licensed operators.</text>
+  <rect x="96" y="250" width="560" height="444" rx="28" fill="#10263a" stroke="#25485c"/>
+  <text x="136" y="306" fill="#e8c779" font-family="Arial,sans-serif" font-weight="700" font-size="16" letter-spacing="2">THE CUSTOMER EXPERIENCE TODAY</text>
+  <path d="M160 375h415" stroke="#35586a" stroke-width="3" stroke-dasharray="7 10"/>
+  <circle cx="182" cy="375" r="35" fill="#1b4357"/><circle cx="365" cy="375" r="35" fill="#1b4357"/><circle cx="548" cy="375" r="35" fill="#1b4357"/>
+  <text x="182" y="383" text-anchor="middle" fill="#77d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="22">01</text>
+  <text x="365" y="383" text-anchor="middle" fill="#77d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="22">02</text>
+  <text x="548" y="383" text-anchor="middle" fill="#77d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="22">03</text>
+  <text x="182" y="438" text-anchor="middle" fill="#eaf0f3" font-family="Arial,sans-serif" font-size="16">Find ideas</text>
+  <text x="365" y="438" text-anchor="middle" fill="#eaf0f3" font-family="Arial,sans-serif" font-size="16">Compare offers</text>
+  <text x="548" y="438" text-anchor="middle" fill="#eaf0f3" font-family="Arial,sans-serif" font-size="16">Contact &amp; book</text>
+  <text x="136" y="507" fill="#d9e3e9" font-family="Arial,sans-serif" font-size="19">Information, planning and company offers</text>
+  <text x="136" y="539" fill="#d9e3e9" font-family="Arial,sans-serif" font-size="19">may sit across different channels.</text>
+  <text x="136" y="600" fill="#98abba" font-family="Arial,sans-serif" font-size="16">Research task: test discovery friction, trust,</text>
+  <text x="136" y="626" fill="#98abba" font-family="Arial,sans-serif" font-size="16">response time and booking intent in interviews.</text>
+  <rect x="704" y="250" width="800" height="444" rx="28" fill="#122d40" stroke="#2b5668"/>
+  <text x="752" y="306" fill="#79d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="16" letter-spacing="2">THE OPPORTUNITY</text>
+  <text x="752" y="383" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="34">Make the journey easier to navigate.</text>
+  <rect x="752" y="427" width="700" height="67" rx="16" fill="#17384b"/>
+  <circle cx="787" cy="460" r="7" fill="url(#accent)"/>
+  <text x="812" y="468" fill="#eaf0f3" font-family="Arial,sans-serif" font-size="20">Discover Egyptian places and company packages</text>
+  <rect x="752" y="510" width="700" height="67" rx="16" fill="#17384b"/>
+  <circle cx="787" cy="543" r="7" fill="url(#accent)"/>
+  <text x="812" y="551" fill="#eaf0f3" font-family="Arial,sans-serif" font-size="20">Plan an itinerary around traveler preferences</text>
+  <rect x="752" y="593" width="700" height="67" rx="16" fill="#17384b"/>
+  <circle cx="787" cy="626" r="7" fill="url(#accent)"/>
+  <text x="812" y="634" fill="#eaf0f3" font-family="Arial,sans-serif" font-size="20">Connect to one tourism company for the complete trip</text>
+  <rect x="96" y="735" width="1408" height="72" rx="18" fill="#0c1e2d" stroke="#273f50"/>
+  <text x="132" y="779" fill="#e8c779" font-family="Arial,sans-serif" font-weight="700" font-size="17">NO UNSUPPORTED SURVEY CLAIMS</text>
+  <text x="467" y="779" fill="#c0ced8" font-family="Arial,sans-serif" font-size="17">These are product hypotheses—not measured customer findings.</text>
+  <text x="96" y="850" fill="#71899b" font-family="Arial,sans-serif" font-size="14">TRAVELNOW · INVESTOR PRESENTATION</text><text x="1504" y="850" text-anchor="end" fill="#71899b" font-family="Arial,sans-serif" font-size="14">02 / 08</text>
+</svg>

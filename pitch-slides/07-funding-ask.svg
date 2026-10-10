@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">TravelNow's $5,000 first-year funding request</title>
+  <desc id="desc">A planning allocation of $5,000 for marketing, quality fixes, web services, payment readiness, legal review, and reserve.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#081625"/><stop offset="1" stop-color="#102a40"/></linearGradient><linearGradient id="gold" x2="1"><stop stop-color="#f3d98c"/><stop offset="1" stop-color="#c39138"/></linearGradient></defs>
+  <rect width="1600" height="900" fill="url(#bg)"/><circle cx="1480" cy="145" r="300" fill="#1b5269" opacity=".14"/>
+  <text x="96" y="90" fill="#79d6c8" font-family="Arial,sans-serif" font-weight="700" font-size="16" letter-spacing="3">06 · FUNDING REQUEST</text>
+  <text x="96" y="151" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="45">Seeking $5,000 to complete and test year one.</text>
+  <text x="96" y="195" fill="#bdcbd6" font-family="Arial,sans-serif" font-size="21">A lean cash budget for a founder-built product and focused Egypt launch pilot.</text>
+  <rect x="96" y="244" width="380" height="474" rx="28" fill="#132f42" stroke="#3b6575"/>
+  <text x="140" y="314" fill="#8edfd0" font-family="Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="2">12-MONTH CASH ASK</text>
+  <text x="130" y="433" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="92">$5,000</text>
+  <text x="140" y="480" fill="#cfdae0" font-family="Arial,sans-serif" font-size="21">USD · planning cap</text>
+  <path d="M140 523h286" stroke="#486779"/>
+  <text x="140" y="573" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="19">Founder-led development</text>
+  <text x="140" y="607" fill="#bdcbd6" font-family="Arial,sans-serif" font-size="17">Founder salaries are not included.</text>
+  <text x="140" y="665" fill="#91a8b5" font-family="Arial,sans-serif" font-size="15">Planning allowances—not vendor quotes.</text>
+  <g font-family="Arial,sans-serif">
+    <text x="548" y="276" fill="#dce5e9" font-weight="700" font-size="17">PLANNED USE</text><text x="1442" y="276" text-anchor="end" fill="#dce5e9" font-weight="700" font-size="17">USD</text>
+    <rect x="540" y="299" width="904" height="51" rx="13" fill="#142d40"/><rect x="1035" y="320" width="300" height="8" rx="4" fill="#203d4f"/><rect x="1035" y="320" width="300" height="8" rx="4" fill="#47a99f"/>
+    <text x="565" y="332" fill="#fffaf0" font-weight="700" font-size="17">Marketing &amp; content</text><text x="1415" y="332" text-anchor="end" fill="#fffaf0" font-weight="700" font-size="18">$1,800</text>
+    <rect x="540" y="362" width="904" height="51" rx="13" fill="#142d40"/><rect x="1035" y="383" width="300" height="8" rx="4" fill="#203d4f"/><rect x="1035" y="383" width="183" height="8" rx="4" fill="#47999b"/>
+    <text x="565" y="395" fill="#fffaf0" font-weight="700" font-size="17">Website fixes, testing &amp; QA</text><text x="1415" y="395" text-anchor="end" fill="#fffaf0" font-weight="700" font-size="18">$1,100</text>
+    <rect x="540" y="425" width="904" height="51" rx="13" fill="#142d40"/><rect x="1035" y="446" width="300" height="8" rx="4" fill="#203d4f"/><rect x="1035" y="446" width="150" height="8" rx="4" fill="#48888f"/>
+    <text x="565" y="458" fill="#fffaf0" font-weight="700" font-size="17">Web services · 12 months</text><text x="1415" y="458" text-anchor="end" fill="#fffaf0" font-weight="700" font-size="18">$900</text>
+    <rect x="540" y="488" width="904" height="51" rx="13" fill="#142d40"/><rect x="1035" y="509" width="300" height="8" rx="4" fill="#203d4f"/><rect x="1035" y="509" width="83" height="8" rx="4" fill="#657d83"/>
+    <text x="565" y="521" fill="#fffaf0" font-weight="700" font-size="17">Payment-gateway readiness &amp; test</text><text x="1415" y="521" text-anchor="end" fill="#fffaf0" font-weight="700" font-size="18">$500</text>
+    <rect x="540" y="551" width="904" height="51" rx="13" fill="#142d40"/><rect x="1035" y="572" width="300" height="8" rx="4" fill="#203d4f"/><rect x="1035" y="572" width="67" height="8" rx="4" fill="#7a817d"/>
+    <text x="565" y="584" fill="#fffaf0" font-weight="700" font-size="17">Terms, privacy &amp; launch review</text><text x="1415" y="584" text-anchor="end" fill="#fffaf0" font-weight="700" font-size="18">$400</text>
+    <rect x="540" y="614" width="904" height="51" rx="13" fill="#142d40"/><rect x="1035" y="635" width="300" height="8" rx="4" fill="#203d4f"/><rect x="1035" y="635" width="50" height="8" rx="4" fill="#ad8c50"/>
+    <text x="565" y="647" fill="#fffaf0" font-weight="700" font-size="17">Contingency reserve</text><text x="1415" y="647" text-anchor="end" fill="#fffaf0" font-weight="700" font-size="18">$300</text>
+  </g>
+  <rect x="540" y="682" width="904" height="53" rx="14" fill="#203b4d" stroke="#e0bd6d"/>
+  <text x="570" y="717" fill="#e8c779" font-family="Arial,sans-serif" font-weight="700" font-size="21">TOTAL</text><text x="1415" y="717" text-anchor="end" fill="#fffaf0" font-family="Arial,sans-serif" font-weight="700" font-size="23">$5,000</text>
+  <text x="96" y="785" fill="#9db1bd" font-family="Arial,sans-serif" font-size="15">Web-service allowance depends on provider, configuration and usage. Recheck live prices before purchase.</text>
+  <text x="96" y="850" fill="#71899b" font-family="Arial,sans-serif" font-size="14">TRAVELNOW · INVESTOR PRESENTATION</text><text x="1504" y="850" text-anchor="end" fill="#71899b" font-family="Arial,sans-serif" font-size="14">07 / 08</text>
+</svg>
