@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <link rel="stylesheet" href="../assets/css/sos-emergency.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -126,7 +127,9 @@
         .sidebar-list {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 8px 12px;
+            min-height: 0;
         }
         .sidebar-list::-webkit-scrollbar { width: 3px; }
         .sidebar-list::-webkit-scrollbar-track { background: transparent; }
@@ -158,57 +161,87 @@
         .place-stars { color: #ffc107; font-size: 0.68rem; }
         /* ===== MAP PANEL ===== */
         .map-panel { position: relative; min-width: 0; min-height: 0; }
-        #leaflet-map { height: 100%; min-height: 320px; width: 100%; }
+        #leaflet-map {
+            height: 100%;
+            width: 100%;
+            background:
+                linear-gradient(135deg, rgba(212,175,55,0.05), rgba(14,34,52,0.65)),
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18), transparent 35%),
+                #dfe7ef;
+            position: relative;
+            overflow: hidden;
+        }
+        #leaflet-map::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px);
+            background-size: 22px 22px;
+            opacity: 0.35;
+            pointer-events: none;
+        }
         .map-drawer-toggle,
         .map-drawer-close,
         .map-drawer-backdrop { display: none; }
-        /* ===== FLOATING CARD ===== */
+        /* ===== SIDE DRAWER CARD ===== */
         .map-card {
-            position: absolute;
-            left: 50%;
-            bottom: 20px;
+            position: fixed;
+            top: calc(var(--navbar-height) + 14px);
+            right: 14px;
+            bottom: auto;
             z-index: 900;
-            width: min(460px, calc(100% - 32px));
-            max-height: min(58dvh, 560px);
+            width: 320px;
+            height: auto;
+            max-height: 75vh;
             background: rgba(8,20,35,0.97);
-            border: 1px solid rgba(212,175,55,0.3);
-            border-radius: 20px;
-            box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.35);
+            border-radius: 16px;
+            box-shadow: 0 24px 70px rgba(0,0,0,0.55), 0 0 0 1px rgba(212,175,55,0.08);
             display: none;
             backdrop-filter: blur(8px);
-            overflow-x: hidden;
-            overflow-y: auto;
-            transform: translateX(-50%);
-            animation: cardIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
+            overflow: hidden;
+            animation: cardIn 0.25s ease;
+            box-sizing: border-box;
         }
-        @keyframes cardIn { from { opacity:0; transform:translate(-50%,16px) scale(0.97); } to { opacity:1; transform:translate(-50%,0) scale(1); } }
-        .card-img-wrap { position: relative; }
+        #card-inner {
+            width: 100%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            overflow: visible;
+        }
+        @keyframes cardIn { from { opacity:0; transform:translateX(18px) scale(0.98); } to { opacity:1; transform:translateX(0) scale(1); } }
+        .card-img-wrap { position: relative; flex-shrink: 0; }
         .card-img {
             width: 100%;
-            height: 175px;
+            height: 140px;
             object-fit: cover;
             display: block;
             background: linear-gradient(135deg, var(--navy), #152d44);
+            border-radius: 16px 16px 0 0;
         }
         .card-img-placeholder {
             width: 100%;
-            height: 175px;
+            height: 140px;
             background: linear-gradient(135deg, #0a1d2e, #152d44);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5rem;
+            font-size: 2.5rem;
             color: rgba(212,175,55,0.2);
+            border-radius: 16px 16px 0 0;
         }
         .card-close {
             position: absolute;
-            top: 10px; right: 10px;
-            background: rgba(0,0,0,0.55);
+            top: 8px; right: 8px;
+            background: rgba(0,0,0,0.65);
             border: none;
             color: #fff;
-            width: 30px; height: 30px;
+            width: 28px; height: 28px;
             border-radius: 50%;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: background 0.2s;
@@ -224,58 +257,92 @@
             padding: 1px 5px;
             border-radius: 4px;
         }
-        .card-body { padding: 16px; }
+        .card-body {
+            padding: 10px 12px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            overflow: visible;
+        }
         .card-cat {
             display: inline-block;
             background: rgba(212,175,55,0.12);
             color: var(--gold);
             border: 1px solid rgba(212,175,55,0.25);
-            border-radius: 20px;
-            font-size: 0.68rem;
-            padding: 2px 10px;
+            border-radius: 16px;
+            font-size: 0.62rem;
+            padding: 2px 8px;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.05em;
             font-weight: 600;
-            margin-bottom: 7px;
+            width: fit-content;
         }
         .card-title {
             color: var(--gold);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             font-family: 'Cinzel', serif;
-            line-height: 1.3;
-            margin-bottom: 4px;
-        }
-        .card-loc { color: var(--text-dim); font-size: 0.78rem; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
-        .card-stars { color: #ffc107; font-size: 0.78rem; margin-bottom: 8px; }
-        .card-desc {
-            color: rgba(255,255,255,0.72);
-            font-size: 0.8rem;
-            line-height: 1.55;
-            margin-bottom: 14px;
+            line-height: 1.25;
+            margin: 0;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-loc { 
+            color: var(--text-dim); 
+            font-size: 0.7rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+            margin: 0; 
+        }
+        .card-stars { 
+            color: #ffc107; 
+            font-size: 0.7rem; 
+            margin: 0; 
+        }
+        .card-desc {
+            color: rgba(255,255,255,0.65);
+            font-size: 0.72rem;
+            line-height: 1.4;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
         /* Card actions */
-        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .card-actions { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 6px; 
+            margin-top: 6px; 
+        }
         .card-btn {
             border: none;
-            border-radius: 11px;
-            padding: 9px 10px;
-            font-size: 0.76rem;
+            border-radius: 9px;
+            padding: 7px 8px;
+            font-size: 0.7rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.2s;
             text-decoration: none;
             font-family: 'Poppins', sans-serif;
         }
-        .card-btn.full { grid-column: 1 / -1; padding: 10px; font-size: 0.82rem; }
+        .card-btn.full { 
+            grid-column: 1 / -1; 
+            padding: 8px 10px; 
+            font-size: 0.74rem; 
+        }
+        .card-btn i {
+            font-size: 0.75rem;
+        }
         .btn-gold-fill { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: var(--navy); }
         .btn-gold-fill:hover { background: linear-gradient(135deg, var(--gold2), #b8941f); color: var(--navy); transform: translateY(-1px); }
         .btn-gmaps { background: rgba(66,133,244,0.13); color: #669df6; border: 1px solid rgba(66,133,244,0.25); }
@@ -289,6 +356,34 @@
         .sk { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200%; animation: shimmer 1.3s infinite; border-radius: 8px; }
         @keyframes shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
         .place-item.sk { height: 54px; cursor: default; border: none; margin-bottom: 5px; }
+        
+        /* ===== HIDE FORWARD NAVIGATION BUTTON ===== */
+        /* Make navigation buttons horizontal (side by side) instead of vertical */
+        .leaflet-bottom.leaflet-right .leaflet-control {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 8px !important;
+            align-items: center !important;
+        }
+        
+        .leaflet-bottom.leaflet-right .leaflet-control button {
+            margin: 0 !important;
+        }
+        
+        /* Optional: Hide forward button if still needed */
+        /* Uncomment these lines to hide the forward button:
+        .leaflet-control-browser-history .leaflet-history-forward,
+        .leaflet-history-forward,
+        .leaflet-bottom-right button:last-child,
+        .leaflet-bottom-right .leaflet-control button + button,
+        button[title*="Forward"],
+        button[title*="forward"],
+        button[aria-label*="Forward"],
+        button[aria-label*="forward"],
+        button[aria-label*="Next"] {
+            display: none !important;
+        }
+        */
         /* ===== CUSTOM MARKERS ===== */
         .lf-marker-pin {
             width: 34px; height: 34px;
@@ -312,20 +407,29 @@
         }
         /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
-            html, body { overflow-x: hidden; overflow-y: auto; }
-            body.has-tn-navbar.map-page { overflow-x: hidden; overflow-y: auto; }
-            .map-layout,
-            body.has-tn-navbar.map-page .map-layout {
+            html, body { overflow-x: hidden; overflow-y: hidden; }
+            body.map-page { overflow: hidden; }
+            
+            .map-layout {
                 grid-template-columns: 1fr;
                 grid-template-rows: 1fr;
-                height: auto;
-                min-height: calc(100dvh - var(--navbar-height));
+                height: calc(100vh - var(--navbar-height));
+                min-height: calc(100vh - var(--navbar-height));
+                margin-top: var(--navbar-height);
             }
-            body.has-tn-navbar.map-page .map-layout {
-                height: auto;
-                min-height: calc(100dvh - var(--navbar-height));
+            
+            .map-panel { 
+                order: 1; 
+                height: 100%;
+                min-height: 0;
             }
-            .map-panel { order: 1; min-height: calc(100dvh - var(--navbar-height)); }
+            
+            #leaflet-map { 
+                height: 100%; 
+                width: 100%;
+                min-height: 0;
+            }
+            
             .sidebar {
                 order: 2;
                 position: fixed;
@@ -334,20 +438,28 @@
                 left: 0;
                 z-index: 1150;
                 width: min(86vw, 350px);
+                max-height: calc(100vh - var(--navbar-height));
                 height: auto;
-                min-height: 0;
                 overflow: hidden;
                 transform: translateX(-105%);
                 transition: transform 0.28s ease;
                 box-shadow: 18px 0 45px rgba(0,0,0,0.42);
             }
+            
             body.map-drawer-open .sidebar { transform: translateX(0); }
+            
             .sidebar-head { padding: 14px 12px 8px; }
             .sidebar-logo { gap: 8px; margin-bottom: 10px; }
             .sidebar-logo h5 { font-size: 0.88rem; min-width: 0; }
-            .back-btn { padding: 5px 8px; white-space: nowrap; }
-            .sidebar-list { max-height: 190px; padding: 6px 10px; }
-            #leaflet-map { height: 100%; min-height: calc(100dvh - var(--navbar-height)); }
+            .back-btn { padding: 5px 8px; white-space: nowrap; font-size: 0.7rem; }
+            
+            .sidebar-list { 
+                flex: 1;
+                max-height: none;
+                overflow-y: auto;
+                padding: 6px 10px; 
+            }
+            
             .map-drawer-toggle {
                 display: inline-flex;
                 align-items: center;
@@ -363,7 +475,9 @@
                 color: var(--gold);
                 font: 600 0.76rem 'Poppins', sans-serif;
                 box-shadow: 0 5px 18px rgba(0,0,0,0.35);
+                backdrop-filter: blur(8px);
             }
+            
             .map-drawer-close {
                 display: inline-flex;
                 align-items: center;
@@ -376,46 +490,236 @@
                 background: rgba(255,255,255,0.06);
                 color: var(--gold);
             }
+            
             .map-drawer-backdrop {
                 position: fixed;
                 inset: var(--navbar-height) 0 0;
                 z-index: 1100;
                 background: rgba(0,0,0,0.48);
+                display: none;
             }
+            
             body.map-drawer-open .map-drawer-backdrop { display: block; }
+            
             .map-card {
-                width: min(460px, calc(100% - 24px));
-                max-height: min(52dvh, 480px);
-                left: 50%;
-                bottom: 12px;
-                transform: translateX(-50%);
-                overflow-y: auto;
+                width: min(90vw, 340px);
+                max-height: 70vh;
+                right: 5vw;
+                left: auto;
+                bottom: auto;
+                top: calc(var(--navbar-height) + 12px);
+                border-radius: 14px;
             }
-            .card-img, .card-img-placeholder { height: 130px; }
-            .card-body { padding: 12px; }
-            .card-desc { margin-bottom: 10px; }
-            .leaflet-control-zoom { margin-top: 10px !important; margin-left: 10px !important; }
-            .leaflet-control-attribution { font-size: 9px; }
+            
+            .card-img, .card-img-placeholder { 
+                height: 130px;
+                border-radius: 14px 14px 0 0;
+            }
+            
+            .card-close {
+                width: 26px; 
+                height: 26px;
+                font-size: 0.7rem;
+            }
+            
+            .card-body { 
+                padding: 9px 11px 9px;
+                gap: 5px;
+            }
+            
+            .card-cat { 
+                font-size: 0.6rem; 
+                padding: 2px 7px;
+            }
+            
+            .card-title { 
+                font-size: 0.9rem;
+                line-height: 1.25;
+                -webkit-line-clamp: 2;
+            }
+            
+            .card-loc { 
+                font-size: 0.68rem;
+            }
+            
+            .card-stars { 
+                font-size: 0.68rem;
+            }
+            
+            .card-desc { 
+                font-size: 0.7rem;
+                line-height: 1.4;
+                -webkit-line-clamp: 2;
+            }
+            
+            .card-actions {
+                gap: 6px;
+                margin-top: 5px;
+            }
+            
+            .card-btn { 
+                font-size: 0.68rem; 
+                padding: 7px 6px;
+                border-radius: 8px;
+            }
+            
+            .card-btn.full {
+                font-size: 0.72rem;
+                padding: 8px 8px;
+            }
+            
+            .card-btn i {
+                font-size: 0.7rem;
+            }
+            
+            .leaflet-control-zoom { 
+                margin-top: 70px !important; 
+                margin-left: 10px !important; 
+            }
+            .leaflet-control-attribution { font-size: 8px; }
         }
 
-        @media (max-width: 480px) {
-            .sidebar-logo h5 { font-size: 0.78rem; }
-            .back-btn { font-size: 0.68rem; }
-            .search-box input, .cat-select { font-size: 0.78rem; }
-            .map-layout,
-            body.has-tn-navbar.map-page .map-layout {
-                grid-template-rows: 1fr;
-            }
-            .map-panel, #leaflet-map { min-height: calc(100dvh - var(--navbar-height)); }
+        @media (max-width: 576px) {
+            .sidebar { width: 90vw; }
+            .sidebar-logo h5 { font-size: 0.82rem; }
+            .back-btn { font-size: 0.66rem; padding: 4px 7px; }
+            .search-box input, .cat-select { font-size: 0.8rem; padding: 8px 10px 8px 32px; }
+            
             .map-card {
-                width: calc(100% - 16px);
-                left: 50%;
-                bottom: 8px;
-                max-height: min(58dvh, 440px);
-                transform: translateX(-50%);
+                width: calc(100vw - 24px);
+                right: 12px;
+                left: 12px;
+                bottom: auto;
+                top: calc(var(--navbar-height) + 10px);
+                max-height: 65vh;
+                border-radius: 14px;
             }
-            .card-actions { gap: 6px; }
-            .card-btn { padding: 8px 6px; font-size: 0.68rem; }
+            
+            .card-img, .card-img-placeholder { 
+                height: 120px;
+                border-radius: 14px 14px 0 0;
+            }
+            
+            .card-body { 
+                padding: 9px 10px 9px;
+                gap: 5px;
+            }
+            
+            .card-cat { 
+                font-size: 0.6rem; 
+                padding: 2px 7px;
+            }
+            
+            .card-title { 
+                font-size: 0.88rem;
+                line-height: 1.25;
+                -webkit-line-clamp: 2;
+            }
+            
+            .card-loc, .card-stars { 
+                font-size: 0.66rem;
+            }
+            
+            .card-desc { 
+                font-size: 0.68rem; 
+                line-height: 1.35;
+                -webkit-line-clamp: 2;
+            }
+            
+            .card-actions { 
+                gap: 5px;
+                margin-top: 5px;
+            }
+            
+            .card-btn { 
+                padding: 7px 6px; 
+                font-size: 0.66rem;
+                border-radius: 8px;
+            }
+            
+            .card-btn.full { 
+                font-size: 0.7rem;
+                padding: 8px 7px;
+            }
+            
+            .card-btn i { 
+                font-size: 0.68rem;
+            }
+            
+            .map-drawer-toggle {
+                top: 10px;
+                left: 10px;
+                padding: 8px 10px;
+                font-size: 0.72rem;
+            }
+            
+            .place-item { padding: 8px 9px; }
+            .place-icon { width: 32px; height: 32px; font-size: 1rem; }
+            .place-name { font-size: 0.8rem; }
+            .place-sub { font-size: 0.7rem; }
+        }
+        
+        @media (max-width: 390px) {
+            .map-card {
+                width: calc(100vw - 20px);
+                right: 10px;
+                left: 10px;
+                bottom: auto;
+                top: calc(var(--navbar-height) + 8px);
+                max-height: 60vh;
+                border-radius: 12px;
+            }
+            
+            .card-img, .card-img-placeholder { 
+                height: 110px;
+                border-radius: 12px 12px 0 0;
+            }
+            
+            .card-body { 
+                padding: 8px 9px 8px;
+                gap: 4px;
+            }
+            
+            .card-cat { 
+                font-size: 0.58rem; 
+                padding: 2px 6px;
+            }
+            
+            .card-title { 
+                font-size: 0.85rem;
+                line-height: 1.2;
+                -webkit-line-clamp: 2;
+            }
+            
+            .card-loc, .card-stars { 
+                font-size: 0.64rem;
+            }
+            
+            .card-desc { 
+                font-size: 0.66rem; 
+                line-height: 1.3;
+                -webkit-line-clamp: 1;
+            }
+            
+            .card-actions { 
+                gap: 5px;
+                margin-top: 4px;
+            }
+            
+            .card-btn { 
+                font-size: 0.64rem; 
+                padding: 6px 5px;
+                border-radius: 7px;
+            }
+            
+            .card-btn.full { 
+                font-size: 0.68rem;
+                padding: 7px 6px;
+            }
+            
+            .card-btn i { 
+                font-size: 0.66rem;
+            }
         }
     </style>
 </head>
@@ -485,6 +789,8 @@
 <script src="../assets/js/auth.js"></script>
 <script src="../assets/js/theme.js"></script>
 <script src="../assets/js/navbar.js"></script>
+
+<script src="../assets/js/sos-emergency.js"></script>
 <script>
 // ===================================================
 // STATE
@@ -543,15 +849,19 @@ function initMap() {
         attributionControl: true
     });
 
-    // Light and dark base tiles
+    // OpenStreetMap tiles do not require an API key and avoid watermark overlays.
     lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abc',
+        maxZoom: 19,
+        noWrap: false
     });
 
     darkTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abc',
+        maxZoom: 19,
+        noWrap: false
     });
 
     currentTileLayer = document.body.classList.contains('dark-mode') ? darkTileLayer : lightTileLayer;
@@ -570,6 +880,19 @@ function initMap() {
             currentTileLayer.addTo(leafletMap);
         }
     });
+
+    // Hide forward/next navigation buttons if they exist
+    setTimeout(() => {
+        const forwardButtons = document.querySelectorAll(
+            '.leaflet-history-forward, ' +
+            'button[title*="Forward"], ' +
+            'button[title*="forward"], ' +
+            'button[aria-label*="Forward"], ' +
+            'button[aria-label*="forward"], ' +
+            'button[aria-label*="Next"]'
+        );
+        forwardButtons.forEach(btn => btn.style.display = 'none');
+    }, 500);
 }
 
 // ===================================================
@@ -684,14 +1007,57 @@ function hexToRgb(hex) {
 // ===================================================
 // SELECT ATTRACTION (sidebar click or marker click)
 // ===================================================
+function focusMarkerOnMap(latlng) {
+    if (!leafletMap || !latlng) return;
+
+    const card = document.getElementById('map-card');
+    const cardWidth = card && card.style.display !== 'none' ? card.offsetWidth || 320 : 0;
+    const mapContainer = leafletMap.getContainer();
+    const mapWidth = mapContainer.offsetWidth;
+
+    // If mobile or card takes most of screen, just center on marker
+    if (!cardWidth || cardWidth >= mapWidth * 0.8 || mapWidth < 900) {
+        leafletMap.flyTo(latlng, 14, { animate: true, duration: 0.8 });
+        return;
+    }
+
+    // Desktop: position marker in the visible area (left of the card)
+    // Available space for map view (excluding card): mapWidth - cardWidth - margins
+    const cardRightMargin = 14; // card has right: 14px
+    const availableSpace = mapWidth - cardWidth - (cardRightMargin * 2);
+    
+    // We want the marker to be in center of available space
+    // So offset = (availableSpace / 2) - (mapWidth / 2) + cardWidth + margins
+    const centerOfAvailableSpace = availableSpace / 2;
+    const centerOfMap = mapWidth / 2;
+    const offsetNeeded = centerOfMap - centerOfAvailableSpace;
+    
+    const targetZoom = 14;
+    
+    // Project the latlng to pixel coordinates at target zoom
+    const point = leafletMap.project(latlng, targetZoom);
+    
+    // Shift left by the offset
+    point.x -= offsetNeeded;
+    
+    // Convert back to geographic coordinates
+    const newCenter = leafletMap.unproject(point, targetZoom);
+    
+    // Fly to the adjusted center
+    leafletMap.flyTo(newCenter, targetZoom, { animate: true, duration: 0.8 });
+}
+
 function selectAttraction(id) {
     const att = allAttractions.find(a => String(a._id) === String(id));
     if (!att) return;
 
+    // Only fly to marker if it's a different attraction
+    const isDifferent = String(activeId) !== String(id);
+    
     const lat = att.coordinates?.lat;
     const lng = att.coordinates?.lng;
-    if (lat && lng) {
-        leafletMap.flyTo([lat, lng], 14, { animate: true, duration: 0.8 });
+    if (lat && lng && isDifferent) {
+        focusMarkerOnMap([lat, lng]);
     }
 
     setActiveMarker(id);

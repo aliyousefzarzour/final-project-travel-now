@@ -1,0 +1,474 @@
+/* =================== SOS EMERGENCY ASSISTANCE - TRAVELNOW =================== */
+
+/* Floating SOS Button */
+.sos-emergency-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    z-index: 1040;
+    box-shadow: 0 8px 24px rgba(220, 53, 69, 0.4), 0 0 0 0 rgba(220, 53, 69, 0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    animation: sos-pulse 2s ease-in-out infinite;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sos-emergency-btn:hover {
+    transform: scale(1.1) translateY(-3px);
+    box-shadow: 0 12px 32px rgba(220, 53, 69, 0.5), 0 0 0 0 rgba(220, 53, 69, 0.7);
+}
+
+.sos-emergency-btn:active {
+    transform: scale(1.05);
+}
+
+.sos-emergency-btn i {
+    font-size: 1.4rem;
+    margin-bottom: -2px;
+}
+
+.sos-emergency-btn span {
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+/* Pulse animation */
+@keyframes sos-pulse {
+    0%, 100% {
+        box-shadow: 0 8px 24px rgba(220, 53, 69, 0.4), 0 0 0 0 rgba(220, 53, 69, 0.5);
+    }
+    50% {
+        box-shadow: 0 8px 24px rgba(220, 53, 69, 0.4), 0 0 0 15px rgba(220, 53, 69, 0);
+    }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .sos-emergency-btn {
+        animation: none;
+    }
+}
+
+/* Modal Backdrop */
+.sos-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1060;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sos-modal-backdrop.show {
+    display: block;
+    opacity: 1;
+}
+
+/* Modal Dialog */
+.sos-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1070;
+    display: none;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.sos-modal.show {
+    display: block;
+}
+
+.sos-modal-dialog {
+    max-width: 620px;
+    margin: 40px auto;
+    transform: scale(0.9) translateY(-20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sos-modal.show .sos-modal-dialog {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.sos-modal-content {
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+/* Modal Header */
+.sos-modal-header {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: #ffffff;
+    padding: 24px 28px;
+    position: relative;
+    border-bottom: none;
+}
+
+.sos-modal-header-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.sos-modal-icon {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+
+.sos-modal-title-group {
+    flex: 1;
+}
+
+.sos-modal-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0 0 6px;
+    line-height: 1.2;
+}
+
+.sos-modal-subtitle {
+    font-size: 0.92rem;
+    opacity: 0.95;
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 400;
+}
+
+.sos-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #ffffff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    z-index: 2;
+}
+
+.sos-modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Modal Body */
+.sos-modal-body {
+    padding: 28px;
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+    color: var(--card-foreground);
+}
+
+/* Search Bar */
+.sos-search-bar {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.sos-search-input {
+    width: 100%;
+    padding: 12px 16px 12px 44px;
+    border: 1px solid var(--input-border);
+    border-radius: 12px;
+    background: var(--input);
+    color: var(--foreground);
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.sos-search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
+.sos-search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+}
+
+/* Emergency Cards Grid */
+.sos-contacts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+/* Emergency Contact Card */
+.sos-contact-card {
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.sos-contact-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary);
+}
+
+.sos-contact-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #ffffff;
+}
+
+.sos-contact-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.sos-contact-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--card-foreground);
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sos-contact-phone {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 4px 0 8px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+}
+
+.sos-contact-desc {
+    font-size: 0.88rem;
+    color: var(--muted-foreground);
+    line-height: 1.5;
+    margin: 0 0 12px;
+}
+
+.sos-call-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: var(--primary-fg);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.sos-call-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(212, 175, 55, 0.3);
+    color: var(--primary-fg);
+}
+
+.sos-call-btn i {
+    font-size: 0.95rem;
+}
+
+/* Category Icons Colors */
+.sos-icon-medical { background: linear-gradient(135deg, #28a745 0%, #20a038 100%); }
+.sos-icon-police { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
+.sos-icon-fire { background: linear-gradient(135deg, #fd7e14 0%, #dc6502 100%); }
+.sos-icon-tourism { background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); }
+.sos-icon-utility { background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); }
+.sos-icon-consumer { background: linear-gradient(135deg, #20c997 0%, #1aa179 100%); }
+
+/* No Results Message */
+.sos-no-results {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted-foreground);
+}
+
+.sos-no-results i {
+    font-size: 3rem;
+    opacity: 0.3;
+    margin-bottom: 16px;
+}
+
+.sos-no-results p {
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sos-emergency-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+    }
+
+    .sos-modal {
+        padding: 10px;
+    }
+
+    .sos-modal-dialog {
+        margin: 20px auto;
+    }
+
+    .sos-modal-header {
+        padding: 20px 20px;
+    }
+
+    .sos-modal-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+    }
+
+    .sos-modal-title {
+        font-size: 1.35rem;
+    }
+
+    .sos-modal-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .sos-modal-body {
+        padding: 20px;
+        max-height: calc(100vh - 180px);
+    }
+
+    .sos-contact-card {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .sos-contact-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+    }
+
+    .sos-call-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 430px) {
+    .sos-emergency-btn {
+        width: 56px;
+        height: 56px;
+        bottom: 16px;
+        right: 16px;
+    }
+
+    .sos-emergency-btn i {
+        font-size: 1.2rem;
+    }
+
+    .sos-emergency-btn span {
+        font-size: 0.7rem;
+    }
+
+    .sos-modal-title {
+        font-size: 1.2rem;
+    }
+
+    .sos-contact-name {
+        font-size: 0.95rem;
+    }
+
+    .sos-contact-phone {
+        font-size: 1.05rem;
+    }
+
+    .sos-contact-desc {
+        font-size: 0.82rem;
+    }
+}
+
+/* Ensure SOS button doesn't overlap with other floating elements */
+body:has(.whatsapp-float) .sos-emergency-btn,
+body:has(.chat-widget) .sos-emergency-btn {
+    bottom: 100px; /* Adjust if WhatsApp or chat button exists */
+}
+
+/* Adjust Back button position when other floating elements exist */
+body:has(.whatsapp-float) #tn-history-nav,
+body:has(.chat-widget) #tn-history-nav {
+    bottom: 100px; /* Match SOS button adjustment */
+}
+
+/* Keyboard focus styles */
+.sos-emergency-btn:focus,
+.sos-call-btn:focus,
+.sos-modal-close:focus,
+.sos-search-input:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Dark mode specific adjustments */
+body.dark-mode .sos-modal-content {
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+}
+
+body.dark-mode .sos-contact-card {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+body.dark-mode .sos-contact-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}

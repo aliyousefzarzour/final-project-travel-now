@@ -456,29 +456,19 @@
             <button id="tn-nav-back" class="tn-hist-btn" title="Go back" aria-label="Go back" disabled>
                 <i class="fas fa-chevron-left"></i>
             </button>
-            <button id="tn-nav-fwd" class="tn-hist-btn" title="Go forward" aria-label="Go forward" disabled>
-                <i class="fas fa-chevron-right"></i>
-            </button>
         `;
         document.body.appendChild(wrap);
 
         const backBtn = document.getElementById('tn-nav-back');
-        const fwdBtn  = document.getElementById('tn-nav-fwd');
 
         backBtn.addEventListener('click', () => {
             history.back();
-            setTimeout(() => { fwdBtn.disabled = false; }, 150);
-        });
-
-        fwdBtn.addEventListener('click', () => {
-            history.forward();
         });
 
         if (history.length > 1) backBtn.disabled = false;
 
         window.addEventListener('popstate', () => {
             backBtn.disabled = false;
-            fwdBtn.disabled  = false;
         });
     }
 })();

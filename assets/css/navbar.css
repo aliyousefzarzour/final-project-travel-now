@@ -404,12 +404,13 @@ body.has-tn-navbar.map-page {
    ═══════════════════════════════════════════ */
 #tn-history-nav {
     position: fixed;
-    bottom: 28px;
-    right: 28px;
-    z-index: 1200;
+    bottom: 30px;
+    right: 104px; /* SOS button width (64px) + 5px gap + 30px right margin + 5px extra for visual balance */
+    z-index: 1201; /* Ensure it stays above SOS button (z-index: 1040) */
     display: flex;
-    gap: 8px;
     align-items: center;
+    gap: 5px;
+    pointer-events: none; /* Allow clicks to pass through to underlying content */
 }
 
 .tn-hist-btn {
@@ -428,6 +429,7 @@ body.has-tn-navbar.map-page {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    pointer-events: auto; /* Enable clicks on button */
 }
 
 .tn-hist-btn:hover:not(:disabled) {
@@ -447,14 +449,26 @@ body.has-tn-navbar.map-page {
     border-color: rgba(212, 175, 55, 0.4);
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     #tn-history-nav {
-        bottom: 18px;
-        right: 16px;
+        bottom: 20px;
+        right: 85px; /* SOS button width (60px) + 5px gap + 20px right margin */
     }
     .tn-hist-btn {
         width: 40px;
         height: 40px;
         font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    #tn-history-nav {
+        bottom: 16px;
+        right: 73px; /* SOS button width (56px) + 5px gap + 16px right margin */
+    }
+    .tn-hist-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 0.85rem;
     }
 }
