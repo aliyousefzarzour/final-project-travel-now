@@ -2,6 +2,7 @@
 .dashboard-wrapper {
     display: flex;
     min-height: 100vh;
+    min-height: 100dvh;
     background: var(--bg-body);
 }
 
@@ -12,6 +13,7 @@
     padding: 30px 0;
     position: fixed;
     height: 100vh;
+    height: 100dvh;
     overflow-y: auto;
     z-index: 100;
     transition: transform 0.3s;

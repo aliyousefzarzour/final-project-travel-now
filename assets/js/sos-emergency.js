@@ -133,6 +133,7 @@
         createFloatingButton();
         createModal();
         attachEventListeners();
+        watchPlacement();
     }
 
     // Create floating SOS button
@@ -151,6 +152,146 @@
         `;
 
         document.body.appendChild(btn);
+    }
+
+    // =================== RESPONSIVE PLACEMENT ===================
+    // Sits in the bottom-right corner, then steps away from anything already
+    // occupying that corner on the current page (map attribution bars, support
+    // bubbles, side drawers, mobile nav bars) instead of using one fixed offset
+    // for every page.
+    // Only the corner neighbourhood is inspected, and only shallowly: floating UI
+    // is a handful of nodes, so a full-document getComputedStyle sweep (which once
+    // froze a 50-card page) is deliberately avoided.
+    function collectOccupants(vw, vh) {
+        const edgeZone = Math.max(180, Math.min(vw, vh) * 0.35);
+        const occupants = [];
+
+        const root = document.body;
+        const nodes = [root, ...root.children, ...root.querySelectorAll('nav, header, [class*="float"], [class*="fixed"], [class*="drawer"], [class*="chat"], [class*="whatsapp"], [class*="cookie"], [class*="banner"], .leaflet-bottom')];
+
+        const seen = new Set();
+        nodes.forEach(el => {
+            if (seen.has(el)) return;
+            seen.add(el);
+            if (el.closest('#sos-modal') || el.closest('#sos-modal-backdrop')) return;
+            if (el.classList.contains('sos-emergency-btn')) return;
+
+            const cs = getComputedStyle(el);
+            const isPinned = cs.position === 'fixed' || cs.position === 'sticky';
+            const isMapControl = el.classList.contains('leaflet-control') || el.classList.contains('leaflet-bottom');
+            if (!isPinned && !isMapControl) return;
+            if (cs.visibility === 'hidden' || Number(cs.opacity) === 0) return;
+
+            const r = el.getBoundingClientRect();
+            if (r.width < 8 || r.height < 8) return;
+            if (r.width * r.height > vw * vh * 0.7) return; // full-screen layer, not a corner neighbour
+            if (r.left > vw - edgeZone || r.top > vh - edgeZone) return;
+
+            occupants.push({ left: r.left, top: r.top, right: r.right, bottom: r.bottom });
+        });
+
+        return occupants;
+    }
+
+    // Some layouts report the scroll height instead of the viewport, so take the
+    // smallest trustworthy measurement available.
+    function viewportSize() {
+        const de = document.documentElement;
+        const w = Math.min(window.innerWidth || 1e6, de.clientWidth || 1e6);
+        const h = Math.min(window.innerHeight || 1e6, de.clientHeight || 1e6);
+        return { vw: w > 0 ? w : 0, vh: h > 0 ? h : 0 };
+    }
+
+    function applySmartPosition() {
+        const btn = document.getElementById('sos-emergency-btn');
+        if (!btn) return;
+
+        const { vw, vh } = viewportSize();
+        if (!vw || !vh) return;
+
+        const gap = vw < 480 ? 14 : 20;
+        const size = btn.offsetWidth || 64;
+        const ideal = { left: vw - gap - size, top: vh - gap - size };
+        const occupants = collectOccupants(vw, vh);
+
+        const navbarEl = document.querySelector('.tn-navbar, #main-navbar');
+        const navbarH = navbarEl ? navbarEl.getBoundingClientRect().bottom : 0;
+        const minTop = Math.min(vh - size, Math.max(navbarH + 12, 12));
+
+        const candidates = [ideal];
+        occupants.forEach(o => {
+            candidates.push({ left: ideal.left, top: o.top - size - gap });      // stack above it
+            candidates.push({ left: o.left - size - gap, top: ideal.top });       // sit left of it
+        });
+
+        const cost = (c) => {
+            const left = Math.max(gap, Math.min(vw - gap - size, c.left));
+            const top = Math.max(minTop, Math.min(vh - gap - size, c.top));
+            let overlapArea = 0;
+            for (const o of occupants) {
+                const ow = Math.min(left + size, o.right) - Math.max(left, o.left);
+                const oh = Math.min(top + size, o.bottom) - Math.max(top, o.top);
+                if (ow > 0 && oh > 0) overlapArea += ow * oh;
+            }
+            const proximity = Math.hypot(ideal.left - left, ideal.top - top) / Math.max(vw, vh);
+            return { left: Math.round(left), top: Math.round(top), score: overlapArea / (size * size) * 10 + proximity };
+        };
+
+        const best = candidates.map(cost).sort((a, b) => a.score - b.score)[0];
+
+        // Never park the button off-screen; a stale measurement must not stick.
+        if (best.top + size > vh || best.left + size > vw || best.top < 0 || best.left < 0) {
+            if (btn.dataset.placedAt) { delete btn.dataset.placedAt; }
+            return;
+        }
+
+        const next = `${best.top}:${best.left}`;
+        if (btn.dataset.placedAt === next) return;
+        btn.dataset.placedAt = next;
+
+        btn.style.setProperty('bottom', 'auto', 'important');
+        btn.style.setProperty('right', 'auto', 'important');
+        btn.style.setProperty('top', `${best.top}px`, 'important');
+        btn.style.setProperty('left', `${best.left}px`, 'important');
+    }
+
+    function watchPlacement() {
+        const cornerCandidates = () => document.querySelectorAll(
+            'nav, header, [class*="float"], [class*="fixed"], [class*="drawer"], [class*="chat"], [class*="whatsapp"], [class*="cookie"], [class*="banner"], .leaflet-bottom'
+        ).length;
+
+        const signature = () => {
+            const { vw, vh } = viewportSize();
+            return `${vw}x${vh}|${document.body.childElementCount}|${cornerCandidates()}|${document.body.className}`;
+        };
+        let lastSig = '';
+        let running = false;
+
+        const run = () => {
+            if (running) return;
+            running = true;
+            // Deliberately synchronous: requestAnimationFrame never fires in a
+            // backgrounded tab, which would leave the button unpositioned.
+            try {
+                const sig = signature();
+                if (sig !== lastSig) {
+                    lastSig = sig;
+                    const btn = document.getElementById('sos-emergency-btn');
+                    if (btn) delete btn.dataset.placedAt;
+                    applySmartPosition();
+                }
+            } finally {
+                running = false;
+            }
+        };
+
+        window.addEventListener('resize', run);
+        window.addEventListener('orientationchange', run);
+        // Cheap enough to poll: the real scan only happens when the signature moves.
+        setInterval(run, 350);
+        run();
+        setTimeout(run, 600);
+        setTimeout(run, 1800);
     }
 
     // Create modal structure
@@ -313,6 +454,7 @@
         if (!modal || !backdrop) return;
 
         modalOpen = true;
+        document.body.classList.add('sos-modal-open');
         backdrop.classList.add('show');
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
@@ -335,6 +477,7 @@
         if (!modal || !backdrop) return;
 
         modalOpen = false;
+        document.body.classList.remove('sos-modal-open');
         backdrop.classList.remove('show');
         modal.classList.remove('show');
         document.body.style.overflow = '';

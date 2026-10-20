@@ -30,7 +30,20 @@
         #section-chats .row { overflow: hidden; }
         #section-chats .dashboard-card { overflow: hidden !important; }
         #active-chat { overflow: hidden; }
-        .filter-btn-active { background: rgba(212,175,55,0.9) !important; color: #0a1d2e !important; border: none !important; }    </style>
+        .filter-btn-active { background: rgba(212,175,55,0.9) !important; color: #0a1d2e !important; border: none !important; }
+
+        /* The admin tables are 5-7 columns wide and none of them sit in a
+           .table-responsive wrapper, so the table scrolls inside itself. */
+        @media (max-width: 991px) {
+            .data-table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-wrapper">
@@ -168,7 +181,7 @@
                             </h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body" id="booking-details-body" style="padding:22px;max-height:70vh;overflow-y:auto;"></div>
+                        <div class="modal-body" id="booking-details-body" style="padding:22px;max-height:70vh;max-height:70dvh;overflow-y:auto;"></div>
                         <div class="modal-footer" style="border-top:1px solid rgba(212,175,55,0.15);padding:12px 22px;">
                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                         </div>
@@ -209,7 +222,7 @@
                             </h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body" id="payment-details-body" style="padding:22px;max-height:70vh;overflow-y:auto;"></div>
+                        <div class="modal-body" id="payment-details-body" style="padding:22px;max-height:70vh;max-height:70dvh;overflow-y:auto;"></div>
                         <div class="modal-footer" style="border-top:1px solid rgba(212,175,55,0.15);padding:12px 22px;">
                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                         </div>
@@ -297,7 +310,7 @@
                             </h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body" id="feedback-details-body" style="padding:20px;max-height:65vh;overflow-y:auto;overflow-x:hidden;word-break:break-word;"></div>
+                        <div class="modal-body" id="feedback-details-body" style="padding:20px;max-height:65vh;max-height:65dvh;overflow-y:auto;overflow-x:hidden;word-break:break-word;"></div>
                         <div class="modal-footer" style="border-top:1px solid rgba(212,175,55,0.15);padding:12px 22px;">
                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-danger btn-sm" id="modal-delete-feedback-btn">
@@ -309,7 +322,7 @@
             </div>
 
             <section id="section-chats" class="admin-section" style="display:none;">
-                <div class="row g-3" style="height:calc(100vh - 200px);min-height:480px;max-height:700px;">
+                <div class="row g-3" style="height:calc(100vh - 200px);height:calc(100dvh - 200px);min-height:480px;max-height:700px;">
                     <!-- Users list -->
                     <div class="col-md-4" style="height:100%;">
                         <div class="dashboard-card" style="padding:0;overflow:hidden;height:100%;display:flex;flex-direction:column;">

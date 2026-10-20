@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <link rel="stylesheet" href="../assets/css/sos-emergency.css">
 </head>
 <body>
     <div id="tn-navbar"></div>
@@ -124,6 +125,8 @@
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/navbar.js"></script>
+
+    <script src="../assets/js/sos-emergency.js"></script>
     <script src="../assets/js/realtime.js"></script>
     <script>
     const user = requireAuth();
@@ -213,7 +216,7 @@
                             <div style="font-weight:700;color:var(--text);font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.companyName}</div>
                             <small class="text-muted">${c.governorate||''}</small>
                         </div>
-                        <a href="company-profile.html?id=${c._id}" class="btn btn-sm btn-outline-gold" style="white-space:nowrap;font-size:0.75rem;padding:4px 10px;">View</a>
+                        <a href="company-profile.html?id=${c._id}" class="btn btn-sm btn-outline-gold" style="white-space:nowrap;font-size:0.75rem;padding:8px 12px;min-height:40px;display:inline-flex;align-items:center;">View</a>
                     </div>
                 </div>
             `).join('')}</div>`;

@@ -156,37 +156,40 @@
         #leaflet-map { height: 100vh; width: 100%; }
         /* ===== FLOATING CARD ===== */
         .map-card {
-            position: absolute;
-            right: 16px;
-            top: 16px;
+            position: fixed;
+            right: 14px;
+            top: calc(var(--navbar-height, 82px) + 10px);
+            bottom: 10px;
             z-index: 900;
-            width: 360px;
+            width: min(360px, calc(100vw - 22px));
+            max-height: calc(100vh - var(--navbar-height, 82px) - 20px);
             background: rgba(8,20,35,0.97);
-            border: 1px solid rgba(212,175,55,0.3);
-            border-radius: 20px;
-            box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.35);
+            border-radius: 18px;
+            box-shadow: 0 18px 42px rgba(0,0,0,0.45), 0 0 0 1px rgba(212,175,55,0.08);
             display: none;
             backdrop-filter: blur(8px);
             overflow: hidden;
-            animation: cardIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
+            animation: cardIn 0.25s ease;
+            box-sizing: border-box;
         }
-        @keyframes cardIn { from { opacity:0; transform:translateY(-16px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
-        .card-img-wrap { position: relative; }
+        @keyframes cardIn { from { opacity:0; transform:translateX(14px) scale(0.99); } to { opacity:1; transform:translateX(0) scale(1); } }
+        .card-img-wrap { position: relative; flex-shrink: 0; }
         .card-img {
             width: 100%;
-            height: 175px;
+            height: 130px;
             object-fit: cover;
             display: block;
             background: linear-gradient(135deg, var(--navy), #152d44);
         }
         .card-img-placeholder {
             width: 100%;
-            height: 175px;
+            height: 130px;
             background: linear-gradient(135deg, #0a1d2e, #152d44);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5rem;
+            font-size: 2.8rem;
             color: rgba(212,175,55,0.2);
         }
         .card-close {
@@ -213,42 +216,49 @@
             padding: 1px 5px;
             border-radius: 4px;
         }
-        .card-body { padding: 16px; }
+        .card-body {
+            padding: 12px 12px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            overflow: visible;
+        }
         .card-cat {
             display: inline-block;
             background: rgba(212,175,55,0.12);
             color: var(--gold);
             border: 1px solid rgba(212,175,55,0.25);
             border-radius: 20px;
-            font-size: 0.68rem;
-            padding: 2px 10px;
+            font-size: 0.64rem;
+            padding: 2px 8px;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             font-weight: 600;
-            margin-bottom: 7px;
+            width: fit-content;
         }
         .card-title {
             color: var(--gold);
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 700;
             font-family: 'Cinzel', serif;
-            line-height: 1.3;
-            margin-bottom: 4px;
+            line-height: 1.25;
+            margin: 0;
         }
-        .card-loc { color: var(--text-dim); font-size: 0.78rem; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
-        .card-stars { color: #ffc107; font-size: 0.78rem; margin-bottom: 8px; }
+        .card-loc { color: var(--text-dim); font-size: 0.74rem; display: flex; align-items: center; gap: 5px; margin: 0; }
+        .card-stars { color: #ffc107; font-size: 0.74rem; margin: 0; }
         .card-desc {
             color: rgba(255,255,255,0.72);
-            font-size: 0.8rem;
-            line-height: 1.55;
-            margin-bottom: 14px;
+            font-size: 0.77rem;
+            line-height: 1.45;
+            margin: 0;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
         /* Card actions */
-        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; }
         .card-btn {
             border: none;
             border-radius: 11px;
@@ -278,6 +288,20 @@
         .sk { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200%; animation: shimmer 1.3s infinite; border-radius: 8px; }
         @keyframes shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
         .place-item.sk { height: 54px; cursor: default; border: none; margin-bottom: 5px; }
+        
+        /* ===== NAVIGATION BUTTONS RESPONSIVE ===== */
+        /* Make navigation buttons horizontal (side by side) instead of vertical */
+        .leaflet-bottom.leaflet-right .leaflet-control {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 8px !important;
+            align-items: center !important;
+        }
+        
+        .leaflet-bottom.leaflet-right .leaflet-control button {
+            margin: 0 !important;
+        }
+        
         /* ===== CUSTOM MARKERS ===== */
         .lf-marker-pin {
             width: 34px; height: 34px;
@@ -306,7 +330,15 @@
             .sidebar { height: auto; overflow: visible; }
             .sidebar-list { max-height: 180px; }
             #leaflet-map { height: 65vh; }
-            .map-card { width: calc(100vw - 32px); right: 16px; top: auto; bottom: 16px; }
+            .map-card {
+                width: min(360px, calc(100vw - 18px));
+                right: 10px;
+                left: auto;
+                top: calc(var(--navbar-height, 82px) + 10px);
+                bottom: 10px;
+                max-height: calc(100vh - var(--navbar-height, 82px) - 20px);
+                transform: none;
+            }
         }
     </style>
 </head>
@@ -425,15 +457,19 @@ function initMap() {
         attributionControl: true
     });
 
-    // Light and dark base tiles
+    // OpenStreetMap tiles do not require an API key and avoid watermark overlays.
     lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abc',
+        maxZoom: 19,
+        noWrap: false
     });
 
     darkTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abc',
+        maxZoom: 19,
+        noWrap: false
     });
 
     currentTileLayer = document.body.classList.contains('dark-mode') ? darkTileLayer : lightTileLayer;
@@ -452,6 +488,19 @@ function initMap() {
             currentTileLayer.addTo(leafletMap);
         }
     });
+
+    // Hide forward/next navigation buttons if they exist
+    setTimeout(() => {
+        const forwardButtons = document.querySelectorAll(
+            '.leaflet-history-forward, ' +
+            'button[title*="Forward"], ' +
+            'button[title*="forward"], ' +
+            'button[aria-label*="Forward"], ' +
+            'button[aria-label*="forward"], ' +
+            'button[aria-label*="Next"]'
+        );
+        forwardButtons.forEach(btn => btn.style.display = 'none');
+    }, 500);
 }
 
 // ===================================================
@@ -566,6 +615,25 @@ function hexToRgb(hex) {
 // ===================================================
 // SELECT ATTRACTION (sidebar click or marker click)
 // ===================================================
+function focusMarkerOnMap(latlng) {
+    if (!leafletMap || !latlng) return;
+
+    const card = document.getElementById('map-card');
+    const cardWidth = card && card.style.display !== 'none' ? card.offsetWidth || 360 : 0;
+    const mapWidth = leafletMap.getSize().x;
+
+    if (!cardWidth || cardWidth >= mapWidth * 0.8) {
+        leafletMap.flyTo(latlng, 14, { animate: true, duration: 0.8 });
+        return;
+    }
+
+    const offsetX = -(cardWidth / 2 + 26);
+    const projected = leafletMap.project(latlng, leafletMap.getZoom());
+    projected.x += offsetX;
+    const target = leafletMap.unproject(projected, leafletMap.getZoom());
+    leafletMap.flyTo(target, 14, { animate: true, duration: 0.8 });
+}
+
 function selectAttraction(id) {
     const att = allAttractions.find(a => String(a._id) === String(id));
     if (!att) return;
@@ -573,7 +641,7 @@ function selectAttraction(id) {
     const lat = att.coordinates?.lat;
     const lng = att.coordinates?.lng;
     if (lat && lng) {
-        leafletMap.flyTo([lat, lng], 14, { animate: true, duration: 0.8 });
+        focusMarkerOnMap([lat, lng]);
     }
 
     setActiveMarker(id);

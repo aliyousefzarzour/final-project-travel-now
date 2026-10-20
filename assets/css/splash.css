@@ -4,6 +4,7 @@
     top: 0; left: 0;
     width: 100%;
     height: 100vh;
+    height: 100dvh;
     z-index: 9999;
     overflow: hidden;
     background: #000;
@@ -125,4 +126,43 @@
 
 @keyframes fadeOut {
     to { opacity: 0; visibility: hidden; }
+}
+
+/* The splash was authored for desktop only: 7rem type with 10px tracking
+   overflows a 360px phone, so the hero scales down with the viewport. */
+@media (max-width: 768px) {
+    .splash-title {
+        font-size: clamp(2rem, 11vw, 3.4rem);
+        letter-spacing: 4px;
+        padding: 0 20px;
+        max-width: 100%;
+        margin-bottom: 14px;
+    }
+
+    .splash-subtitle {
+        font-size: 1rem;
+        letter-spacing: 3px;
+        margin-bottom: 28px;
+        padding: 0 20px;
+    }
+
+    .countdown #countdown-number { font-size: 3.4rem; }
+    .countdown { margin-top: 18px; }
+    .skip-btn { padding: 11px 26px; letter-spacing: 1px; }
+    .splash-loader { width: 46px; height: 46px; }
+}
+
+@media (max-width: 380px) {
+    .splash-title { font-size: 1.7rem; letter-spacing: 2px; }
+    .splash-subtitle { font-size: .85rem; letter-spacing: 2px; }
+    .countdown #countdown-number { font-size: 2.8rem; }
+}
+
+/* Landscape phones have almost no vertical room for title + subtitle + loader. */
+@media (max-height: 460px) {
+    .splash-subtitle { margin-bottom: 16px; }
+    .splash-loader { display: none; }
+    .countdown { margin-top: 10px; }
+    .countdown #countdown-number { font-size: 2.4rem; }
+    .skip-btn { margin-top: 12px; }
 }

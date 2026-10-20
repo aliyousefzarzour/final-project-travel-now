@@ -1,10 +1,9 @@
 /* =================== SOS EMERGENCY ASSISTANCE - TRAVELNOW =================== */
 
-/* Floating SOS Button */
+/* Floating SOS Button — coordinates are resolved at runtime by sos-emergency.js
+   so the button adapts to whatever occupies the bottom-right of each page. */
 .sos-emergency-btn {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -15,7 +14,7 @@
     font-weight: 700;
     text-align: center;
     cursor: pointer;
-    z-index: 1040;
+    z-index: 1201;
     box-shadow: 0 8px 24px rgba(220, 53, 69, 0.4), 0 0 0 0 rgba(220, 53, 69, 0.5);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
@@ -192,6 +191,7 @@
 .sos-modal-body {
     padding: 28px;
     max-height: calc(100vh - 220px);
+    max-height: calc(100dvh - 220px);
     overflow-y: auto;
     color: var(--card-foreground);
 }
@@ -351,8 +351,6 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .sos-emergency-btn {
-        bottom: 20px;
-        right: 20px;
         width: 60px;
         height: 60px;
     }
@@ -386,6 +384,7 @@
     .sos-modal-body {
         padding: 20px;
         max-height: calc(100vh - 180px);
+        max-height: calc(100dvh - 180px);
     }
 
     .sos-contact-card {
@@ -409,8 +408,6 @@
     .sos-emergency-btn {
         width: 56px;
         height: 56px;
-        bottom: 16px;
-        right: 16px;
     }
 
     .sos-emergency-btn i {
@@ -438,16 +435,9 @@
     }
 }
 
-/* Ensure SOS button doesn't overlap with other floating elements */
-body:has(.whatsapp-float) .sos-emergency-btn,
-body:has(.chat-widget) .sos-emergency-btn {
-    bottom: 100px; /* Adjust if WhatsApp or chat button exists */
-}
-
-/* Adjust Back button position when other floating elements exist */
-body:has(.whatsapp-float) #tn-history-nav,
-body:has(.chat-widget) #tn-history-nav {
-    bottom: 100px; /* Match SOS button adjustment */
+/* The trigger sits above the modal layer, so it steps out while the list is open */
+body.sos-modal-open .sos-emergency-btn {
+    visibility: hidden;
 }
 
 /* Keyboard focus styles */

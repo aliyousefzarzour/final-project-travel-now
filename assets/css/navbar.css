@@ -136,7 +136,7 @@ html {
     font-size: 0.88rem;
     font-weight: 600;
     letter-spacing: 0.4px;
-    padding: 6px 13px !important;
+    padding: 9px 13px !important;
     border-radius: 8px;
     transition: color 0.25s ease, background 0.25s ease;
     white-space: nowrap;
@@ -284,6 +284,9 @@ html {
     .tn-navbar .navbar-toggler {
         display: flex !important;
         order: 2;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 8px 12px;
     }
 
     /* Desktop actions — gone on mobile */
@@ -345,6 +348,19 @@ html {
         border-top: 1px solid rgba(212, 175, 55, 0.15);
         margin-top: 4px;
     }
+
+    .tn-navbar .theme-toggle {
+        width: 44px;
+        height: 44px;
+    }
+
+    .tn-navbar .tn-nav-actions-mobile .btn,
+    .tn-navbar .tn-nav-actions-mobile .btn-gold {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 @media (max-width: 576px) {
@@ -361,7 +377,6 @@ html {
     }
 
     .tn-navbar .navbar-brand i { font-size: 0.95rem; }
-    .tn-navbar .navbar-toggler { padding: 6px 8px; }
     .tn-navbar .navbar-collapse {
         padding-left: 10px !important;
         padding-right: 10px !important;
@@ -389,86 +404,14 @@ body.has-tn-navbar .main-content {
 body.has-tn-navbar .dashboard-wrapper .sidebar {
     top: var(--navbar-height);
     height: calc(100vh - var(--navbar-height));
+    height: calc(100dvh - var(--navbar-height));
 }
 body.has-tn-navbar.map-page .map-layout {
     height: calc(100vh - var(--navbar-height));
+    height: calc(100dvh - var(--navbar-height));
     margin-top: 0;
 }
 body.has-tn-navbar.map-page {
     overflow: hidden;
     padding-top: var(--navbar-height) !important;
-}
-
-/* ═══════════════════════════════════════════
-   HISTORY NAVIGATION — bottom-right floating
-   ═══════════════════════════════════════════ */
-#tn-history-nav {
-    position: fixed;
-    bottom: 30px;
-    right: 104px; /* SOS button width (64px) + 5px gap + 30px right margin + 5px extra for visual balance */
-    z-index: 1201; /* Ensure it stays above SOS button (z-index: 1040) */
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    pointer-events: none; /* Allow clicks to pass through to underlying content */
-}
-
-.tn-hist-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 2px solid #d4af37;
-    background: rgba(10, 29, 46, 0.92);
-    color: #d4af37;
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    pointer-events: auto; /* Enable clicks on button */
-}
-
-.tn-hist-btn:hover:not(:disabled) {
-    background: #d4af37;
-    color: #0a1d2e;
-    transform: scale(1.1);
-    box-shadow: 0 6px 24px rgba(212, 175, 55, 0.4);
-}
-
-.tn-hist-btn:active:not(:disabled) {
-    transform: scale(0.95);
-}
-
-.tn-hist-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    border-color: rgba(212, 175, 55, 0.4);
-}
-
-@media (max-width: 768px) {
-    #tn-history-nav {
-        bottom: 20px;
-        right: 85px; /* SOS button width (60px) + 5px gap + 20px right margin */
-    }
-    .tn-hist-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 576px) {
-    #tn-history-nav {
-        bottom: 16px;
-        right: 73px; /* SOS button width (56px) + 5px gap + 16px right margin */
-    }
-    .tn-hist-btn {
-        width: 38px;
-        height: 38px;
-        font-size: 0.85rem;
-    }
 }

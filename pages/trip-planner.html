@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../assets/css/pages.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <link rel="stylesheet" href="../assets/css/sos-emergency.css">
     <style>
         /* ═══════════════════════════════════════════════
            BASE & RESET
@@ -39,6 +40,7 @@
             color: #fff;
             overflow-x: hidden;
             min-height: 100vh;
+            min-height: 100dvh;
         }
         /* ═══════════════════════════════════════════════
            ANIMATED BACKGROUND
@@ -96,6 +98,7 @@
         #page-wrapper {
             position: relative; z-index: 1;
             min-height: 100vh;
+            min-height: 100dvh;
         }
 
         /* ═══════════════════════════════════════════════
@@ -103,6 +106,7 @@
         ═══════════════════════════════════════════════ */
         .hero-section {
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             padding-top: 80px;
@@ -147,7 +151,7 @@
         .yala-badge i { font-size: 0.9rem; }
         .hero-title {
             font-family: 'Cinzel', serif;
-            font-size: clamp(4rem, 8vw, 7rem);
+            font-size: clamp(2.4rem, 11vw, 7rem);
             font-weight: 900;
             line-height: 0.9;
             letter-spacing: 4px;
@@ -710,7 +714,7 @@
             .hero-split { padding: 20px 16px 40px; }
             .form-wizard-body { padding: 24px 20px; }
             .form-wizard-header { padding: 20px 24px; }
-            .hero-title { font-size: 4rem; }
+            .hero-title { font-size: clamp(2.4rem, 11vw, 4rem); }
             .counter-grid { grid-template-columns: 1fr; gap: 10px; }
             .counter-card { padding: 14px 12px; }
             .style-grid { grid-template-columns: repeat(2, 1fr); }
@@ -723,6 +727,7 @@
             .style-grid { grid-template-columns: repeat(3, 1fr); }
             .style-name { font-size: 0.62rem; letter-spacing: 0; }
             .style-emoji { font-size: 1.4rem; }
+            .hero-title { letter-spacing: 1px; }
         }
 
         /* ── Scrollbar ── */
@@ -1059,7 +1064,7 @@
         <!-- END HERO SECTION -->
 
         <!-- ════════════════ ITINERARY RESULT ════════════════ -->
-        <div id="itinerary-result" style="display:none;min-height:100vh;padding:40px 32px 80px;max-width:1200px;margin:0 auto;position:relative;z-index:1;"></div>
+        <div id="itinerary-result" style="display:none;min-height:100vh;min-height:100dvh;padding:40px 32px 80px;max-width:1200px;margin:0 auto;position:relative;z-index:1;"></div>
 
         <!-- ════════════════ HOW IT WORKS ════════════════ -->
         <section class="how-section">
@@ -1096,6 +1101,8 @@
     <script src="../assets/js/custom-select.js"></script>
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/navbar.js"></script>
+
+    <script src="../assets/js/sos-emergency.js"></script>
     <script>
     /* ── Counter pop animation on input change ── */
     ['planner-budget','planner-travelers','planner-days'].forEach(id => {

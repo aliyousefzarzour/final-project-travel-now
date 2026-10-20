@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,11 +10,13 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <link rel="stylesheet" href="../assets/css/sos-emergency.css">
     <style>
         /* ── Layout ── */
-        body { min-height: 100vh; }
+        body { min-height: 100vh; min-height: 100dvh; }
         .chat-page {
             min-height: calc(100vh - 70px);
+            min-height: calc(100dvh - 70px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -29,6 +31,7 @@
             display: flex;
             flex-direction: column;
             height: min(680px, calc(100vh - 120px));
+            height: min(680px, calc(100dvh - 120px));
             background: var(--card, #fff);
             border: 1px solid rgba(212,175,55,0.2);
         }
@@ -243,7 +246,7 @@
 
         /* ── Responsive ── */
         @media (max-width: 576px) {
-            .chat-card { border-radius: 16px; height: calc(100vh - 90px); }
+            .chat-card { border-radius: 16px; height: calc(100vh - 90px); height: calc(100dvh - 90px); }
             .bubble { max-width: 85%; font-size: 0.84rem; }
             .msg-content { max-width: 80%; }
         }
@@ -305,6 +308,8 @@
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/navbar.js"></script>
+
+    <script src="../assets/js/sos-emergency.js"></script>
     <script src="../assets/js/realtime.js"></script>
     <script>
     'use strict';

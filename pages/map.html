@@ -28,7 +28,10 @@
             display: grid;
             grid-template-columns: 340px 1fr;
             grid-template-rows: minmax(0, 1fr);
-            height: 100vh;
+            /* The fixed navbar occupies the top strip, so the map row is the
+               viewport minus that height — otherwise it runs off the bottom. */
+            height: calc(100vh - var(--navbar-height));
+            height: calc(100dvh - var(--navbar-height));
         }
         /* ===== SIDEBAR ===== */
         .sidebar {
@@ -36,7 +39,9 @@
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            /* The layout row is already viewport-minus-navbar; 100vh here made
+               the panel reach past the bottom edge on desktop. */
+            height: 100%;
             overflow: hidden;
         }
         .sidebar-head {
@@ -195,6 +200,7 @@
             width: 320px;
             height: auto;
             max-height: 75vh;
+            max-height: 75dvh;
             background: rgba(8,20,35,0.97);
             border: 1px solid rgba(212,175,55,0.35);
             border-radius: 16px;
@@ -414,7 +420,9 @@
                 grid-template-columns: 1fr;
                 grid-template-rows: 1fr;
                 height: calc(100vh - var(--navbar-height));
+                height: calc(100dvh - var(--navbar-height));
                 min-height: calc(100vh - var(--navbar-height));
+                min-height: calc(100dvh - var(--navbar-height));
                 margin-top: var(--navbar-height);
             }
             
@@ -439,6 +447,7 @@
                 z-index: 1150;
                 width: min(86vw, 350px);
                 max-height: calc(100vh - var(--navbar-height));
+                max-height: calc(100dvh - var(--navbar-height));
                 height: auto;
                 overflow: hidden;
                 transform: translateX(-105%);
@@ -504,6 +513,7 @@
             .map-card {
                 width: min(90vw, 340px);
                 max-height: 70vh;
+                max-height: 70dvh;
                 right: 5vw;
                 left: auto;
                 bottom: auto;
@@ -592,6 +602,7 @@
                 bottom: auto;
                 top: calc(var(--navbar-height) + 10px);
                 max-height: 65vh;
+                max-height: 65dvh;
                 border-radius: 14px;
             }
             
@@ -653,10 +664,21 @@
                 font-size: 0.72rem;
             }
             
-            .place-item { padding: 8px 9px; }
+            .place-item { padding: 8px 9px; min-height: 48px; }
             .place-icon { width: 32px; height: 32px; font-size: 1rem; }
             .place-name { font-size: 0.8rem; }
             .place-sub { font-size: 0.7rem; }
+
+            /* Compact type, but every control stays thumb-sized. */
+            .card-btn,
+            .card-btn.full,
+            .map-drawer-toggle,
+            .back-btn {
+                min-height: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
         }
         
         @media (max-width: 390px) {
@@ -667,6 +689,7 @@
                 bottom: auto;
                 top: calc(var(--navbar-height) + 8px);
                 max-height: 60vh;
+                max-height: 60dvh;
                 border-radius: 12px;
             }
             
@@ -880,6 +903,26 @@ function initMap() {
             currentTileLayer.addTo(leafletMap);
         }
     });
+
+    // Leaflet samples the container's size once, at init. The shared navbar
+    // adds its own height to the body afterwards, and opening the place card or
+    // resizing the window changes it again — Leaflet then keeps painting tiles
+    // for the old box, which leaves an unpainted strip under the map.
+    const keepSized = () => {
+        const c = leafletMap.getContainer();
+        if (!c || !c.clientWidth) return;
+        const size = leafletMap.getSize();
+        if (size.x !== c.clientWidth || size.y !== c.clientHeight) {
+            leafletMap.invalidateSize({ animate: false });
+        }
+    };
+    if (window.ResizeObserver) {
+        new ResizeObserver(keepSized).observe(leafletMap.getContainer());
+    }
+    leafletMap.on('zoomend moveend', keepSized);
+    window.addEventListener('orientationchange', () => setTimeout(keepSized, 250));
+    setTimeout(keepSized, 0);
+    setTimeout(keepSized, 600);
 
     // Hide forward/next navigation buttons if they exist
     setTimeout(() => {

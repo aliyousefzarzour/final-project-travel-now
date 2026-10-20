@@ -12,11 +12,13 @@
     <link rel="stylesheet" href="../assets/css/pages.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <link rel="stylesheet" href="../assets/css/sos-emergency.css">
     <style>
         body { background: var(--bg-body); }
 
         .hero-section {
-            height: 42vh; /* نزلتها شوية بسيطة للتوازن */
+            height: 42vh;
+            height: 42dvh; /* نزلتها شوية بسيطة للتوازن */
             width: 100%;
             position: relative;
             background-size: cover;
@@ -63,7 +65,7 @@
 
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -194,7 +196,10 @@
         #favBtn:hover i { color: #e74c3c !important; }
 
         @media (max-width: 991px) {
-            .hero-section { height: 50vh; }
+            .hero-section { height: 50vh; height: 50dvh; }
+            /* iOS Safari ignores fixed background attachment and scales the
+               cover image oddly, so the hero scrolls with the page instead. */
+            .hero-section { background-attachment: scroll; }
             .booking-sidebar { position: static; margin-top: 30px; }
         }
     </style>
@@ -340,6 +345,7 @@
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/sos-emergency.js"></script>
     <script>
         // JS Logic (Mainly kept from original but with UI element mapping updates)
         const DEMO_BOOKINGS_KEY = 'travelnow-demo-bookings';

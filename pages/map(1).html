@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/dark-mode.css">
+    <link rel="stylesheet" href="../assets/css/sos-emergency.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -278,6 +279,23 @@
         .sk { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200%; animation: shimmer 1.3s infinite; border-radius: 8px; }
         @keyframes shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
         .place-item.sk { height: 54px; cursor: default; border: none; margin-bottom: 5px; }
+        
+        /* ===== HIDE FORWARD NAVIGATION BUTTON ===== */
+        /* Hide the forward/next button in leaflet map controls */
+        .leaflet-control-browser-history .leaflet-history-forward,
+        /* ===== NAVIGATION BUTTONS RESPONSIVE ===== */
+        /* Make navigation buttons horizontal (side by side) instead of vertical */
+        .leaflet-bottom.leaflet-right .leaflet-control {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 8px !important;
+            align-items: center !important;
+        }
+        
+        .leaflet-bottom.leaflet-right .leaflet-control button {
+            margin: 0 !important;
+        }
+        
         /* ===== CUSTOM MARKERS ===== */
         .lf-marker-pin {
             width: 34px; height: 34px;
@@ -367,6 +385,8 @@
 <script src="../assets/js/auth.js"></script>
 <script src="../assets/js/theme.js"></script>
 <script src="../assets/js/navbar.js"></script>
+
+<script src="../assets/js/sos-emergency.js"></script>
 <script>
 // ===================================================
 // STATE
@@ -454,6 +474,19 @@ function initMap() {
             currentTileLayer.addTo(leafletMap);
         }
     });
+
+    // Hide forward/next navigation buttons if they exist
+    setTimeout(() => {
+        const forwardButtons = document.querySelectorAll(
+            '.leaflet-history-forward, ' +
+            'button[title*="Forward"], ' +
+            'button[title*="forward"], ' +
+            'button[aria-label*="Forward"], ' +
+            'button[aria-label*="forward"], ' +
+            'button[aria-label*="Next"]'
+        );
+        forwardButtons.forEach(btn => btn.style.display = 'none');
+    }, 500);
 }
 
 // ===================================================

@@ -57,7 +57,7 @@
         #cs-panel {
             position: fixed; bottom: 100px; right: 28px; z-index: 9998;
             width: 340px; max-width: calc(100vw - 32px);
-            height: 480px; max-height: calc(100vh - 130px);
+            height: 480px; max-height: calc(100vh - 130px); max-height: calc(100dvh - 130px);
             border-radius: 20px; overflow: hidden;
             box-shadow: 0 16px 56px rgba(0,0,0,0.25);
             display: flex; flex-direction: column;
