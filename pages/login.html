@@ -353,13 +353,22 @@
 
         async function loginResendCode(email) {
             try {
-                await fetch(`${API_BASE}/auth/verify-email/send`, {
+                const res  = await fetch(`${API_BASE}/auth/verify-email/send`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
                 });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    const errEl = document.getElementById('login-email-otp-error');
+                    if (errEl) { errEl.textContent = data.message || 'Could not send the code. Try again.'; errEl.style.display = 'block'; }
+                    showToast(data.message || 'Could not send the verification code', 'error');
+                    return;
+                }
                 showToast('Verification code sent to your email', 'success');
-            } catch (_) {}
+            } catch (_) {
+                showToast('Connection failed. Check your network and resend.', 'error');
+            }
         }
 
         // Google Sign-In trigger

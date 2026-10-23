@@ -8,6 +8,7 @@ const Company = require('../models/Company');
 const PasswordResetOtp = require('../models/PasswordResetOtp');
 const WhatsAppOtp = require('../models/WhatsAppOtp');
 const EmailVerificationToken = require('../models/EmailVerificationToken');
+const canonicalEmail = require('../utils/canonicalEmail');
 const { sendEmail, verificationEmailHtml, passwordResetEmailHtml } = require('../services/emailService');
 const { send: sendNotification } = require('./notificationController');
 
@@ -677,7 +678,7 @@ exports.sendVerificationEmail = async (req, res) => {
         const { email } = req.body;
         if (!email) return res.status(400).json({ message: 'Email is required' });
 
-        const normalizedEmail = String(email).trim().toLowerCase();
+        const normalizedEmail = canonicalEmail(email);
         const user = await User.findOne({ email: normalizedEmail }).catch(() => null);
         const company = user ? null : await Company.findOne({ email: normalizedEmail }).catch(() => null);
 
@@ -716,7 +717,7 @@ exports.verifyEmail = async (req, res) => {
         const { email, code } = req.body;
         if (!email || !code) return res.status(400).json({ message: 'Email and code are required' });
 
-        const normalizedEmail = String(email).trim().toLowerCase();
+        const normalizedEmail = canonicalEmail(email);
 
         const result = await EmailVerificationToken.verify(normalizedEmail, code);
         if (!result.ok) return res.status(400).json({ message: result.reason });

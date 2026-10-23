@@ -204,8 +204,11 @@
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Registration failed');
 
-            registeredEmail = email;
-            document.getElementById('otp-email-display').textContent = email;
+            // The backend normalizes the address (Gmail dots/letter case) before it
+            // stores the user and hashes the code, so verifying against the typed
+            // string would look up an email that does not exist.
+            registeredEmail = data.user?.email || email;
+            document.getElementById('otp-email-display').textContent = registeredEmail;
             setStep(2);
             document.querySelectorAll('.otp-digit')[0]?.focus();
             startCooldown(60);
