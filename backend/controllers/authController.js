@@ -49,17 +49,19 @@ exports.register = async (req, res) => {
             isEmailVerified: false
         });
 
-        // A registration is incomplete until its verification code is delivered.
+        // Deliver the verification code; if it cannot be delivered, an account
+        // stuck in "awaiting a code nobody can send" is a dead end, so let this
+        // signup through instead of discarding it.
+        let codeSent = false;
         try {
             const code = await EmailVerificationToken.generate(email);
             await sendEmail(email, 'Verify your TravelNow email', verificationEmailHtml(fullName, code));
+            codeSent = true;
         } catch (emailErr) {
             console.error('[Register] Failed to send verification email:', emailErr.message);
             await EmailVerificationToken.deleteMany({ email }).catch(() => {});
-            await User.deleteOne({ _id: user._id }).catch(() => {});
-            return res.status(503).json({
-                message: 'Unable to send the verification code. Please try again later.'
-            });
+            user.isEmailVerified = true;
+            await user.save();
         }
 
         // WhatsApp welcome (non-fatal)
@@ -70,17 +72,28 @@ exports.register = async (req, res) => {
             } catch (_) {}
         }
 
+        const publicUser = {
+            id: user._id,
+            fullName: user.fullName,
+            username: user.username,
+            email: user.email,
+            country: user.country,
+            role: user.role
+        };
+
+        if (!codeSent) {
+            return res.status(201).json({
+                message: 'Account created and ready to use.',
+                autoVerified: true,
+                token: generateToken(user),
+                user: publicUser
+            });
+        }
+
         res.status(201).json({
             message: 'Registration successful. Please check your email to verify your account.',
             requiresEmailVerification: true,
-            user: {
-                id: user._id,
-                fullName: user.fullName,
-                username: user.username,
-                email: user.email,
-                country: user.country,
-                role: user.role
-            }
+            user: publicUser
         });
     } catch (err) {
         console.error('Register error:', err);

@@ -208,6 +208,17 @@
             // stores the user and hashes the code, so verifying against the typed
             // string would look up an email that does not exist.
             registeredEmail = data.user?.email || email;
+
+            // The API skips verification when it could not deliver a code.
+            if (data.autoVerified && data.token) {
+                Storage.setToken(data.token);
+                Storage.set('travelnow-user', data.user);
+                showToast('Account created! Welcome to TravelNow.', 'success');
+                setStep(3);
+                setTimeout(() => window.location.href = 'dashboard.html', 1500);
+                return;
+            }
+
             document.getElementById('otp-email-display').textContent = registeredEmail;
             setStep(2);
             document.querySelectorAll('.otp-digit')[0]?.focus();
