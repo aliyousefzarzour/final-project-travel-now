@@ -552,8 +552,11 @@
         if (element) element.textContent = value;
     };
 
-    // Auto-detect backend URL (works on both localhost and 127.0.0.1)
-    const BACKEND = `http://${window.location.hostname === '127.0.0.1' ? '127.0.0.1' : 'localhost'}:5000`;
+    // Reuse the shared API base from auth.js. Hardcoding http://localhost:5000
+    // broke every panel request on GitHub Pages, where that host is the visitor's
+    // own machine and an http call from an https page is blocked anyway.
+    const BACKEND = (window.API_BASE || '').replace(/\/api\/?$/, '')
+        || `http://${window.location.hostname}:5000`;
 
     async function fetchJson(url, options = {}) {
         // Convert relative URLs to absolute
@@ -713,7 +716,7 @@
             const data = await fetchJson(`../api/companies/${id}`);
             const c = data.company;
 
-            const BACKEND_URL = `http://${window.location.hostname === '127.0.0.1' ? '127.0.0.1' : 'localhost'}:5000`;
+            const BACKEND_URL = BACKEND;
 
             // Helper: render a file link/image
             function fileLink(path, label) {
@@ -1870,7 +1873,7 @@
             clearInterval(interval);
             const tok = Storage.getToken();
             if (!tok) return;
-            const s = io((window.TRAVELNOW_API_BASE || 'http://127.0.0.1:5000').replace('/api',''), {
+            const s = io(BACKEND, {
                 auth: { token: tok }, transports: ['websocket','polling']
             });
             s.on('chat_message', data => {
