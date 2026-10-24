@@ -496,7 +496,7 @@
             formCard.style.opacity = '0';
             formCard.style.transition = 'opacity 0.3s ease';
             setTimeout(() => { formCard.style.opacity = '1'; }, 30);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            (document.body.classList.contains('has-tn-navbar') ? document.body : window).scrollTo({ top: 0, behavior: 'smooth' });
         }, 300);
         showToast('Plan cleared — Yala, plan again! 🗺️', 'success');
     }

@@ -406,10 +406,14 @@
         // Scroll shadow effect
         const navEl = document.getElementById('tn-nav-el');
         if (navEl) {
+            // Pages scroll inside <body> (below the fixed navbar); the map page
+            // still scrolls the window.
+            const scrollTarget = document.body.classList.contains('map-page') ? window : document.body;
             const onScroll = () => {
-                navEl.classList.toggle('scrolled', window.scrollY > 20);
+                const y = scrollTarget === window ? window.scrollY : document.body.scrollTop;
+                navEl.classList.toggle('scrolled', y > 20);
             };
-            window.addEventListener('scroll', onScroll, { passive: true });
+            scrollTarget.addEventListener('scroll', onScroll, { passive: true });
             onScroll();
         }
 

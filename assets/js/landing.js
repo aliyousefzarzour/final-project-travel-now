@@ -24,8 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Navbar scroll effect
     const navbar = document.getElementById('main-navbar');
     if (navbar) {
-        const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 20);
-        window.addEventListener('scroll', onScroll, { passive: true });
+        const scrollTarget = document.body.classList.contains('has-tn-navbar') ? document.body : window;
+        const onScroll = () => {
+            const y = scrollTarget === window ? window.scrollY : document.body.scrollTop;
+            navbar.classList.toggle('scrolled', y > 20);
+        };
+        scrollTarget.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
     }
 

@@ -11,6 +11,27 @@
     padding: 20px;
 }
 
+/* The below-navbar scroll layout lives in navbar.css; these are the
+   auth-specific parts of it. */
+html:has(body.auth-page.has-tn-navbar) {
+    background: #0a1d2e;
+}
+
+body.auth-page.has-tn-navbar {
+    align-items: flex-start;
+    padding-top: 20px !important;
+}
+
+body.auth-page.has-tn-navbar .auth-container {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+body.has-tn-navbar .user-type-page {
+    min-height: calc(100vh - var(--navbar-height));
+    min-height: calc(100dvh - var(--navbar-height));
+}
+
 .auth-page::before {
     content: '';
     position: absolute;
@@ -331,6 +352,10 @@
     .user-type-page {
         align-items: flex-start;
         padding: 16px 12px;
+    }
+
+    body.auth-page.has-tn-navbar {
+        padding-top: 16px !important;
     }
 
     .auth-card {

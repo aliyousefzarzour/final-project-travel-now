@@ -8,6 +8,20 @@
     const countdownNum = document.getElementById('countdown-number');
     const skipBtn = document.getElementById('skip-btn');
 
+    // The landing page scrolls inside <body> (below the fixed navbar), so AOS
+    // has to read that scroll offset and hear its scroll events.
+    if (document.body.classList.contains('has-tn-navbar')) {
+        try {
+            Object.defineProperty(window, 'pageYOffset', {
+                configurable: true,
+                get: () => document.body.scrollTop
+            });
+        } catch (e) { /* keep the default window scroll position */ }
+        document.body.addEventListener('scroll', () => {
+            window.dispatchEvent(new Event('scroll'));
+        }, { passive: true });
+    }
+
     if (localStorage.getItem('splashSeen')) {
         if (splashScreen) splashScreen.style.display = 'none';
         if (landingPage) landingPage.style.display = 'block';
