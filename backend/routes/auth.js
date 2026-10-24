@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const config = require('../config');
 const { authMiddleware } = require('../middleware/auth');
-const { validate, registerValidation, loginValidation } = require('../middleware/validation');
+const { validate, registerValidation, loginValidation, registrationCodeValidation, registrationVerifyValidation } = require('../middleware/validation');
 const ctrl = require('../controllers/authController');
 
 // المكتبات المطلوبة لتسجيل الدخول بجوجل
@@ -18,6 +18,8 @@ const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 // =================== STANDARD ROUTES ===================
 router.post('/register', registerValidation, validate, ctrl.register);
+router.post('/register/resend', registrationCodeValidation, validate, ctrl.resendRegistrationCode);
+router.post('/register/verify', registrationVerifyValidation, validate, ctrl.verifyRegistration);
 router.post('/login', loginValidation, validate, ctrl.login);
 router.post('/forgot-password',      ctrl.forgotPassword);
 router.post('/forgot-password/send', ctrl.sendResetOtp);

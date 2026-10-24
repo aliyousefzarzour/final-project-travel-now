@@ -8,6 +8,7 @@ const Company = require('../models/Company');
 const PasswordResetOtp = require('../models/PasswordResetOtp');
 const WhatsAppOtp = require('../models/WhatsAppOtp');
 const EmailVerificationToken = require('../models/EmailVerificationToken');
+const PendingRegistration = require('../models/PendingRegistration');
 const canonicalEmail = require('../utils/canonicalEmail');
 const { sendEmail, verificationEmailHtml, passwordResetEmailHtml } = require('../services/emailService');
 const { send: sendNotification } = require('./notificationController');
@@ -21,83 +22,150 @@ const generateToken = (user) => {
     );
 };
 
-// =================== REGISTER (✅ معدّل) ===================
+async function deliverRegistrationCode(pending, code) {
+    const filter = { email: pending.email, registrationId: pending.registrationId, codeHash: pending.codeHash };
+    try {
+        const delivery = await sendEmail(pending.email, 'Verify your TravelNow email', verificationEmailHtml(pending.fullName, code));
+        if (!delivery || delivery.demo || delivery.rejected?.length) {
+            throw new Error('Verification email was not accepted for delivery');
+        }
+    } catch (err) {
+        console.error('[Register] Failed to send verification email:', err.message);
+        await PendingRegistration.updateOne(filter, { $set: { nextResendAt: new Date(), delivered: false } });
+        return false;
+    }
+    await PendingRegistration.updateOne(filter, { $set: { delivered: true } });
+    return true;
+}
+
 exports.register = async (req, res) => {
     try {
         const { fullName, username, email, country, phone, password } = req.body;
-
-        // Validation
-        if (!fullName || !username || !email || !password) {
-            return res.status(400).json({ message: 'All fields are required' });
+        if (await User.exists({ $or: [{ email }, { username }] })) {
+            return res.status(409).json({ message: 'An account with this email or username already exists. Please log in.' });
         }
 
-        // Check if user exists
-        const existingUser = await User.findOne({ $or: [{ email }, { username }] }).catch(() => null);
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
+        const previous = await PendingRegistration.findOne({ email });
+        if (previous && previous.nextResendAt > new Date()) {
+            return res.status(429).json({ message: 'Please wait before requesting another code.' });
         }
 
-        // ✅ Create user with authProvider
-        const user = await User.create({
-            fullName,
-            username,
-            email,
-            country: country || 'Unknown',
-            phone: phone || null,
-            password,
-            authProvider: 'local',
-            isEmailVerified: false
+        const code = crypto.randomInt(100000, 1000000).toString();
+        const [passwordHash, codeHash] = await Promise.all([bcrypt.hash(password, 12), bcrypt.hash(code, 10)]);
+        const pending = await PendingRegistration.findOneAndUpdate(
+            { email },
+            { $set: {
+                fullName, username, email, country, phone: phone || null, passwordHash, codeHash,
+                registrationId: crypto.randomBytes(32).toString('hex'),
+                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                nextResendAt: new Date(Date.now() + 60 * 1000),
+                attempts: 0,
+                delivered: false
+            } },
+            { upsert: true, new: true, runValidators: true }
+        ).select('+codeHash');
+
+        if (!await deliverRegistrationCode(pending, code)) {
+            return res.status(503).json({ message: 'Unable to send the verification code. No account has been created. Please try again later.' });
+        }
+
+        res.status(202).json({
+            message: 'Check your email. Your account will be created after you verify the code.',
+            requiresEmailVerification: true,
+            email: pending.email,
+            registrationId: pending.registrationId
         });
+    } catch (err) {
+        console.error('Register error:', err.message);
+        res.status(500).json({ message: 'Unable to start registration. Please try again.' });
+    }
+};
 
-        // Deliver the verification code; if it cannot be delivered, an account
-        // stuck in "awaiting a code nobody can send" is a dead end, so let this
-        // signup through instead of discarding it.
-        let codeSent = false;
-        try {
-            const code = await EmailVerificationToken.generate(email);
-            await sendEmail(email, 'Verify your TravelNow email', verificationEmailHtml(fullName, code));
-            codeSent = true;
-        } catch (emailErr) {
-            console.error('[Register] Failed to send verification email:', emailErr.message);
-            await EmailVerificationToken.deleteMany({ email }).catch(() => {});
-            user.isEmailVerified = true;
-            await user.save();
+exports.resendRegistrationCode = async (req, res) => {
+    try {
+        const { email, registrationId } = req.body;
+        const code = crypto.randomInt(100000, 1000000).toString();
+        const codeHash = await bcrypt.hash(code, 10);
+        const pending = await PendingRegistration.findOneAndUpdate(
+            { email, registrationId, expiresAt: { $gt: new Date() }, nextResendAt: { $lte: new Date() } },
+            { $set: { codeHash, attempts: 0, delivered: false, nextResendAt: new Date(Date.now() + 60 * 1000) } },
+            { new: true }
+        ).select('+codeHash');
+        if (!pending) {
+            const active = await PendingRegistration.exists({ email, registrationId, expiresAt: { $gt: new Date() } });
+            return res.status(active ? 429 : 400).json({
+                message: active ? 'Please wait before resending the code.' : 'Registration has expired or was replaced. Please start again.'
+            });
+        }
+        if (!await deliverRegistrationCode(pending, code)) {
+            return res.status(503).json({ message: 'Unable to send the verification code. No account has been created. Please try again later.' });
+        }
+        res.json({ message: 'A new verification code has been sent.', cooldown: 60 });
+    } catch (err) {
+        console.error('Resend registration code error:', err.message);
+        res.status(500).json({ message: 'Unable to resend the verification code.' });
+    }
+};
+
+exports.verifyRegistration = async (req, res) => {
+    try {
+        const { email, registrationId, code } = req.body;
+        const pending = await PendingRegistration.findOneAndUpdate(
+            { email, registrationId, delivered: true, expiresAt: { $gt: new Date() }, attempts: { $lt: 5 } },
+            { $inc: { attempts: 1 } },
+            { new: true }
+        ).select('+codeHash +passwordHash');
+        if (!pending) {
+            return res.status(400).json({ message: 'Registration code is unavailable, expired, or has too many attempts. Please request a new code.' });
+        }
+        if (!await bcrypt.compare(code, pending.codeHash)) {
+            return res.status(400).json({ message: `Incorrect code. ${5 - pending.attempts} attempt(s) left.` });
         }
 
-        // WhatsApp welcome (non-fatal)
-        if (phone) {
+        if (await User.exists({ $or: [{ email: pending.email }, { username: pending.username }] })) {
+            return res.status(409).json({ message: 'An account with this email or username already exists. Please log in.' });
+        }
+
+        // Atomic consumption prevents concurrent submissions from creating two accounts.
+        const consumed = await PendingRegistration.findOneAndDelete({
+            _id: pending._id, registrationId, codeHash: pending.codeHash, delivered: true, expiresAt: { $gt: new Date() }
+        });
+        if (!consumed) {
+            return res.status(400).json({ message: 'This code has already been used or replaced. Please start again.' });
+        }
+
+        // insertMany validates the document without rehashing the stored bcrypt hash in the save hook.
+        const [user] = await User.insertMany([{
+            fullName: pending.fullName,
+            username: pending.username,
+            email: pending.email,
+            country: pending.country,
+            phone: pending.phone,
+            password: pending.passwordHash,
+            authProvider: 'local',
+            role: 'tourist',
+            isEmailVerified: true
+        }]);
+
+        if (user.phone) {
             try {
                 const wa = require('../services/whatsappService');
-                wa.sendWelcomeUser(phone, fullName).catch(() => {});
+                wa.sendWelcomeUser(user.phone, user.fullName).catch(() => {});
             } catch (_) {}
         }
 
-        const publicUser = {
-            id: user._id,
-            fullName: user.fullName,
-            username: user.username,
-            email: user.email,
-            country: user.country,
-            role: user.role
-        };
-
-        if (!codeSent) {
-            return res.status(201).json({
-                message: 'Account created and ready to use.',
-                autoVerified: true,
-                token: generateToken(user),
-                user: publicUser
-            });
-        }
-
         res.status(201).json({
-            message: 'Registration successful. Please check your email to verify your account.',
-            requiresEmailVerification: true,
-            user: publicUser
+            message: 'Email verified and account created successfully.',
+            verified: true,
+            token: generateToken(user),
+            user: {
+                id: user._id, fullName: user.fullName, username: user.username,
+                email: user.email, country: user.country, role: user.role
+            }
         });
     } catch (err) {
-        console.error('Register error:', err);
-        res.status(500).json({ message: 'Registration failed', error: err.message });
+        console.error('Verify registration error:', err.message);
+        res.status(500).json({ message: 'Unable to complete registration. Please try again.' });
     }
 };
 

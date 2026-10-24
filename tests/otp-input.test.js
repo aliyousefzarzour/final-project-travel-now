@@ -7,7 +7,8 @@ const path = require('node:path');
 
 const OTP_PAGES = [
     path.resolve(__dirname, '..', 'pages', 'forgot-password.html'),
-    path.resolve(__dirname, '..', 'pages', 'company-verify-email.html')
+    path.resolve(__dirname, '..', 'pages', 'company-verify-email.html'),
+    path.resolve(__dirname, '..', 'pages', 'register.html')
 ];
 
 for (const pagePath of OTP_PAGES) {

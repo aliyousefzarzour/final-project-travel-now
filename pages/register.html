@@ -114,12 +114,12 @@
                     </p>
                 </div>
                 <div class="otp-inputs" id="otp-inputs">
-                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
-                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
-                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
-                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
-                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
-                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" aria-label="Digit 1 of 6">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="Digit 2 of 6">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="Digit 3 of 6">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="Digit 4 of 6">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="Digit 5 of 6">
+                    <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" aria-label="Digit 6 of 6">
                 </div>
                 <div id="otp-error" style="color:#ff6b7a;text-align:center;font-size:0.85rem;margin-top:8px;display:none;"></div>
                 <button class="btn btn-gold w-100 mt-3" id="verify-otp-btn" onclick="verifyEmailOtp()">
@@ -161,6 +161,7 @@
     <script>
     let cooldownInterval = null;
     let registeredEmail  = '';
+    let registrationId = '';
 
     function setStep(n) {
         [1, 2, 3].forEach(i => {
@@ -193,7 +194,7 @@
 
         const btn = e.target.querySelector('[type=submit]');
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Creating account…';
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Sending verification code…';
 
         try {
             const res  = await fetch(`${API_BASE}/auth/register`, {
@@ -204,26 +205,16 @@
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Registration failed');
 
-            // The backend normalizes the address (Gmail dots/letter case) before it
-            // stores the user and hashes the code, so verifying against the typed
-            // string would look up an email that does not exist.
-            registeredEmail = data.user?.email || email;
-
-            // The API skips verification when it could not deliver a code.
-            if (data.autoVerified && data.token) {
-                Storage.setToken(data.token);
-                Storage.set('travelnow-user', data.user);
-                showToast('Account created! Welcome to TravelNow.', 'success');
-                setStep(3);
-                setTimeout(() => window.location.href = 'dashboard.html', 1500);
-                return;
-            }
-
+            registeredEmail = data.email;
+            registrationId = data.registrationId;
+            document.getElementById('reg-password').value = '';
+            document.getElementById('reg-confirm-password').value = '';
+            document.getElementById('otp-error').style.display = 'none';
             document.getElementById('otp-email-display').textContent = registeredEmail;
             setStep(2);
             document.querySelectorAll('.otp-digit')[0]?.focus();
             startCooldown(60);
-            showToast('Account created! Check your email for the verification code.', 'success');
+            showToast('Code sent. Verify your email to create your account.', 'success');
         } catch (err) {
             showToast(err.message, 'error');
         } finally {
@@ -232,17 +223,30 @@
         }
     });
 
-    document.getElementById('otp-inputs').addEventListener('input', e => {
-        if (e.target.value.length === 1) {
-            e.target.classList.add('filled');
-            if (e.target.nextElementSibling) e.target.nextElementSibling.focus();
-            if ([...document.querySelectorAll('.otp-digit')].every(d => d.value.length === 1)) verifyEmailOtp();
-        } else {
-            e.target.classList.remove('filled');
-        }
+    const otpWrap = document.getElementById('otp-inputs');
+    const otpInputs = [...otpWrap.querySelectorAll('.otp-digit')];
+    otpWrap.addEventListener('input', e => {
+        const d = e.target;
+        d.value = d.value.replace(/\D/g, '').slice(-1);
+        d.classList.toggle('filled', !!d.value);
+        if (d.value && d.nextElementSibling) d.nextElementSibling.focus();
+        if (otpInputs.every(input => input.value.length === 1)) verifyEmailOtp();
+    });
+    otpWrap.addEventListener('paste', e => {
+        const start = otpInputs.indexOf(e.target);
+        if (start < 0) return;
+        e.preventDefault();
+        const digits = (e.clipboardData?.getData('text') || '').replace(/\D/g, '').slice(0, otpInputs.length - start);
+        if (!digits) return;
+        [...digits].forEach((digit, index) => {
+            otpInputs[start + index].value = digit;
+            otpInputs[start + index].classList.add('filled');
+        });
+        otpInputs[Math.min(start + digits.length, otpInputs.length - 1)].focus();
+        if (otpInputs.every(input => input.value.length === 1)) verifyEmailOtp();
     });
 
-    document.getElementById('otp-inputs').addEventListener('keydown', e => {
+    otpWrap.addEventListener('keydown', e => {
         if (e.key === 'Backspace' && !e.target.value && e.target.previousElementSibling) {
             e.target.previousElementSibling.value = '';
             e.target.previousElementSibling.classList.remove('filled');
@@ -255,23 +259,23 @@
         if (code.length < 6) return showToast('Enter the full 6-digit code', 'warning');
 
         const btn = document.getElementById('verify-otp-btn');
+        if (btn.disabled) return;
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Verifying…';
         document.getElementById('otp-error').style.display = 'none';
 
         try {
-            const res  = await fetch(`${API_BASE}/auth/verify-email/verify`, {
+            const res  = await fetch(`${API_BASE}/auth/register/verify`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: registeredEmail, code })
+                body: JSON.stringify({ email: registeredEmail, registrationId, code })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Verification failed');
+            if (!data.verified || !data.token || !data.user) throw new Error('Registration was not completed. Please try again.');
 
-            if (data.token && data.user) {
-                Storage.setToken(data.token);
-                Storage.set('travelnow-user', data.user);
-            }
+            Storage.setToken(data.token);
+            Storage.set('travelnow-user', data.user);
             clearInterval(cooldownInterval);
             setStep(3);
             setTimeout(() => window.location.href = 'dashboard.html', 1800);
@@ -290,10 +294,10 @@
         const btn = document.getElementById('resend-btn');
         btn.disabled = true;
         try {
-            const res = await fetch(`${API_BASE}/auth/verify-email/send`, {
+            const res = await fetch(`${API_BASE}/auth/register/resend`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: registeredEmail })
+                body: JSON.stringify({ email: registeredEmail, registrationId })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Failed to resend code');
@@ -328,6 +332,8 @@
 
     function goBackToStep1() {
         clearInterval(cooldownInterval);
+        registrationId = '';
+        registeredEmail = '';
         setStep(1);
         document.querySelectorAll('.otp-digit').forEach(d => { d.value = ''; d.classList.remove('filled'); });
     }

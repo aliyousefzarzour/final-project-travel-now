@@ -31,4 +31,14 @@ const loginValidation = [
     body('password').notEmpty().withMessage('Password is required')
 ];
 
-module.exports = { validate, registerValidation, loginValidation };
+const registrationCodeValidation = [
+    body('email').isString().bail().trim().isEmail().bail().normalizeEmail(),
+    body('registrationId').isString().bail().matches(/^[a-f0-9]{64}$/).withMessage('Please start registration again')
+];
+
+const registrationVerifyValidation = [
+    ...registrationCodeValidation,
+    body('code').isString().bail().matches(/^\d{6}$/).withMessage('Enter the 6-digit verification code')
+];
+
+module.exports = { validate, registerValidation, loginValidation, registrationCodeValidation, registrationVerifyValidation };
