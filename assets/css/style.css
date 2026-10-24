@@ -91,7 +91,8 @@ body {
     font-family: 'Poppins', sans-serif;
     color: var(--text);
     background: var(--bg-body);
-    overflow-x: hidden;
+    /* clip, not hidden: hidden forces overflow-y to auto and adds a second page scrollbar */
+    overflow-x: clip;
     transition: background 0.3s ease, color 0.3s ease;
     line-height: 1.6;
 }
