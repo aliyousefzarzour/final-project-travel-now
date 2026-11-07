@@ -103,11 +103,11 @@
                     <p>Live company activity and offers from the backend</p>
                 </div>
                 <div class="row g-3">
-                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-calendar-check"></i><h3 id="booking-count">0</h3><p>Total Bookings</p></div></div>
-                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-tags"></i><h3 id="my-offers-count">0</h3><p>Active Offers</p></div></div>
-                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-bullhorn"></i><h3 id="my-posts-count">0</h3><p>Visible Posts</p></div></div>
-                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-star"></i><h3 id="my-rating">0</h3><p>Avg Rating</p></div></div>
-                    <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-heart" style="color:#e74c3c"></i><h3 id="my-followers">0</h3><p>Followers</p></div></div>
+                    <div class="col-md-3 col-6"><a class="stat-card text-decoration-none d-block" href="#section-bookings" data-section-link="bookings"><i class="fas fa-calendar-check"></i><h3 id="booking-count">0</h3><p>Total Bookings</p></a></div>
+                    <div class="col-md-3 col-6"><a class="stat-card text-decoration-none d-block" href="#section-offers" data-section-link="offers"><i class="fas fa-tags"></i><h3 id="my-offers-count">0</h3><p>Active Offers</p></a></div>
+                    <div class="col-md-3 col-6"><a class="stat-card text-decoration-none d-block" href="#section-posts" data-section-link="posts"><i class="fas fa-bullhorn"></i><h3 id="my-posts-count">0</h3><p>Visible Posts</p></a></div>
+                    <div class="col-md-3 col-6"><a class="stat-card text-decoration-none d-block" href="#" data-profile-link><i class="fas fa-star"></i><h3 id="my-rating">0</h3><p>Avg Rating</p></a></div>
+                    <div class="col-md-3 col-6"><a class="stat-card text-decoration-none d-block" href="#" data-profile-link><i class="fas fa-heart" style="color:#e74c3c"></i><h3 id="my-followers">0</h3><p>Followers</p></a></div>
                 </div>
             </div>
 
@@ -381,6 +381,7 @@
     const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
     let offersCache = [];
     let postsCache = [];
+    let companyId = null;
 
     async function fetchJson(url, options = {}) {
         const response = await fetch(url, {
@@ -397,15 +398,35 @@
         document.getElementById('welcome-name').textContent = user.fullName || user.name || 'Company';
     }
 
+    function showSection(target) {
+        const link = document.querySelector(`.sidebar-menu a[data-section="${target}"]`);
+        if (!link) return;
+        document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+        document.querySelectorAll('.admin-section').forEach(section => section.style.display = 'none');
+        document.getElementById(`section-${target}`).style.display = 'block';
+        document.getElementById('section-title').textContent = link.textContent.trim();
+    }
+
     document.querySelectorAll('.sidebar-menu a[data-section]').forEach(link => {
         link.addEventListener('click', e => {
             e.preventDefault();
-            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
-            link.classList.add('active');
-            document.querySelectorAll('.admin-section').forEach(section => section.style.display = 'none');
-            const target = link.dataset.section;
-            document.getElementById(`section-${target}`).style.display = 'block';
-            document.getElementById('section-title').textContent = link.textContent.trim();
+            showSection(link.dataset.section);
+        });
+    });
+
+    document.querySelectorAll('.stat-card[data-section-link]').forEach(card => {
+        card.addEventListener('click', e => {
+            e.preventDefault();
+            showSection(card.dataset.sectionLink);
+        });
+    });
+
+    document.querySelectorAll('.stat-card[data-profile-link]').forEach(card => {
+        card.addEventListener('click', e => {
+            e.preventDefault();
+            if (companyId) window.location.href = `company-profile.html?id=${companyId}`;
+            else showToast('Company profile not available', 'warning');
         });
     });
 
@@ -420,6 +441,7 @@
         postsCache = postsData.posts || [];
         const bookings = bookingsData.bookings || [];
         const company = (companyData.companies || []).find(item => String(item.userId) === String(user.id));
+        companyId = company?._id || null;
 
         document.getElementById('booking-count').textContent = bookings.length;
         document.getElementById('my-offers-count').textContent = offersCache.length;
