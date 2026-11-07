@@ -193,16 +193,8 @@
                 });
             }
 
-            // Handle redirect-based Google OAuth response (id_token in URL hash)
-            const hash = window.location.hash;
-            if (hash && hash.includes('id_token=')) {
-                const params = new URLSearchParams(hash.slice(1));
-                const idToken = params.get('id_token');
-                if (idToken) {
-                    history.replaceState(null, '', window.location.pathname);
-                    handleGoogleLogin({ credential: idToken });
-                }
-            }
+            // Handle redirect-based Google sign-in response (id_token in URL hash)
+            handleGoogleRedirect();
 
             // Override form submit to intercept requiresEmailVerification response
             const loginForm = document.getElementById('login-form');
@@ -371,7 +363,19 @@
             }
         }
 
-        // Google Sign-In trigger
+        // Google Sign-In — full-page redirect flow (no popup handoff)
+        const GOOGLE_CLIENT_ID = '736624336183-e7fajpfa642g3v3jaalma9bq2dn811tp.apps.googleusercontent.com';
+
+        function randomToken(bytes) {
+            const arr = new Uint8Array(bytes);
+            crypto.getRandomValues(arr);
+            return Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function googleRedirectUri() {
+            return window.location.origin + window.location.pathname;
+        }
+
         function triggerGoogleSignIn() {
             const btn = document.getElementById('google-signin-btn');
             const GOOGLE_ICON = `<svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -386,84 +390,63 @@
                 btn.innerHTML = GOOGLE_ICON + '<span>Connecting...</span>';
             }
 
-            const reset = () => {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = GOOGLE_ICON + '<span>Continue with Google</span>';
-                }
-            };
+            const nonce = randomToken(16);
+            const state = randomToken(16);
+            sessionStorage.setItem('google-oauth-state', state);
+            sessionStorage.setItem('google-oauth-nonce', nonce);
 
-            if (typeof google === 'undefined' || !google.accounts) {
-                showToast('Google Sign-In is loading. Please try again in a moment.', 'warning');
-                reset();
-                return;
+            const params = new URLSearchParams({
+                client_id: GOOGLE_CLIENT_ID,
+                redirect_uri: googleRedirectUri(),
+                response_type: 'id_token',
+                scope: 'openid email profile',
+                nonce,
+                state,
+                prompt: 'select_account'
+            });
+            window.location.assign('https://accounts.google.com/o/oauth2/v2/auth?' + params.toString());
+        }
+
+        function handleGoogleRedirect() {
+            const hash = window.location.hash;
+            if (!hash || (!hash.includes('id_token=') && !hash.includes('error='))) return false;
+
+            const params = new URLSearchParams(hash.slice(1));
+            const idToken = params.get('id_token') || params.get('credential');
+            const returnedState = params.get('state');
+            const expectedState = sessionStorage.getItem('google-oauth-state');
+            const expectedNonce = sessionStorage.getItem('google-oauth-nonce');
+            sessionStorage.removeItem('google-oauth-state');
+            sessionStorage.removeItem('google-oauth-nonce');
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+
+            if (params.get('error')) {
+                showToast(params.get('error') === 'access_denied'
+                    ? 'Google sign-in was cancelled.'
+                    : 'Google sign-in failed. Please try again.', 'error');
+                return true;
+            }
+            if (!idToken) {
+                showToast('Google sign-in failed. Please try again.', 'error');
+                return true;
+            }
+            if (expectedState && returnedState !== expectedState) {
+                showToast('Google sign-in session expired. Please try again.', 'error');
+                return true;
+            }
+            if (expectedNonce) {
+                try {
+                    const b64 = idToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+                    const payload = JSON.parse(atob(b64));
+                    if (payload.nonce && payload.nonce !== expectedNonce) {
+                        showToast('Google sign-in verification failed. Please try again.', 'error');
+                        return true;
+                    }
+                } catch (_) { /* nonce check is best-effort; server verifies the token */ }
             }
 
-            // Use oauth2 token client — opens a proper Google account picker popup
-            const client = google.accounts.oauth2.initTokenClient({
-                client_id: '736624336183-e7fajpfa642g3v3jaalma9bq2dn811tp.apps.googleusercontent.com',
-                scope: 'openid email profile',
-                callback: async (tokenResponse) => {
-                    if (tokenResponse.error) {
-                        showToast('Google Sign-In was cancelled.', 'warning');
-                        reset();
-                        return;
-                    }
-                    // Exchange access token for user info then call backend
-                    try {
-                        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                            headers: { 'Authorization': 'Bearer ' + tokenResponse.access_token }
-                        });
-                        const userInfo = await userInfoRes.json();
-
-                        // Create a pseudo credential object that our backend can use
-                        // We'll send the access token and user info to our own endpoint
-                        const res = await fetch(`${API_BASE}/auth/google-access-token`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                access_token: tokenResponse.access_token,
-                                email: userInfo.email,
-                                name: userInfo.name,
-                                picture: userInfo.picture,
-                                sub: userInfo.sub
-                            })
-                        });
-                        const data = await res.json();
-                        if (res.ok && data.token) {
-                            Storage.set('travelnow-user', { ...data.user, token: data.token });
-                            Storage.setToken(data.token);
-                            showToast(`Welcome, ${data.user.fullName || data.user.name}! 👋`);
-                            setTimeout(() => {
-                                const role = data.user.role || 'tourist';
-                                if (role === 'admin') window.location.href = '../admin/admin.html';
-                                else if (role === 'company') window.location.href = '../pages/company-dashboard.html';
-                                else window.location.href = '../pages/dashboard.html';
-                            }, 900);
-                        } else {
-                            // Fallback: use local demo mode
-                            const localUser = {
-                                fullName: userInfo.name,
-                                username: userInfo.email.split('@')[0],
-                                email: userInfo.email,
-                                role: 'tourist',
-                                profilePic: userInfo.picture,
-                                token: tokenResponse.access_token
-                            };
-                            Storage.set('travelnow-user', localUser);
-                            Storage.setToken(tokenResponse.access_token);
-                            showToast(`Welcome, ${userInfo.name}!`);
-                            setTimeout(() => window.location.href = '../pages/dashboard.html', 900);
-                        }
-                    } catch (err) {
-                        showToast('Google Sign-In failed. Please try email login.', 'error');
-                    } finally {
-                        reset();
-                    }
-                }
-            });
-
-            client.requestAccessToken({ prompt: 'select_account' });
+            handleGoogleLogin({ credential: idToken });
+            return true;
         }
     </script>
 
