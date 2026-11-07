@@ -13,7 +13,7 @@ const User = require('../models/User');
 const crypto = require('crypto');
 
 // ✅ الـ Client ID الخاص بمشروعك
-const GOOGLE_CLIENT_ID = "472844156998-o2uftp7651tsbfdo00hv07h95vlou5vb.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "736624336183-e7fajpfa642g3v3jaalma9bq2dn811tp.apps.googleusercontent.com";
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 // =================== STANDARD ROUTES ===================
