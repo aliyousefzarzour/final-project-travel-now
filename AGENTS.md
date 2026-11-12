@@ -31,9 +31,9 @@ Backend listens on `http://localhost:5000` (override with `PORT`). Health: `GET 
   - If Mongo is down, the app **keeps running in demo mode** (see "Demo Mode" below).
 - **Stripe** keys (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`) for real payments; otherwise payment endpoints return a fake `pi_demo_*` intent.
 
-### Default Admin Account (seeded in `config/index.js`)
-- Email: `admin@travelnow.com`
-- Password: `Admin123@`
+### Admin Account (from environment)
+- Email: supplied via `ADMIN_EMAIL`
+- Password: supplied via `ADMIN_PASSWORD` (never committed)
 
 ## High-Level Architecture
 

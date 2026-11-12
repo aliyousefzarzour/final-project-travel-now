@@ -22,7 +22,7 @@ module.exports = {
     // لو عايز تسمح لأي origin (development only!)
     // FRONTEND_URL: '*',
 
-    JWT_SECRET: process.env.JWT_SECRET || 'travelnow-super-secret-key-change-in-production',
+    JWT_SECRET: process.env.JWT_SECRET || require('crypto').randomBytes(32).toString('hex'),
     JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
 
     // MongoDB
